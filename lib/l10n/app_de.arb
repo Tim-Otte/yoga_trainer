@@ -1,0 +1,19 @@
+{
+    "@@locale": "de",
+    "appTitle": "Yoga Trainer",
+    "workouts": "Workout",
+    "noWorkouts": "Keine Workouts verfügbar",
+    "poses": "Übungen",
+    "noPoses": "Keine Übungen verfügbar",
+    "settings": "Einstellungen",
+    "addPose": "Pose hinzufügen",
+    "poseName": "Name",
+    "poseDescription": "Beschreibung",
+    "poseDuration": "Dauer",
+    "poseDurationSuffix": "Sekunden",
+    "poseDurationInvalid": "Der Wert muss eine Zahl zwischen 10 und 60 sein",
+    "poseDifficulty": "Schwierigkeit",
+    "difficultyEasy": "Leicht",
+    "difficultyMedium": "Mittel",
+    "difficultyHard": "Schwer"
+}

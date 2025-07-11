@@ -1,0 +1,67 @@
+{
+    "@@locale": "en",
+    "appTitle": "Yoga Trainer",
+    "@appTitle": {
+        "description": "The title of the app"
+    },
+    "workouts": "Workouts",
+    "@workouts": {
+        "description": "The title of the workout page"
+    },
+    "noWorkouts": "No workouts available",
+    "@noWorkouts": {
+        "description": "Message displayed when there are no workouts available"
+    },
+    "poses": "Poses",
+    "@poses": {
+        "description": "The title of the poses page"
+    },
+    "noPoses": "No poses available",
+    "@noPoses": {
+        "description": "Message displayed when there are no poses available"
+    },
+    "settings": "Settings",
+    "@settings": {
+        "description": "The title of the settings page"
+    },
+    "addPose": "Add a pose",
+    "@addPose": {
+        "description": "The title of the add_pose page"
+    },
+    "poseName": "Name",
+    "@poseName": {
+        "description": "The label of the text input for the name of a pose"
+    },
+    "poseDescription": "Description",
+    "@poseDescription": {
+        "description": "The label of the text input for the description of a pose"
+    },
+    "poseDuration": "Duration",
+    "@poseDuration": {
+        "description": "The label of the input for the duration of a pose"
+    },
+    "poseDurationSuffix": "seconds",
+    "@poseDurationSuffix": {
+        "description": "The suffix of the input for the duration of a pose"
+    },
+    "poseDurationInvalid": "The value must be a number between 10 and 60",
+    "@poseDurationInvalid": {
+        "description": "The error to display if the input is invalid"
+    },
+    "poseDifficulty": "Difficulty",
+    "@poseDifficulty": {
+        "description": "The label of the input for the difficulty of a pose"
+    },
+    "difficultyEasy": "Easy",
+    "@difficultyEasy": {
+        "description": "The label for the easy difficulty"
+    },
+    "difficultyMedium": "Medium",
+    "@difficultyMedium": {
+        "description": "The label for the medium difficulty"
+    },
+    "difficultyHard": "Hard",
+    "@difficultyHard": {
+        "description": "The label for the hard difficulty"
+    }
+}
