@@ -32,9 +32,17 @@
     "@poseName": {
         "description": "The label of the text input for the name of a pose"
     },
+    "poseNameInvalid": "The name must be unique and not empty",
+    "@poseNameInvalid": {
+        "description": "The error to display if the input is invalid"
+    },
     "poseDescription": "Description",
     "@poseDescription": {
         "description": "The label of the text input for the description of a pose"
+    },
+    "poseDescriptionEmpty": "No description provided",
+    "@poseDescriptionEmpty": {
+        "description": "The text to show if the description is empty"
     },
     "poseDuration": "Duration",
     "@poseDuration": {
@@ -63,5 +71,41 @@
     "difficultyHard": "Hard",
     "@difficultyHard": {
         "description": "The label for the hard difficulty"
+    },
+    "poseBodyPart": "Affected body part",
+    "@poseBodyPart": {
+        "description": "THe label for the selection of the affected body part"
+    },
+    "poseBodyPartEmpty": "No body part selected",
+    "@poseBodyPartEmpty": {
+        "description": "The text to show if no body part is selected"
+    },
+    "selectBodyPart": "Select affected body part",
+    "@selectBodyPart": {
+        "description": "The title of the select_body_part page"
+    },
+    "noBodyParts": "No body parts available",
+    "@noBodyParts": {
+        "description": "Message displayed when there are no body parts available"
+    },
+    "addBodyPart": "Add body part",
+    "@addBodyPart": {
+        "description": "The title of the add_body_part dialog"
+    },
+    "bodyPartName": "Name",
+    "@bodyPartName": {
+        "description": "The label of the text input for the name of a body part"
+    },
+    "bodyPartNameInvalid": "The name must be unique and not empty",
+    "@bodyPartNameInvalid": {
+        "description": "The error to display if the input is invalid"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "The label text for save buttons"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "The label text for cancel buttons"
     }
 }

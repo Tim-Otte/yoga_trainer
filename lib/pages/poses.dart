@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/icon_with_text.dart';
 import 'package:yoga_trainer/database.dart';
+import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/add_pose.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
@@ -62,24 +63,92 @@ class PosesPage extends StatelessWidget implements PageInfos {
 
         final poses = snapshot.data!;
 
-        return ListView.builder(
+        return Padding(
+          padding: EdgeInsetsGeometry.symmetric(vertical: 20),
+          child: Wrap(
+            runSpacing: 20,
+            children: [
+              getPoseGroup(
+                context,
+                Difficulty.easy,
+                poses
+                    .where((x) => x.pose.difficulty == Difficulty.easy)
+                    .toList(),
+              ),
+              getPoseGroup(
+                context,
+                Difficulty.medium,
+                poses
+                    .where((x) => x.pose.difficulty == Difficulty.medium)
+                    .toList(),
+              ),
+              getPoseGroup(
+                context,
+                Difficulty.hard,
+                poses
+                    .where((x) => x.pose.difficulty == Difficulty.hard)
+                    .toList(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget getPoseGroup(
+    BuildContext context,
+    Difficulty difficulty,
+    List<PoseWithBodyPart> poses,
+  ) {
+    if (poses.isEmpty) {
+      return SizedBox();
+    }
+
+    var localizations = AppLocalizations.of(context);
+    var theme = Theme.of(context);
+
+    String title = switch (difficulty) {
+      Difficulty.easy => localizations.difficultyEasy,
+      Difficulty.medium => localizations.difficultyMedium,
+      Difficulty.hard => localizations.difficultyHard,
+    };
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsetsGeometry.only(left: 15),
+          child: Text(
+            title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ),
+        ListView.builder(
+          primary: false,
+          shrinkWrap: true,
           itemCount: poses.length,
           itemBuilder: (context, index) {
-            final pose = poses[index];
+            final pose = poses[index].pose;
+            final bodyPart = poses[index].bodyPart;
             return ListTile(
               title: Text(pose.name),
-              subtitle: Text(pose.description),
+              subtitle: Text(bodyPart.name),
               trailing: Chip(
                 label: Text('${pose.duration}s'),
-                avatar: Icon(Icons.timer),
+                avatar: Icon(Icons.timer_outlined),
               ),
               onTap: () {
                 // Handle workout tap
               },
             );
           },
-        );
-      },
+        ),
+      ],
     );
   }
 }
