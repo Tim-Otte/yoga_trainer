@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -22,7 +23,7 @@ class _AddBodyPartDialogState extends State<AddBodyPartDialog> {
     var database = Provider.of<AppDatabase>(context);
 
     return AlertDialog(
-      icon: Icon(Icons.person_search),
+      icon: Icon(Symbols.person_search),
       title: Text(localizations.addBodyPart),
       content: Form(
         key: _formKey,

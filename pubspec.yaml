@@ -39,6 +39,7 @@ dependencies:
   drift_flutter: ^0.2.4
   path_provider: ^2.1.5
   provider: ^6.1.5
+  material_symbols_icons: ^4.2815.1
 
 dev_dependencies:
   drift_dev: ^2.27.0

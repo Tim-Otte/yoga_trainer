@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -37,7 +38,7 @@ class _NameInputState extends State<NameInput> {
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         label: Text(localizations.poseName),
-        icon: Icon(Icons.label_outline),
+        icon: Icon(Symbols.label_outline),
       ),
       maxLength: 100,
       validator: (value) {

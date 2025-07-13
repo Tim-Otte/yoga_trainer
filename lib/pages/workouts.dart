@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/icon_with_text.dart';
 import 'package:yoga_trainer/database.dart';
@@ -15,12 +16,12 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
   @override
   IconData getIcon() {
-    return Icons.self_improvement;
+    return Symbols.self_improvement;
   }
 
   @override
   Widget? getFAB(BuildContext context) {
-    return FloatingActionButton(child: Icon(Icons.add), onPressed: () {});
+    return FloatingActionButton(child: Icon(Symbols.add_2), onPressed: () {});
   }
 
   @override
@@ -33,7 +34,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
         if (snapshot.hasError) {
           return Center(
             child: IconWithText(
-              icon: Icons.dangerous,
+              icon: Symbols.dangerous,
               text: 'Error: ${snapshot.error}',
             ),
           );
@@ -41,7 +42,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
             child: IconWithText(
-              icon: Icons.search_off,
+              icon: Symbols.search_off,
               text: AppLocalizations.of(context).noWorkouts,
             ),
           );

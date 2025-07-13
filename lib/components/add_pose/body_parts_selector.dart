@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/extensions/color.dart';
@@ -41,7 +42,7 @@ class _BodyPartsSelectorState extends State<BodyPartsSelector> {
         Padding(
           padding: const EdgeInsets.only(left: 2, right: 10),
           child: Icon(
-            Icons.person_search_outlined,
+            Symbols.person_search,
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
@@ -92,7 +93,7 @@ class _BodyPartsSelectorState extends State<BodyPartsSelector> {
                       ),
                     ],
                   ),
-                  const Icon(Icons.chevron_right),
+                  const Icon(Symbols.chevron_right),
                 ],
               ),
             ),

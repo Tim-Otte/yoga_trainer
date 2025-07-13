@@ -80,14 +80,19 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  /// Returns a stream of all [BodyPart] objects from the database.
+  /// Returns a stream of all [BodyPart]s that match the given [search] query.
   ///
-  /// This stream emits a list of body parts whenever the underlying data changes,
-  /// allowing the UI to reactively update as the database is modified.
-  Stream<List<BodyPart>> getAllBodyParts() {
-    return (select(
-      bodyParts,
-    )..orderBy([(bp) => OrderingTerm.asc(bp.name)])).watch();
+  /// The stream emits updated lists whenever the underlying data changes.
+  Stream<List<BodyPart>> getAllBodyParts(String search) {
+    var query = select(bodyParts);
+
+    if (search.isNotEmpty) {
+      query.where((bp) => bp.name.contains(search));
+    }
+
+    query.orderBy([(bp) => OrderingTerm.asc(bp.name)]);
+
+    return query.watch();
   }
 
   /// Checks if a body part with the given [name] exists in the database.

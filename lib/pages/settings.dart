@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
 
@@ -12,7 +13,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
 
   @override
   IconData getIcon() {
-    return Icons.settings;
+    return Symbols.settings;
   }
 
   @override

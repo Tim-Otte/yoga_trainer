@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
@@ -45,17 +46,17 @@ class _DifficultyInputState extends State<DifficultyInput> {
               segments: [
                 ButtonSegment(
                   value: Difficulty.easy,
-                  icon: Icon(Icons.sentiment_very_satisfied),
+                  icon: Icon(Symbols.sentiment_very_satisfied),
                   label: Text(localizations.difficultyEasy),
                 ),
                 ButtonSegment(
                   value: Difficulty.medium,
-                  icon: Icon(Icons.sentiment_neutral),
+                  icon: Icon(Symbols.sentiment_content),
                   label: Text(localizations.difficultyMedium),
                 ),
                 ButtonSegment(
                   value: Difficulty.hard,
-                  icon: Icon(Icons.sentiment_very_dissatisfied),
+                  icon: Icon(Symbols.sentiment_frustrated),
                   label: Text(localizations.difficultyHard),
                 ),
               ],

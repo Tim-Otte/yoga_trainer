@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
 class DescriptionInput extends StatefulWidget {
@@ -33,7 +34,7 @@ class _DescriptionInputState extends State<DescriptionInput> {
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         label: Text(localizations.poseDescription),
-        icon: Icon(Icons.info_outline),
+        icon: Icon(Symbols.info),
         alignLabelWithHint: true,
       ),
       maxLines: 3,

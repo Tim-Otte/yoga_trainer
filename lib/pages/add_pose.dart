@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_pose/all.dart';
 import 'package:yoga_trainer/database.dart';
@@ -46,7 +47,7 @@ class _AddPosePageState extends State<AddPosePage> {
                     }
                   }
                 : null,
-            icon: Icon(Icons.check),
+            icon: Icon(Symbols.check),
           ),
           SizedBox(width: 10),
         ],

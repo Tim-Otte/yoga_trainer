@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/icon_with_text.dart';
 import 'package:yoga_trainer/database.dart';
@@ -17,7 +18,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
 
   @override
   IconData getIcon() {
-    return Icons.sports_gymnastics;
+    return Symbols.sports_gymnastics;
   }
 
   @override
@@ -25,7 +26,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
     var database = Provider.of<AppDatabase>(context);
 
     return FloatingActionButton(
-      child: Icon(Icons.add),
+      child: Icon(Symbols.add_2),
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(
@@ -47,7 +48,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
         if (snapshot.hasError) {
           return Center(
             child: IconWithText(
-              icon: Icons.dangerous,
+              icon: Symbols.dangerous,
               text: 'Error: ${snapshot.error}',
             ),
           );
@@ -55,7 +56,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
             child: IconWithText(
-              icon: Icons.search_off,
+              icon: Symbols.search_off,
               text: AppLocalizations.of(context).noPoses,
             ),
           );
@@ -140,7 +141,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
               subtitle: Text(bodyPart.name),
               trailing: Chip(
                 label: Text('${pose.duration}s'),
-                avatar: Icon(Icons.timer_outlined),
+                avatar: Icon(Symbols.timer),
               ),
               onTap: () {
                 // Handle workout tap

@@ -107,5 +107,9 @@
     "cancel": "Cancel",
     "@cancel": {
         "description": "The label text for cancel buttons"
+    },
+    "search": "Search...",
+    "@search": {
+        "description": "The hint text to display in search inputs"
     }
 }

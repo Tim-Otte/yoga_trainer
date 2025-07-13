@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
 class DurationInput extends StatefulWidget {
@@ -34,7 +35,7 @@ class _DurationInputState extends State<DurationInput> {
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         label: Text(localizations.poseDuration),
-        icon: Icon(Icons.timer_outlined),
+        icon: Icon(Symbols.timer),
         suffixText: localizations.poseDurationSuffix,
       ),
       keyboardType: TextInputType.number,

@@ -26,5 +26,6 @@
     "bodyPartName": "Name",
     "bodyPartNameInvalid": "Der Name muss einzigartig und nicht leer sein",
     "save": "Speichern",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "search": "Suchen..."
 }
