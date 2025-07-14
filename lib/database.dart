@@ -80,6 +80,20 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  /// Updates an existing pose in the database with the provided [pose] data.
+  ///
+  /// Returns a [Future] that completes when the update operation is finished.
+  Future updatePose(PosesCompanion pose) async {
+    await (update(poses)..where((p) => p.id.equals(pose.id.value))).write(pose);
+  }
+
+  /// Deletes a pose from the database by its [id].
+  ///
+  /// Returns a [Future] that completes when the pose has been deleted.
+  Future deletePose(int id) async {
+    await (delete(poses)..where((p) => p.id.equals(id))).go();
+  }
+
   /// Returns a stream of all [BodyPart]s that match the given [search] query.
   ///
   /// The stream emits updated lists whenever the underlying data changes.

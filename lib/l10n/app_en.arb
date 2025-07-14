@@ -100,6 +100,22 @@
     "@bodyPartNameInvalid": {
         "description": "The error to display if the input is invalid"
     },
+    "addToWorkout": "Add to workout",
+    "@addToWorkout": {
+        "description": "The label of the add_to_workout button"
+    },
+    "editPose": "Edit pose",
+    "@editPose": {
+        "description": "The title of the edit pose mode"
+    },
+    "deleteDialogTitle": "Confirm deletion",
+    "@deleteDialogTitle": {
+        "description": "The title of the confirm_delete dialog"
+    },
+    "deleteDialogContent": "Do you really want to delete this?",
+    "@deleteDialogContent": {
+        "description": "The content of the confirm_delete dialog"
+    },
     "save": "Save",
     "@save": {
         "description": "The label text for save buttons"
@@ -111,5 +127,21 @@
     "search": "Search...",
     "@search": {
         "description": "The hint text to display in search inputs"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "The label/tooltip text for delete buttons"
+    },
+    "edit": "Edit",
+    "@edit": {
+        "description": "The label/tooltip text for edit buttons"
+    },
+    "yes": "Yes",
+    "@yes": {
+        "description": "The label text for yes buttons"
+    },
+    "no": "No",
+    "@no": {
+        "description": "The label text for no buttons"
     }
 }

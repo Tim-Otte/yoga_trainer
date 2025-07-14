@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import 'package:yoga_trainer/components/add_pose/all.dart';
+import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/entities/poses.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';

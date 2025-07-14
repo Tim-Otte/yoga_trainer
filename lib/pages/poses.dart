@@ -7,6 +7,7 @@ import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/add_pose.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
+import 'package:yoga_trainer/pages/pose_details.dart';
 
 class PosesPage extends StatelessWidget implements PageInfos {
   const PosesPage({super.key});
@@ -69,21 +70,21 @@ class PosesPage extends StatelessWidget implements PageInfos {
           child: Wrap(
             runSpacing: 20,
             children: [
-              getPoseGroup(
+              _getPoseGroup(
                 context,
                 Difficulty.easy,
                 poses
                     .where((x) => x.pose.difficulty == Difficulty.easy)
                     .toList(),
               ),
-              getPoseGroup(
+              _getPoseGroup(
                 context,
                 Difficulty.medium,
                 poses
                     .where((x) => x.pose.difficulty == Difficulty.medium)
                     .toList(),
               ),
-              getPoseGroup(
+              _getPoseGroup(
                 context,
                 Difficulty.hard,
                 poses
@@ -97,7 +98,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
     );
   }
 
-  Widget getPoseGroup(
+  Widget _getPoseGroup(
     BuildContext context,
     Difficulty difficulty,
     List<PoseWithBodyPart> poses,
@@ -106,6 +107,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
       return SizedBox();
     }
 
+    var database = Provider.of<AppDatabase>(context);
     var localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
 
@@ -144,7 +146,16 @@ class PosesPage extends StatelessWidget implements PageInfos {
                 avatar: Icon(Symbols.timer),
               ),
               onTap: () {
-                // Handle workout tap
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => Provider(
+                      create: (_) => database,
+                      child: PoseDetailsPage(pose: pose, bodyPart: bodyPart),
+                    ),
+                    fullscreenDialog: true,
+                  ),
+                );
               },
             );
           },

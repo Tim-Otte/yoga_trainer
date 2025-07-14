@@ -25,7 +25,15 @@
     "addBodyPart": "Körperteil hinzufügen",
     "bodyPartName": "Name",
     "bodyPartNameInvalid": "Der Name muss einzigartig und nicht leer sein",
+    "addToWorkout": "Zu Workout hinzufügen",
+    "editPose": "Pose bearbeiten",
+    "deleteDialogTitle": "Löschen bestätigen",
+    "deleteDialogContent": "Möchtest Du dies wirklich löschen?",
     "save": "Speichern",
     "cancel": "Abbrechen",
-    "search": "Suchen..."
+    "search": "Suchen...",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "yes": "Ja",
+    "no": "Nein"
 }
