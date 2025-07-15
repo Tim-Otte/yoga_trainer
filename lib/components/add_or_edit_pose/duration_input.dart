@@ -54,7 +54,7 @@ class _DurationInputState extends State<DurationInput> {
 
         return null;
       },
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       initialValue: _value.toString(),
       onChanged: (value) => setState(() {
         var parsed = int.tryParse(value);

@@ -1,10 +1,15 @@
+import 'package:duration/duration.dart';
+import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import 'package:yoga_trainer/components/icon_with_text.dart';
+import 'package:yoga_trainer/components/stream_list_view.dart';
 import 'package:yoga_trainer/database.dart';
+import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
+import 'package:yoga_trainer/pages/add_workout.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
+import 'package:yoga_trainer/pages/workout_details.dart';
 
 class WorkoutsPage extends StatelessWidget implements PageInfos {
   const WorkoutsPage({super.key});
@@ -21,45 +26,48 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
   @override
   Widget? getFAB(BuildContext context) {
-    return FloatingActionButton(child: Icon(Symbols.add_2), onPressed: () {});
+    var database = Provider.of<AppDatabase>(context);
+
+    return FloatingActionButton(
+      child: Icon(Symbols.add_2),
+      onPressed: () => context.navigateTo(
+        (_) => Provider(create: (_) => database, child: AddWorkoutPage()),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<AppDatabase>(context);
 
-    return StreamBuilder(
-      stream: database.getAllWorkouts(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: IconWithText(
-              icon: Symbols.dangerous,
-              text: 'Error: ${snapshot.error}',
-            ),
-          );
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(
-            child: IconWithText(
-              icon: Symbols.search_off,
-              text: AppLocalizations.of(context).noWorkouts,
-            ),
-          );
-        }
+    return StreamListView(
+      stream: database.streamAllWorkouts(),
+      noDataText: AppLocalizations.of(context).noWorkouts,
+      itemBuilder: (context, item, _) {
+        final workout = item.workout;
 
-        final workouts = snapshot.data!;
-
-        return ListView.builder(
-          itemCount: workouts.length,
-          itemBuilder: (context, index) {
-            final workout = workouts[index];
-            return ListTile(
-              title: Text(workout.name),
-              subtitle: Text(workout.description),
-              onTap: () {
-                // Handle workout tap
-              },
+        return ListTile(
+          title: Text(workout.name),
+          subtitle: Text(workout.description),
+          leading: CircleAvatar(child: Icon(item.difficulty.getIcon())),
+          trailing: Chip(
+            label: Text(
+              Duration(seconds: item.duration).pretty(
+                abbreviated: true,
+                delimiter: ' ',
+                locale: DurationLocale.fromLanguageCode(
+                  Localizations.localeOf(context).languageCode,
+                )!,
+              ),
+            ),
+            avatar: Icon(Symbols.timer),
+          ),
+          onTap: () {
+            context.navigateTo(
+              (_) => Provider(
+                create: (_) => database,
+                child: WorkoutDetailsPage(workoutInfos: item),
+              ),
             );
           },
         );

@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yoga_trainer/entities/all.dart';
+import 'package:yoga_trainer/entities/workout_with_infos.dart';
+import 'package:yoga_trainer/extensions/iterable.dart';
 
 part 'database.g.dart';
 
@@ -25,15 +27,150 @@ class AppDatabase extends _$AppDatabase {
   ///
   /// The stream emits a list of [Workout] objects whenever the data changes.
   /// Useful for listening to real-time updates of workouts.
-  Stream<List<Workout>> getAllWorkouts() {
-    return select(workouts).watch();
+  Stream<List<WorkoutWithInfos>> streamAllWorkouts() {
+    final duration =
+        poses.duration *
+        (workoutPoses.side.caseMatch(
+          when: {Constant(Side.both.index): Constant(2)},
+          orElse: Constant(1),
+        )).sum();
+    final difficulty = poses.difficulty.max();
+
+    return (select(workouts).join([
+            innerJoin(
+              workoutPoses,
+              workoutPoses.workout.equalsExp(workouts.id),
+            ),
+            innerJoin(poses, poses.id.equalsExp(workoutPoses.pose)),
+          ])
+          ..addColumns([duration, difficulty])
+          ..orderBy([OrderingTerm.asc(workouts.name)]))
+        .watch()
+        .map(
+          (rows) => rows
+              .map(
+                (row) => WorkoutWithInfos(
+                  workout: row.readTable(workouts),
+                  duration: row.read(duration) ?? 0,
+                  difficulty: Difficulty.values[(row.read(difficulty) ?? 0)],
+                ),
+              )
+              .toList(),
+        );
+  }
+
+  /// Retrieves a [WorkoutWithInfos] object for the workout with the given [id].
+  ///
+  /// Returns a [Future] that completes with the workout and its associated information.
+  Future<WorkoutWithInfos> getWorkout(int id) async {
+    final duration =
+        (poses.duration *
+                (workoutPoses.side.caseMatch(
+                  when: {Constant(Side.both.index): Constant(2)},
+                  orElse: Constant(1),
+                )))
+            .sum();
+    final difficulty = poses.difficulty.max();
+
+    return (select(workouts).join([
+            innerJoin(
+              workoutPoses,
+              workoutPoses.workout.equalsExp(workouts.id),
+            ),
+            innerJoin(poses, poses.id.equalsExp(workoutPoses.pose)),
+          ])
+          ..addColumns([duration, difficulty])
+          ..orderBy([OrderingTerm.asc(workouts.name)]))
+        .map(
+          (row) => WorkoutWithInfos(
+            workout: row.readTable(workouts),
+            duration: row.read(duration) ?? 0,
+            difficulty: Difficulty.values[(row.read(difficulty) ?? 0)],
+          ),
+        )
+        .getSingle();
+  }
+
+  /// Checks if a workout with the specified [name] exists in the database.
+  ///
+  /// Returns `true` if a workout with the given name is found, otherwise `false`.
+  Future<bool> hasWorkoutWithName(String name) async {
+    return (await (select(
+          workouts,
+        )..where((p) => p.name.like(name))).getSingleOrNull()) !=
+        null;
+  }
+
+  /// Inserts a new workout entry into the database.
+  ///
+  /// Returns a [Future] that completes when the workout has been successfully inserted.
+  Future insertWorkout(
+    String name,
+    String description,
+    List<PoseWithBodyPartAndSide> poses,
+  ) async {
+    final workoutId = await into(
+      workouts,
+    ).insert(WorkoutsCompanion.insert(name: name, description: description));
+
+    final posesToInsert = poses.mapWithIndex(
+      (p, index) => WorkoutPosesCompanion.insert(
+        workout: workoutId,
+        pose: p.pose.id,
+        order: index,
+        side: Value(p.side),
+      ),
+    );
+
+    await batch((batch) => batch.insertAll(workoutPoses, posesToInsert));
+  }
+
+  /// Updates an existing workout in the database.
+  ///
+  /// This method performs an update operation on a workout record.
+  ///
+  /// Returns a [Future] that completes when the update is finished.
+  Future updateWorkout(
+    WorkoutsCompanion workout,
+    List<PoseWithBodyPartAndSide> poses,
+  ) async {
+    await (update(
+      workouts,
+    )..where((w) => w.id.equals(workout.id.value))).write(workout);
+
+    await (delete(
+      workoutPoses,
+    )..where((wp) => wp.workout.equals(workout.id.value))).go();
+
+    await batch(
+      (batch) => batch.insertAll(
+        workoutPoses,
+        poses.mapWithIndex(
+          (item, index) => WorkoutPosesCompanion.insert(
+            workout: workout.id.value,
+            pose: item.pose.id,
+            order: index,
+            side: Value(item.side),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Deletes a workout from the database by its [id].
+  ///
+  /// Returns a [Future] that completes when the workout has been deleted.
+  Future deleteWorkout(int id) async {
+    await (delete(workoutPoses)..where((wp) => wp.workout.equals(id))).go();
+
+    await (delete(workouts)..where((w) => w.id.equals(id))).go();
   }
 
   /// Returns a stream of all poses from the database.
   ///
   /// The stream emits a list of [Pose] objects whenever the data changes.
   /// Useful for listening to real-time updates of poses.
-  Stream<List<PoseWithBodyPart>> getAllPoses() {
+  Stream<List<PoseWithBodyPart>> streamAllPoses() {
     return (select(poses).join([
       innerJoin(bodyParts, bodyParts.id.equalsExp(poses.affectedBodyPart)),
     ])..orderBy([OrderingTerm.asc(poses.name)])).watch().map(
@@ -46,6 +183,46 @@ class AppDatabase extends _$AppDatabase {
           )
           .toList(),
     );
+  }
+
+  /// Retrieves a list of all poses along with their associated body parts from the database.
+  ///
+  /// Returns a [Future] that completes with a list of [PoseWithBodyPart] objects.
+  Future<List<PoseWithBodyPart>> getAllPoses() {
+    return (select(poses).join([
+          innerJoin(bodyParts, bodyParts.id.equalsExp(poses.affectedBodyPart)),
+        ])..orderBy([OrderingTerm.asc(poses.name)]))
+        .map(
+          (row) => PoseWithBodyPart(
+            pose: row.readTable(poses),
+            bodyPart: row.readTable(bodyParts),
+          ),
+        )
+        .get();
+  }
+
+  /// Retrieves all poses associated with a specific workout.
+  ///
+  /// Returns a [Future] that completes with a list of [PoseWithBodyPart] objects
+  /// for the workout identified by [workoutId].
+  Future<List<PoseWithBodyPartAndSide>> getAllPosesForWorkout(int workoutId) {
+    return (select(poses).join([
+            innerJoin(
+              bodyParts,
+              bodyParts.id.equalsExp(poses.affectedBodyPart),
+            ),
+            innerJoin(workoutPoses, workoutPoses.pose.equalsExp(poses.id)),
+          ])
+          ..where(workoutPoses.workout.equals(workoutId))
+          ..orderBy([OrderingTerm.asc(workoutPoses.order)]))
+        .map(
+          (row) => PoseWithBodyPartAndSide(
+            pose: row.readTable(poses),
+            bodyPart: row.readTable(bodyParts),
+            side: row.readTable(workoutPoses).side,
+          ),
+        )
+        .get();
   }
 
   /// Checks if a pose with the given [name] exists in the database.
@@ -67,6 +244,7 @@ class AppDatabase extends _$AppDatabase {
     String description,
     int duration,
     Difficulty difficulty,
+    bool isUnilateral,
     BodyPart affectedBodyPart,
   ) async {
     await into(poses).insert(
@@ -75,6 +253,7 @@ class AppDatabase extends _$AppDatabase {
         description: description,
         duration: duration,
         difficulty: difficulty,
+        isUnilateral: isUnilateral,
         affectedBodyPart: affectedBodyPart.id,
       ),
     );
@@ -91,13 +270,15 @@ class AppDatabase extends _$AppDatabase {
   ///
   /// Returns a [Future] that completes when the pose has been deleted.
   Future deletePose(int id) async {
+    await (delete(workoutPoses)..where((wp) => wp.pose.equals(id))).go();
+
     await (delete(poses)..where((p) => p.id.equals(id))).go();
   }
 
   /// Returns a stream of all [BodyPart]s that match the given [search] query.
   ///
   /// The stream emits updated lists whenever the underlying data changes.
-  Stream<List<BodyPart>> getAllBodyParts(String search) {
+  Stream<List<BodyPart>> streamAllBodyParts(String search) {
     var query = select(bodyParts);
 
     if (search.isNotEmpty) {

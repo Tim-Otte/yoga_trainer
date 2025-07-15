@@ -29,6 +29,7 @@ class _AddBodyPartDialogState extends State<AddBodyPartDialog> {
         key: _formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: TextFormField(
+          autofocus: true,
           decoration: InputDecoration(label: Text(localizations.bodyPartName)),
           initialValue: _value,
           onChanged: (value) async {

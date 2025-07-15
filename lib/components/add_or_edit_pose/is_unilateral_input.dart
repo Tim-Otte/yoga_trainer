@@ -1,39 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:provider/provider.dart';
-import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/extensions/color.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
-import 'package:yoga_trainer/pages/select_body_part.dart';
 
-class BodyPartsSelector extends StatefulWidget {
-  final BodyPart? initialValue;
-  final Function(BodyPart value) onChanged;
+class IsUnilateralInput extends StatefulWidget {
+  final bool initialValue;
+  final Function(bool value) onChanged;
 
-  const BodyPartsSelector({
+  const IsUnilateralInput({
     super.key,
     required this.initialValue,
     required this.onChanged,
   });
 
   @override
-  State<BodyPartsSelector> createState() => _BodyPartsSelectorState();
+  State<IsUnilateralInput> createState() => _IsUnilateralInputState();
 }
 
-class _BodyPartsSelectorState extends State<BodyPartsSelector> {
-  BodyPart? _selected;
+class _IsUnilateralInputState extends State<IsUnilateralInput> {
+  late bool _value;
 
   @override
   void initState() {
     super.initState();
 
-    _selected = widget.initialValue;
+    _value = widget.initialValue;
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
-    final database = Provider.of<AppDatabase>(context);
     final theme = Theme.of(context);
 
     return Row(
@@ -42,26 +38,17 @@ class _BodyPartsSelectorState extends State<BodyPartsSelector> {
         Padding(
           padding: const EdgeInsets.only(left: 2, right: 10),
           child: Icon(
-            Symbols.person_search,
+            Symbols.swap_horiz,
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
         Expanded(
           child: InkWell(
             onTap: () async {
-              var result = await Navigator.push<BodyPart>(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Provider(
-                    create: (_) => database,
-                    child: SelectBodyPartPage(),
-                  ),
-                ),
-              );
-              setState(() => _selected = result);
-              if (result != null) {
-                widget.onChanged(result);
-              }
+              var newValue = !_value;
+
+              setState(() => _value = newValue);
+              widget.onChanged(newValue);
             },
             highlightColor: theme.highlightColor,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -79,11 +66,13 @@ class _BodyPartsSelectorState extends State<BodyPartsSelector> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${localizations.poseBodyPart}:",
+                        localizations.poseIsUnilateral,
                         style: theme.textTheme.bodyLarge,
                       ),
                       Text(
-                        _selected?.name ?? localizations.poseBodyPartEmpty,
+                        _value
+                            ? localizations.poseIsUnilateralHintTrue
+                            : localizations.poseIsUnilateralHintFalse,
                         style: theme.textTheme.bodyMedium!.copyWith(
                           color: theme.textTheme.bodyMedium!.color!.useOpacity(
                             0.7,
@@ -92,7 +81,13 @@ class _BodyPartsSelectorState extends State<BodyPartsSelector> {
                       ),
                     ],
                   ),
-                  const Icon(Symbols.chevron_right),
+                  Switch(
+                    value: _value,
+                    onChanged: (checked) {
+                      setState(() => _value = checked);
+                      widget.onChanged(checked);
+                    },
+                  ),
                 ],
               ),
             ),

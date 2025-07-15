@@ -60,6 +60,26 @@
     "@poseDifficulty": {
         "description": "The label of the input for the difficulty of a pose"
     },
+    "poseIsUnilateral": "Is unilateral",
+    "@poseIsUnilateral": {
+        "description": "The label of the switch to select if the pose is unilateral"
+    },
+    "poseIsUnilateralHintTrue": "This pose targets one side of the body",
+    "@poseIsUnilateralHintTrue": {
+        "description": "The message to show if the is_unilateral switch is checked"
+    },
+    "poseIsUnilateralHintFalse": "Trains both sides equally",
+    "@poseIsUnilateralHintFalse": {
+        "description": "The message to show if the is_unilateral switch is not checked"
+    },
+    "poseIsUnilateralLabelTrue": "Unilateral",
+    "@poseIsUnilateralLabelTrue": {
+        "description": "The label to show if the is_unilateral is true"
+    },
+    "poseIsUnilateralLabelFalse": "Bilateral",
+    "@poseIsUnilateralLabelFalse": {
+        "description": "The label to show if the is_unilateral is false"
+    },
     "difficultyEasy": "Easy",
     "@difficultyEasy": {
         "description": "The label for the easy difficulty"
@@ -106,7 +126,51 @@
     },
     "editPose": "Edit pose",
     "@editPose": {
-        "description": "The title of the edit pose mode"
+        "description": "The title of the pose_details mode"
+    },
+    "addWorkout": "Add a workout",
+    "@addWorkout": {
+        "description": "The title of the add_workout page"
+    },
+    "workoutDetails": "Details",
+    "@workoutDetails": {
+        "description": "The title of the workout details"
+    },
+    "workoutName": "Name",
+    "@workoutName": {
+        "description": "The label of the text input for the name of a workout"
+    },
+    "workoutNameInvalid": "The name must be unique and not empty",
+    "@workoutNameInvalid": {
+        "description": "The error to display if the input is invalid"
+    },
+    "workoutDescription": "Description",
+    "@workoutDescription": {
+        "description": "The label of the text input for the description of a workout"
+    },
+    "workoutDescriptionEmpty": "No description provided",
+    "@workoutDescriptionEmpty": {
+        "description": "The text to show if the description is empty"
+    },
+    "workoutPoses": "Poses in this workout",
+    "@workoutPoses": {
+        "description": "The title of the list of poses in a workout"
+    },
+    "workoutPosesEmpty": "No poses selected yet",
+    "@workoutPosesEmpty": {
+        "description": "The message to show if no poses are added to the workout"
+    },
+    "workoutAddPoses": "Add poses",
+    "@workoutAddPoses": {
+        "description": "The label of the add_poses button"
+    },
+    "selectPosesForWorkout": "Select poses for workout",
+    "@selectPosesForWorkout": {
+        "description": "The title of the select_poses_for_workout page"
+    },
+    "editWorkout": "Edit workout",
+    "@editWorkout": {
+        "description": "The title of the workout_details page"
     },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {

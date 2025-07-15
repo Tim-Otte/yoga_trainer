@@ -3,7 +3,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
 import 'package:yoga_trainer/database.dart';
-import 'package:yoga_trainer/entities/poses.dart';
+import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
 class AddPosePage extends StatefulWidget {
@@ -18,6 +18,7 @@ class _AddPosePageState extends State<AddPosePage> {
   String _description = '';
   int _duration = 30;
   Difficulty _difficulty = Difficulty.medium;
+  bool _isUnilateral = false;
   BodyPart? _affectedBodyPart;
 
   final _formKey = GlobalKey<FormState>();
@@ -39,6 +40,7 @@ class _AddPosePageState extends State<AddPosePage> {
                       _description,
                       _duration,
                       _difficulty,
+                      _isUnilateral,
                       _affectedBodyPart!,
                     );
 
@@ -93,6 +95,12 @@ class _AddPosePageState extends State<AddPosePage> {
                 initialValue: _affectedBodyPart,
                 onChanged: (value) => setState(() {
                   _affectedBodyPart = value;
+                }),
+              ),
+              IsUnilateralInput(
+                initialValue: _isUnilateral,
+                onChanged: (value) => setState(() {
+                  _isUnilateral = value;
                 }),
               ),
             ],

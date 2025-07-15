@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
@@ -43,23 +42,15 @@ class _DifficultyInputState extends State<DifficultyInput> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SegmentedButton<Difficulty>(
-              segments: [
-                ButtonSegment(
-                  value: Difficulty.easy,
-                  icon: Icon(Symbols.sentiment_very_satisfied),
-                  label: Text(localizations.difficultyEasy),
-                ),
-                ButtonSegment(
-                  value: Difficulty.medium,
-                  icon: Icon(Symbols.sentiment_content),
-                  label: Text(localizations.difficultyMedium),
-                ),
-                ButtonSegment(
-                  value: Difficulty.hard,
-                  icon: Icon(Symbols.sentiment_frustrated),
-                  label: Text(localizations.difficultyHard),
-                ),
-              ],
+              segments: Difficulty.values
+                  .map(
+                    (d) => ButtonSegment(
+                      value: d,
+                      icon: Icon(d.getIcon()),
+                      label: Text(d.getTranslation(context)),
+                    ),
+                  )
+                  .toList(),
               selected: {_value},
               onSelectionChanged: (selected) {
                 setState(() => _value = selected.first);

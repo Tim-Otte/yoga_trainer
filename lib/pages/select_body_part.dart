@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import 'package:yoga_trainer/components/icon_with_text.dart';
 import 'package:yoga_trainer/components/select_body_part/add_body_part_dialog.dart';
+import 'package:yoga_trainer/components/stream_list_view.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
-class SelectBodyPart extends StatefulWidget {
-  const SelectBodyPart({super.key});
+class SelectBodyPartPage extends StatefulWidget {
+  const SelectBodyPartPage({super.key});
 
   @override
-  State<SelectBodyPart> createState() => _SelectBodyPartState();
+  State<SelectBodyPartPage> createState() => _SelectBodyPartPageState();
 }
 
-class _SelectBodyPartState extends State<SelectBodyPart> {
+class _SelectBodyPartPageState extends State<SelectBodyPartPage> {
   String _searchText = '';
 
   @override
@@ -42,46 +42,15 @@ class _SelectBodyPartState extends State<SelectBodyPart> {
             ),
           ),
           Expanded(
-            child: StreamBuilder(
-              stream: database.getAllBodyParts(_searchText),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: IconWithText(
-                      icon: Symbols.dangerous,
-                      text: 'Error: ${snapshot.error}',
-                    ),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
-                    child: IconWithText(
-                      icon: Symbols.search_off,
-                      text: AppLocalizations.of(context).noBodyParts,
-                    ),
-                  );
-                }
-
-                final bodyParts = snapshot.data!;
-
-                return ListView.builder(
-                  itemCount: bodyParts.length,
-                  itemBuilder: (context, index) {
-                    final bodyPart = bodyParts[index];
-                    return ListTile(
-                      title: Text(bodyPart.name),
-                      onTap: () {
-                        Navigator.pop(context, bodyPart);
-                      },
-                    );
-                  },
-                );
-              },
+            child: StreamListView(
+              stream: database.streamAllBodyParts(_searchText),
+              noDataText: AppLocalizations.of(context).noBodyParts,
+              itemBuilder: (context, bodyPart, _) => ListTile(
+                title: Text(bodyPart.name),
+                onTap: () {
+                  Navigator.pop(context, bodyPart);
+                },
+              ),
             ),
           ),
         ],

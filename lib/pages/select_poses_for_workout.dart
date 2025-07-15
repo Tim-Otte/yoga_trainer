@@ -1,48 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:provider/provider.dart';
-import 'package:yoga_trainer/components/stream_loader.dart';
-import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
-import 'package:yoga_trainer/pages/add_pose.dart';
-import 'package:yoga_trainer/pages/page_infos.dart';
-import 'package:yoga_trainer/pages/pose_details.dart';
 
-class PosesPage extends StatelessWidget implements PageInfos {
-  const PosesPage({super.key});
+class SelectPosesForWorkoutPage extends StatefulWidget {
+  const SelectPosesForWorkoutPage({super.key, required this.poses});
 
-  @override
-  String getTitle(BuildContext context) {
-    return AppLocalizations.of(context).poses;
-  }
+  final List<PoseWithBodyPart> poses;
 
   @override
-  IconData getIcon() {
-    return Symbols.sports_gymnastics;
-  }
+  State<StatefulWidget> createState() => _SelectPosesForWorkoutPageState();
+}
 
-  @override
-  Widget? getFAB(BuildContext context) {
-    var database = Provider.of<AppDatabase>(context);
-
-    return FloatingActionButton(
-      child: Icon(Symbols.add_2),
-      onPressed: () => context.navigateTo(
-        (_) => Provider(create: (_) => database, child: AddPosePage()),
-      ),
-    );
-  }
+class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
+  final List<PoseWithBodyPart> _selected = [];
 
   @override
   Widget build(BuildContext context) {
-    final database = Provider.of<AppDatabase>(context);
+    final localizations = AppLocalizations.of(context);
+    final poses = widget.poses;
 
-    return StreamLoader(
-      stream: database.streamAllPoses(),
-      noDataText: AppLocalizations.of(context).noPoses,
-      builder: (context, poses) => Padding(
+    var theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(localizations.selectPosesForWorkout),
+        backgroundColor: theme.colorScheme.surfaceContainer,
+        actions: [
+          IconButton(
+            onPressed: _selected.isNotEmpty
+                ? () {
+                    context.navigateBack(_selected);
+                  }
+                : null,
+            icon: Icon(Symbols.check),
+          ),
+          SizedBox(width: 10),
+        ],
+      ),
+      body: Padding(
         padding: EdgeInsetsGeometry.symmetric(vertical: 20),
         child: Wrap(
           runSpacing: 20,
@@ -79,15 +76,8 @@ class PosesPage extends StatelessWidget implements PageInfos {
       return SizedBox();
     }
 
-    var database = Provider.of<AppDatabase>(context);
-    var localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
-
-    String title = switch (difficulty) {
-      Difficulty.easy => localizations.difficultyEasy,
-      Difficulty.medium => localizations.difficultyMedium,
-      Difficulty.hard => localizations.difficultyHard,
-    };
+    var localizations = AppLocalizations.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -96,7 +86,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
         Padding(
           padding: EdgeInsetsGeometry.only(left: 15),
           child: Text(
-            title,
+            difficulty.getTranslation(context),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,
@@ -108,8 +98,10 @@ class PosesPage extends StatelessWidget implements PageInfos {
           shrinkWrap: true,
           itemCount: poses.length,
           itemBuilder: (context, index) {
-            final pose = poses[index].pose;
-            final bodyPart = poses[index].bodyPart;
+            final item = poses[index];
+            final pose = item.pose;
+            final bodyPart = item.bodyPart;
+
             return ListTile(
               title: Text(pose.name),
               subtitle: Row(
@@ -143,14 +135,25 @@ class PosesPage extends StatelessWidget implements PageInfos {
                   Text('${pose.duration}s'),
                 ],
               ),
-              leading: CircleAvatar(child: Icon(pose.difficulty.getIcon())),
-              onTap: () => context.navigateTo(
-                (_) => Provider(
-                  create: (_) => database,
-                  child: PoseDetailsPage(pose: pose, bodyPart: bodyPart),
-                ),
-                fullscreenDialog: true,
+              leading: Checkbox(
+                value: _selected.contains(item),
+                onChanged: (checked) {
+                  if ((checked ?? false)) {
+                    if (!_selected.contains(item)) {
+                      setState(() => _selected.add(item));
+                    }
+                  } else {
+                    setState(() => _selected.remove(item));
+                  }
+                },
               ),
+              onTap: () {
+                if (_selected.contains(item)) {
+                  setState(() => _selected.remove(item));
+                } else {
+                  setState(() => _selected.add(item));
+                }
+              },
             );
           },
         ),

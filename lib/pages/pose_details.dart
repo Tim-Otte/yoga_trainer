@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
 import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
 import 'package:yoga_trainer/database.dart';
-import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
 class PoseDetailsPage extends StatefulWidget {
@@ -39,6 +38,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
       description: Value(widget.pose.description),
       difficulty: Value(widget.pose.difficulty),
       duration: Value(widget.pose.duration),
+      isUnilateral: Value(widget.pose.isUnilateral),
       affectedBodyPart: Value(widget.pose.affectedBodyPart),
     );
     _bodyPart = widget.bodyPart;
@@ -50,84 +50,78 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
     var localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.surfaceContainer,
-        title: Text(_isInEditMode ? localizations.editPose : _pose.name.value),
-        actions: _isInEditMode
-            ? [
-                IconButton(
-                  onPressed: _isFormValid
-                      ? () async {
-                          await database.updatePose(_pose);
+    return PopScope(
+      canPop: !_isInEditMode,
+      onPopInvokedWithResult: (didPop, result) {
+        if (_isInEditMode) {
+          setState(() => _isInEditMode = false);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: theme.colorScheme.surfaceContainer,
+          title: Text(
+            _isInEditMode ? localizations.editPose : _pose.name.value,
+          ),
+          actions: _isInEditMode
+              ? [
+                  IconButton(
+                    onPressed: _isFormValid
+                        ? () async {
+                            await database.updatePose(_pose);
 
-                          setState(() => _isInEditMode = false);
+                            setState(() => _isInEditMode = false);
+                          }
+                        : null,
+                    icon: Icon(Symbols.check),
+                  ),
+                  SizedBox(width: 10),
+                ]
+              : null,
+        ),
+        body: _isInEditMode
+            ? _getEditMode(context)
+            : _getDisplayWidget(context),
+        bottomNavigationBar: _isInEditMode
+            ? null
+            : BottomAppBar(
+                child: Wrap(
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        var confirmed = await ConfirmDeleteDialog.show(context);
+
+                        if (confirmed) {
+                          await database.deletePose(widget.pose.id);
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
                         }
-                      : null,
-                  icon: Icon(Symbols.check),
+                      },
+                      icon: Icon(Symbols.delete),
+                      color: theme.colorScheme.error,
+                      tooltip: localizations.delete,
+                    ),
+                    IconButton(
+                      onPressed: () => setState(() => _isInEditMode = true),
+                      icon: Icon(Symbols.edit),
+                      tooltip: localizations.edit,
+                    ),
+                  ],
                 ),
-                SizedBox(width: 10),
-              ]
-            : null,
-      ),
-      body: _isInEditMode ? _getEditMode(context) : _getDisplayWidget(context),
-      bottomNavigationBar: _isInEditMode
-          ? null
-          : BottomAppBar(
-              child: Wrap(
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      var confirmed = await ConfirmDeleteDialog.show(context);
-
-                      if (confirmed) {
-                        await database.deletePose(widget.pose.id);
-
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      }
-                    },
-                    icon: Icon(Symbols.delete),
-                    color: theme.colorScheme.error,
-                    tooltip: localizations.delete,
-                  ),
-                  IconButton(
-                    onPressed: () => setState(() => _isInEditMode = true),
-                    icon: Icon(Symbols.edit),
-                    tooltip: localizations.edit,
-                  ),
-                ],
               ),
-            ),
-      floatingActionButton: _isInEditMode
-          ? null
-          : FloatingActionButton(
-              onPressed: () {},
-              tooltip: localizations.addToWorkout,
-              elevation: 0,
-              child: Icon(Symbols.playlist_add),
-            ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButton: _isInEditMode
+            ? null
+            : FloatingActionButton(
+                onPressed: () {},
+                tooltip: localizations.addToWorkout,
+                elevation: 0,
+                child: Icon(Symbols.playlist_add),
+              ),
+      ),
     );
-  }
-
-  Widget _getDifficultyChip(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
-
-    var label = switch (_pose.difficulty.value) {
-      Difficulty.easy => localizations.difficultyEasy,
-      Difficulty.medium => localizations.difficultyMedium,
-      Difficulty.hard => localizations.difficultyHard,
-    };
-
-    var icon = switch (_pose.difficulty.value) {
-      Difficulty.easy => Symbols.sentiment_very_satisfied,
-      Difficulty.medium => Symbols.sentiment_calm,
-      Difficulty.hard => Symbols.sentiment_frustrated,
-    };
-
-    return Chip(label: Text(label), avatar: Icon(icon));
   }
 
   Widget _getDisplayWidget(BuildContext context) {
@@ -144,8 +138,9 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
             children: [
               Text(
                 localizations.poseDescription,
-                style: theme.textTheme.bodyLarge?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               Text(_pose.description.value, style: theme.textTheme.bodyLarge),
@@ -153,10 +148,25 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
               Wrap(
                 spacing: 10,
                 children: [
-                  _getDifficultyChip(context),
+                  Chip(
+                    label: Text(_pose.difficulty.value.getTranslation(context)),
+                    avatar: Icon(_pose.difficulty.value.getIcon()),
+                  ),
                   Chip(
                     label: Text(_bodyPart.name),
                     avatar: Icon(Symbols.person_search),
+                  ),
+                  Chip(
+                    label: Text(
+                      _pose.isUnilateral.value
+                          ? localizations.poseIsUnilateralLabelTrue
+                          : localizations.poseIsUnilateralLabelFalse,
+                    ),
+                    avatar: Icon(
+                      _pose.isUnilateral.value
+                          ? Symbols.swap_horiz
+                          : Symbols.threesixty,
+                    ),
                   ),
                   Chip(
                     label: Text('${_pose.duration.value}s'),
@@ -212,6 +222,12 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
               onChanged: (value) => setState(() {
                 _bodyPart = value;
                 _pose = _pose.copyWith(affectedBodyPart: Value(value.id));
+              }),
+            ),
+            IsUnilateralInput(
+              initialValue: _pose.isUnilateral.value,
+              onChanged: (value) => setState(() {
+                _pose = _pose.copyWith(isUnilateral: Value(value));
               }),
             ),
           ],
