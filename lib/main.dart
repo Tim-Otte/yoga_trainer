@@ -30,7 +30,10 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2196F3)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF2196F3),
+          dynamicSchemeVariant: DynamicSchemeVariant.tonalSpot,
+        ),
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
       home: Provider(

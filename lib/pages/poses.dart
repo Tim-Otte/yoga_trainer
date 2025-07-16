@@ -143,7 +143,11 @@ class PosesPage extends StatelessWidget implements PageInfos {
                   Text('${pose.duration}s'),
                 ],
               ),
-              leading: CircleAvatar(child: Icon(pose.difficulty.getIcon())),
+              leading: CircleAvatar(
+                backgroundColor: pose.difficulty.getBackgroundColor(context),
+                foregroundColor: pose.difficulty.getForegroundColor(context),
+                child: Icon(pose.difficulty.getIcon()),
+              ),
               onTap: () => context.navigateTo(
                 (_) => Provider(
                   create: (_) => database,

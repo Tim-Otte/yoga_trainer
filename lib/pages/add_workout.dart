@@ -109,7 +109,12 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                           _poses = value;
                         }),
                       )
-                    : Text(localizations.workoutPosesEmpty),
+                    : Text(
+                        localizations.workoutPosesEmpty,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
               ],
             ),
           ),

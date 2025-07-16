@@ -268,7 +268,12 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                       ),
                       _poses!.isNotEmpty
                           ? PoseList(poses: _poses!)
-                          : Text(localizations.workoutPosesEmpty),
+                          : Text(
+                              localizations.workoutPosesEmpty,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                     ]),
             ],
           ),
@@ -340,7 +345,10 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                       _poses = value;
                     }),
                   )
-                : Text(localizations.workoutPosesEmpty),
+                : Text(
+                    localizations.workoutPosesEmpty,
+                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                  ),
           ],
         ),
       ),

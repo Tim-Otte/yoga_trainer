@@ -49,10 +49,14 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
         return ListTile(
           title: Text(workout.name),
           subtitle: Text(workout.description, overflow: TextOverflow.ellipsis),
-          leading: CircleAvatar(child: Icon(item.difficulty.getIcon())),
+          leading: CircleAvatar(
+            backgroundColor: item.difficulty.getBackgroundColor(context),
+            foregroundColor: item.difficulty.getForegroundColor(context),
+            child: Icon(item.difficulty.getIcon()),
+          ),
           trailing: Chip(
             label: Text(
-              Duration(seconds: item.duration).pretty(
+              Duration(minutes: (item.duration / 60.0).ceil()).pretty(
                 abbreviated: true,
                 delimiter: ' ',
                 locale: DurationLocale.fromLanguageCode(

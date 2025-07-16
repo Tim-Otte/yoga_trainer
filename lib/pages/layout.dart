@@ -17,11 +17,17 @@ class _LayoutState extends State<Layout> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-        title: Text((_pages[_currentIndex] as PageInfos).getTitle(context)),
-        titleTextStyle: Theme.of(context).textTheme.headlineMedium,
+        backgroundColor: theme.colorScheme.surfaceContainer,
+        foregroundColor: theme.colorScheme.onSurface,
+        title: Text(
+          (_pages[_currentIndex] as PageInfos).getTitle(context),
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
+        titleTextStyle: theme.textTheme.headlineMedium,
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: NavigationBar(
