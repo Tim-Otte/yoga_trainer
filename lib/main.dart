@@ -10,7 +10,7 @@ import 'l10n/generated/app_localizations.dart';
 void main() {
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString(
-      'google_fonts/NunitoSans-OFL.txt',
+      'assets/google_fonts/NunitoSans-OFL.txt',
     );
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
@@ -30,11 +30,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          //seedColor: Color.fromARGB(255, 3, 169, 244),
-          //seedColor: Color(0xFF2748B8),
-          seedColor: Colors.blue,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2196F3)),
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
       home: Provider(
