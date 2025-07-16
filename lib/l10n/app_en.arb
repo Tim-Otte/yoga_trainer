@@ -176,6 +176,10 @@
     "@selectWorkoutToUpdate": {
         "description": "The title of the select_workout_to_update page"
     },
+    "finishedWorkout": "Finished!",
+    "@finishedWorkout": {
+        "description": "The text to show when the user finished the workout"
+    },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
         "description": "The title of the confirm_delete dialog"

@@ -44,6 +44,7 @@
     "workoutDescriptionEmpty": "Keine Beschreibung hinterlegt",
     "editWorkout": "Workout bearbeiten",
     "selectWorkoutToUpdate": "Workout auswählen",
+    "finishedWorkout": "Fertig!",
     "deleteDialogTitle": "Löschen bestätigen",
     "deleteDialogContent": "Möchtest Du dies wirklich löschen?",
     "save": "Speichern",

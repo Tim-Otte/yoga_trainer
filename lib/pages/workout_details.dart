@@ -8,9 +8,9 @@ import 'package:yoga_trainer/components/add_or_edit_workout/all.dart';
 import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/entities/all.dart';
-import 'package:yoga_trainer/entities/workout_with_infos.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
+import 'package:yoga_trainer/pages/play_workout.dart';
 import 'package:yoga_trainer/pages/select_poses_for_workout.dart';
 
 class WorkoutDetailsPage extends StatefulWidget {
@@ -200,7 +200,15 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                 elevation: 0,
               )
             : FloatingActionButton(
-                onPressed: () {},
+                onPressed: () => context.navigateTo(
+                  (_) => Provider(
+                    create: (_) => database,
+                    child: PlayWorkoutPage(
+                      workout: _workoutInfos,
+                      poses: _poses ?? [],
+                    ),
+                  ),
+                ),
                 elevation: 0,
                 child: Icon(Symbols.play_arrow),
               ),
