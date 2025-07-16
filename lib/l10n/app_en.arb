@@ -172,6 +172,10 @@
     "@editWorkout": {
         "description": "The title of the workout_details page"
     },
+    "selectWorkoutToUpdate": "Select workout",
+    "@selectWorkoutToUpdate": {
+        "description": "The title of the select_workout_to_update page"
+    },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
         "description": "The title of the confirm_delete dialog"

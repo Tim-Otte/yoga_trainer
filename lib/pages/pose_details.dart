@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
 import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
 import 'package:yoga_trainer/database.dart';
+import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
+import 'package:yoga_trainer/pages/select_workout_to_update.dart';
 
 class PoseDetailsPage extends StatefulWidget {
   const PoseDetailsPage({
@@ -32,15 +34,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
   void initState() {
     super.initState();
 
-    _pose = PosesCompanion(
-      id: Value(widget.pose.id),
-      name: Value(widget.pose.name),
-      description: Value(widget.pose.description),
-      difficulty: Value(widget.pose.difficulty),
-      duration: Value(widget.pose.duration),
-      isUnilateral: Value(widget.pose.isUnilateral),
-      affectedBodyPart: Value(widget.pose.affectedBodyPart),
-    );
+    _pose = widget.pose.toCompanion(true);
     _bodyPart = widget.bodyPart;
   }
 
@@ -52,9 +46,14 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
 
     return PopScope(
       canPop: !_isInEditMode,
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: (didPop, result) async {
         if (_isInEditMode) {
-          setState(() => _isInEditMode = false);
+          var data = await database.getPose(_pose.id.value);
+          setState(() {
+            _isInEditMode = false;
+            _pose = data.pose.toCompanion(true);
+            _bodyPart = data.bodyPart;
+          });
         }
       },
       child: Scaffold(
@@ -115,7 +114,18 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
         floatingActionButton: _isInEditMode
             ? null
             : FloatingActionButton(
-                onPressed: () {},
+                onPressed: () async {
+                  var pose = await database.getPose(_pose.id.value);
+
+                  if (context.mounted) {
+                    context.navigateTo(
+                      (_) => Provider(
+                        create: (_) => database,
+                        child: SelectWorkoutToUpdatePage(poseToAdd: pose),
+                      ),
+                    );
+                  }
+                },
                 tooltip: localizations.addToWorkout,
                 elevation: 0,
                 child: Icon(Symbols.playlist_add),

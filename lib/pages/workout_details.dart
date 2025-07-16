@@ -14,9 +14,14 @@ import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/select_poses_for_workout.dart';
 
 class WorkoutDetailsPage extends StatefulWidget {
-  const WorkoutDetailsPage({super.key, required this.workoutInfos});
+  const WorkoutDetailsPage({
+    super.key,
+    required this.workoutInfos,
+    this.poseToAdd,
+  });
 
   final WorkoutWithInfos workoutInfos;
+  final PoseWithBodyPart? poseToAdd;
 
   @override
   State<WorkoutDetailsPage> createState() => _WorkoutDetailsPageState();
@@ -30,16 +35,35 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
   bool _isFormValid = true;
   final _formKey = GlobalKey<FormState>();
 
+  Side? _getSideForPose(
+    List<PoseWithBodyPartAndSide> existingPoses,
+    Pose pose,
+  ) {
+    if (pose.isUnilateral) {
+      if (existingPoses.any((x) => x.side == Side.left) &&
+          !existingPoses.any((x) => x.side == Side.right)) {
+        return Side.right;
+      } else if (!existingPoses.any((x) => x.side == Side.left) &&
+          existingPoses.any((x) => x.side == Side.right)) {
+        return Side.left;
+      } else {
+        return Side.both;
+      }
+    }
+
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
 
     _workoutInfos = widget.workoutInfos;
-    _workout = WorkoutsCompanion(
-      id: Value(widget.workoutInfos.workout.id),
-      name: Value(widget.workoutInfos.workout.name),
-      description: Value(widget.workoutInfos.workout.description),
-    );
+    _workout = widget.workoutInfos.workout.toCompanion(true);
+
+    if (widget.poseToAdd != null) {
+      _isInEditMode = true;
+    }
   }
 
   @override
@@ -49,20 +73,30 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     var database = Provider.of<AppDatabase>(context);
 
     if (_poses == null) {
-      database
-          .getAllPosesForWorkout(_workout.id.value)
-          .then(
-            (data) => setState(() {
-              _poses = data;
-            }),
+      database.getAllPosesForWorkout(_workout.id.value).then((data) {
+        if (widget.poseToAdd != null) {
+          data.add(
+            PoseWithBodyPartAndSide(
+              pose: widget.poseToAdd!.pose,
+              bodyPart: widget.poseToAdd!.bodyPart,
+              side: _getSideForPose(data, widget.poseToAdd!.pose),
+            ),
           );
+        }
+        setState(() => _poses = data);
+      });
     }
 
     return PopScope(
       canPop: !_isInEditMode,
-      onPopInvokedWithResult: (didPop, result) {
-        if (_isInEditMode) {
-          setState(() => _isInEditMode = false);
+      onPopInvokedWithResult: (didPop, result) async {
+        if (_isInEditMode && widget.poseToAdd == null) {
+          var poses = await database.getAllPosesForWorkout(_workout.id.value);
+          setState(() {
+            _isInEditMode = false;
+            _workout = _workoutInfos.workout.toCompanion(true);
+            _poses = poses;
+          });
         }
       },
       child: Scaffold(
@@ -81,10 +115,16 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                               _workout.id.value,
                             );
 
-                            setState(() {
-                              _isInEditMode = false;
-                              _workoutInfos = updatedInfos;
-                            });
+                            if (widget.poseToAdd != null) {
+                              if (context.mounted) {
+                                context.navigateBack();
+                              }
+                            } else {
+                              setState(() {
+                                _isInEditMode = false;
+                                _workoutInfos = updatedInfos;
+                              });
+                            }
                           }
                         : null,
                     icon: Icon(Symbols.check),
@@ -93,9 +133,11 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                 ]
               : null,
         ),
-        body: _isInEditMode
-            ? _getEditMode(context)
-            : _getDisplayWidget(context),
+        body: SingleChildScrollView(
+          child: _isInEditMode
+              ? _getEditMode(context)
+              : _getDisplayWidget(context),
+        ),
         bottomNavigationBar: _isInEditMode
             ? BottomAppBar(color: theme.colorScheme.surface)
             : BottomAppBar(
@@ -141,29 +183,13 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                         selectedWorkouts.isNotEmpty) {
                       setState(
                         () => _poses!.addAll(
-                          selectedWorkouts.map((item) {
-                            Side? side;
-
-                            if (item.pose.isUnilateral) {
-                              if (_poses!.any((x) => x.side == Side.left) &&
-                                  !_poses!.any((x) => x.side == Side.right)) {
-                                side = Side.right;
-                              } else if (!_poses!.any(
-                                    (x) => x.side == Side.left,
-                                  ) &&
-                                  _poses!.any((x) => x.side == Side.right)) {
-                                side = Side.left;
-                              } else {
-                                side = Side.both;
-                              }
-                            }
-
-                            return PoseWithBodyPartAndSide(
+                          selectedWorkouts.map(
+                            (item) => PoseWithBodyPartAndSide(
                               pose: item.pose,
                               bodyPart: item.bodyPart,
-                              side: side,
-                            );
-                          }),
+                              side: _getSideForPose(_poses!, item.pose),
+                            ),
+                          ),
                         ),
                       );
                     }

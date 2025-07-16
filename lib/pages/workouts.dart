@@ -48,7 +48,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
         return ListTile(
           title: Text(workout.name),
-          subtitle: Text(workout.description),
+          subtitle: Text(workout.description, overflow: TextOverflow.ellipsis),
           leading: CircleAvatar(child: Icon(item.difficulty.getIcon())),
           trailing: Chip(
             label: Text(

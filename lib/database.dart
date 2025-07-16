@@ -23,27 +23,43 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  /// Returns a stream of all workouts from the database.
+  /// Returns a stream of all workouts, optionally filtered by a search query.
   ///
-  /// The stream emits a list of [Workout] objects whenever the data changes.
-  /// Useful for listening to real-time updates of workouts.
-  Stream<List<WorkoutWithInfos>> streamAllWorkouts() {
+  /// If [search] is provided, only workouts matching the search criteria will be included
+  /// in the resulting list. The stream emits updates whenever the underlying data changes.
+  ///
+  /// Returns a [Stream] that emits lists of [WorkoutWithInfos] objects.
+  Stream<List<WorkoutWithInfos>> streamAllWorkouts({String? search}) {
     final duration =
-        poses.duration *
-        (workoutPoses.side.caseMatch(
-          when: {Constant(Side.both.index): Constant(2)},
-          orElse: Constant(1),
-        )).sum();
+        (poses.duration *
+                workoutPoses.side.caseMatch<int>(
+                  when: {Constant(Side.both.index): Constant(2)},
+                  orElse: Constant(1),
+                ))
+            .sum();
+
     final difficulty = poses.difficulty.max();
 
     return (select(workouts).join([
             innerJoin(
               workoutPoses,
               workoutPoses.workout.equalsExp(workouts.id),
+              useColumns: false,
             ),
-            innerJoin(poses, poses.id.equalsExp(workoutPoses.pose)),
+            innerJoin(
+              poses,
+              poses.id.equalsExp(workoutPoses.pose),
+              useColumns: false,
+            ),
           ])
           ..addColumns([duration, difficulty])
+          ..groupBy(
+            [workouts.id, workouts.name, workouts.description],
+            having: (search ?? '').isNotEmpty
+                ? (workouts.name.contains(search!) |
+                      workouts.description.contains(search))
+                : null,
+          )
           ..orderBy([OrderingTerm.asc(workouts.name)]))
         .watch()
         .map(
@@ -51,8 +67,8 @@ class AppDatabase extends _$AppDatabase {
               .map(
                 (row) => WorkoutWithInfos(
                   workout: row.readTable(workouts),
-                  duration: row.read(duration) ?? 0,
-                  difficulty: Difficulty.values[(row.read(difficulty) ?? 0)],
+                  duration: row.read(duration)!,
+                  difficulty: Difficulty.values[(row.read(difficulty)!)],
                 ),
               )
               .toList(),
@@ -65,21 +81,29 @@ class AppDatabase extends _$AppDatabase {
   Future<WorkoutWithInfos> getWorkout(int id) async {
     final duration =
         (poses.duration *
-                (workoutPoses.side.caseMatch(
+                workoutPoses.side.caseMatch(
                   when: {Constant(Side.both.index): Constant(2)},
                   orElse: Constant(1),
-                )))
+                ))
             .sum();
+
     final difficulty = poses.difficulty.max();
 
     return (select(workouts).join([
             innerJoin(
               workoutPoses,
               workoutPoses.workout.equalsExp(workouts.id),
+              useColumns: false,
             ),
-            innerJoin(poses, poses.id.equalsExp(workoutPoses.pose)),
+            innerJoin(
+              poses,
+              poses.id.equalsExp(workoutPoses.pose),
+              useColumns: false,
+            ),
           ])
           ..addColumns([duration, difficulty])
+          ..groupBy([workouts.id, workouts.name, workouts.description])
+          ..where(workouts.id.equals(id))
           ..orderBy([OrderingTerm.asc(workouts.name)]))
         .map(
           (row) => WorkoutWithInfos(
@@ -223,6 +247,22 @@ class AppDatabase extends _$AppDatabase {
           ),
         )
         .get();
+  }
+
+  /// Retrieves a [PoseWithBodyPart] object by its unique [id].
+  ///
+  /// Returns a [Future] that completes with the pose and its associated body part.
+  Future<PoseWithBodyPart> getPose(int id) async {
+    return (select(poses).join([
+          innerJoin(bodyParts, bodyParts.id.equalsExp(poses.affectedBodyPart)),
+        ])..where(poses.id.equals(id)))
+        .map(
+          (row) => PoseWithBodyPart(
+            pose: row.readTable(poses),
+            bodyPart: row.readTable(bodyParts),
+          ),
+        )
+        .getSingle();
   }
 
   /// Checks if a pose with the given [name] exists in the database.

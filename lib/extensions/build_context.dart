@@ -13,14 +13,25 @@ extension BuildContextExtensions on BuildContext {
   Future<T?> navigateTo<T extends Object?>(
     Widget Function(BuildContext) builder, {
     bool fullscreenDialog = false,
+    bool replace = false,
   }) async {
-    return Navigator.push(
-      this,
-      MaterialPageRoute<T>(
-        builder: builder,
-        fullscreenDialog: fullscreenDialog,
-      ),
-    );
+    if (replace) {
+      return Navigator.pushReplacement(
+        this,
+        MaterialPageRoute<T>(
+          builder: builder,
+          fullscreenDialog: fullscreenDialog,
+        ),
+      );
+    } else {
+      return Navigator.push(
+        this,
+        MaterialPageRoute<T>(
+          builder: builder,
+          fullscreenDialog: fullscreenDialog,
+        ),
+      );
+    }
   }
 
   /// Navigates back to the previous route in the navigation stack.

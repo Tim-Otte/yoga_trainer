@@ -43,6 +43,7 @@
     "selectPosesForWorkout": "Übungen für Workout auswählen",
     "workoutDescriptionEmpty": "Keine Beschreibung hinterlegt",
     "editWorkout": "Workout bearbeiten",
+    "selectWorkoutToUpdate": "Workout auswählen",
     "deleteDialogTitle": "Löschen bestätigen",
     "deleteDialogContent": "Möchtest Du dies wirklich löschen?",
     "save": "Speichern",

@@ -12,7 +12,7 @@ class IconWithText extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 64, color: Theme.of(context).colorScheme.secondary),
-        Text(text),
+        Text(text, textAlign: TextAlign.center),
       ],
     );
   }
