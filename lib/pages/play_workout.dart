@@ -40,108 +40,6 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
   Color _currentColor = Colors.red;
   final Random _random = Random();
 
-  void _startTimer() {
-    int total = 0;
-    for (int i = 0; i < widget.poses.length; i++) {
-      final item = widget.poses[i];
-
-      total +=
-          (item.pose.duration + prepTime) *
-          (item.pose.isUnilateral && item.side == Side.both ? 2 : 1);
-    }
-
-    setState(() {
-      _totalTimerDuration = total;
-      _timer = Timer.periodic(Duration(seconds: 1), _timerCallback);
-    });
-  }
-
-  void _timerCallback(Timer timer) {
-    if (_workoutPaused) return;
-
-    setState(() {
-      if (_timeExceededTotal < _totalTimerDuration) {
-        _timeExceededTotal++;
-        _timeRemainingInPose--;
-
-        _timerFontSize = 100;
-        _updatePoseData();
-      } else {
-        _currentColor =
-            Colors.primaries[_random.nextInt(Colors.primaries.length)];
-      }
-    });
-
-    Future.delayed(
-      Duration(milliseconds: 200),
-      () => setState(() => _timerFontSize = 85),
-    );
-  }
-
-  void _updatePoseData({bool? force}) {
-    PoseWithBodyPartAndSide? current = _currentPose >= 0
-        ? widget.poses[_currentPose]
-        : null;
-
-    if (force == true ||
-        (_timeRemainingInPose <= 0 && _currentPose + 1 < widget.poses.length)) {
-      if (current == null ||
-          (current.side == Side.both && _currentSide == Side.right) ||
-          current.side != Side.both) {
-        _currentPose++;
-        current = widget.poses[_currentPose];
-      }
-
-      // Pose is unilateral
-      if (current.pose.isUnilateral) {
-        // App will show both left and right pose
-        if (current.side == Side.both) {
-          // Left pose has already been trained
-          if (_currentSide == Side.left) {
-            _timeRemainingInPose = current.pose.duration + prepTime;
-            _currentSide = Side.right;
-          }
-          // Start with left pose
-          else {
-            _currentSide = Side.left;
-            _timeRemainingInPose =
-                widget.poses[_currentPose].pose.duration + prepTime;
-          }
-        }
-        // User has selected a custom side
-        else {
-          _currentSide = current.side;
-          _timeRemainingInPose =
-              widget.poses[_currentPose].pose.duration + prepTime;
-        }
-      }
-      // Pose trains whole body so no side has to be displayes
-      else {
-        _currentSide = null;
-        _timeRemainingInPose =
-            widget.poses[_currentPose].pose.duration + prepTime;
-      }
-    }
-
-    _currentPoseIcon = _getIcon(current!);
-
-    if (_timeRemainingInPose > current.pose.duration) {
-      _timerNotifier.value = _timeRemainingInPose - current.pose.duration;
-    } else {
-      _timerNotifier.value = _timeRemainingInPose;
-    }
-  }
-
-  IconData _getIcon(PoseWithBodyPartAndSide current) {
-    if (_timeRemainingInPose > current.pose.duration) {
-      return Symbols.hourglass;
-    } else if (_currentSide != null) {
-      return _currentSide!.getIcon();
-    } else {
-      return Symbols.sports_gymnastics;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -310,5 +208,107 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
     WakelockPlus.disable();
 
     super.dispose();
+  }
+
+  void _startTimer() {
+    int total = 0;
+    for (int i = 0; i < widget.poses.length; i++) {
+      final item = widget.poses[i];
+
+      total +=
+          (item.pose.duration + prepTime) *
+          (item.pose.isUnilateral && item.side == Side.both ? 2 : 1);
+    }
+
+    setState(() {
+      _totalTimerDuration = total;
+      _timer = Timer.periodic(Duration(seconds: 1), _timerCallback);
+    });
+  }
+
+  void _timerCallback(Timer timer) {
+    if (_workoutPaused) return;
+
+    setState(() {
+      if (_timeExceededTotal < _totalTimerDuration) {
+        _timeExceededTotal++;
+        _timeRemainingInPose--;
+
+        _timerFontSize = 100;
+        _updatePoseData();
+      } else {
+        _currentColor =
+            Colors.primaries[_random.nextInt(Colors.primaries.length)];
+      }
+    });
+
+    Future.delayed(
+      Duration(milliseconds: 200),
+      () => setState(() => _timerFontSize = 85),
+    );
+  }
+
+  void _updatePoseData({bool? force}) {
+    PoseWithBodyPartAndSide? current = _currentPose >= 0
+        ? widget.poses[_currentPose]
+        : null;
+
+    if (force == true ||
+        (_timeRemainingInPose <= 0 && _currentPose + 1 < widget.poses.length)) {
+      if (current == null ||
+          (current.side == Side.both && _currentSide == Side.right) ||
+          current.side != Side.both) {
+        _currentPose++;
+        current = widget.poses[_currentPose];
+      }
+
+      // Pose is unilateral
+      if (current.pose.isUnilateral) {
+        // App will show both left and right pose
+        if (current.side == Side.both) {
+          // Left pose has already been trained
+          if (_currentSide == Side.left) {
+            _timeRemainingInPose = current.pose.duration + prepTime;
+            _currentSide = Side.right;
+          }
+          // Start with left pose
+          else {
+            _currentSide = Side.left;
+            _timeRemainingInPose =
+                widget.poses[_currentPose].pose.duration + prepTime;
+          }
+        }
+        // User has selected a custom side
+        else {
+          _currentSide = current.side;
+          _timeRemainingInPose =
+              widget.poses[_currentPose].pose.duration + prepTime;
+        }
+      }
+      // Pose trains whole body so no side has to be displayes
+      else {
+        _currentSide = null;
+        _timeRemainingInPose =
+            widget.poses[_currentPose].pose.duration + prepTime;
+      }
+    }
+
+    _currentPoseIcon = _getIcon(current!);
+
+    if (_timeRemainingInPose > current.pose.duration) {
+      _timerNotifier.value = _timeRemainingInPose - current.pose.duration;
+    } else {
+      _timerNotifier.value = _timeRemainingInPose;
+    }
+  }
+
+  IconData _getIcon(PoseWithBodyPartAndSide current) {
+    if (_timeRemainingInPose > current.pose.duration) {
+      return Symbols.hourglass;
+    } else if (_currentSide != null) {
+      return _currentSide!.getIcon();
+    } else {
+      return Symbols.sports_gymnastics;
+    }
   }
 }
