@@ -64,6 +64,22 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     if (widget.poseToAdd != null) {
       _isInEditMode = true;
     }
+
+    Provider.of<AppDatabase>(
+      context,
+      listen: false,
+    ).getAllPosesForWorkout(_workout.id.value).then((data) {
+      if (widget.poseToAdd != null) {
+        data.add(
+          PoseWithBodyPartAndSide(
+            pose: widget.poseToAdd!.pose,
+            bodyPart: widget.poseToAdd!.bodyPart,
+            side: _getSideForPose(data, widget.poseToAdd!.pose),
+          ),
+        );
+      }
+      setState(() => _poses = data);
+    });
   }
 
   @override
@@ -71,21 +87,6 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     var theme = Theme.of(context);
     var localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
-
-    if (_poses == null) {
-      database.getAllPosesForWorkout(_workout.id.value).then((data) {
-        if (widget.poseToAdd != null) {
-          data.add(
-            PoseWithBodyPartAndSide(
-              pose: widget.poseToAdd!.pose,
-              bodyPart: widget.poseToAdd!.bodyPart,
-              side: _getSideForPose(data, widget.poseToAdd!.pose),
-            ),
-          );
-        }
-        setState(() => _poses = data);
-      });
-    }
 
     return PopScope(
       canPop: !_isInEditMode,

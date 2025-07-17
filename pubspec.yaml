@@ -30,6 +30,7 @@ dependencies:
   material_symbols_icons: ^4.2815.1
   duration: ^4.0.3
   flutter_launcher_icons: ^0.14.4
+  wakelock_plus: ^1.3.2
 
 dev_dependencies:
   drift_dev: ^2.27.0

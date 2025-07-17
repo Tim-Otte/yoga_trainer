@@ -2,7 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yoga_trainer/entities/all.dart';
-import 'package:yoga_trainer/entities/workout_with_infos.dart';
 import 'package:yoga_trainer/extensions/iterable.dart';
 
 part 'database.g.dart';

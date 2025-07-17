@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -31,7 +32,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
   Timer? _timer;
   bool _workoutPaused = false;
 
-  static const PREP_TIME = 3;
+  static const prepTime = 3;
 
   final _timerNotifier = ValueNotifier<int>(0);
 
@@ -45,7 +46,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
       final item = widget.poses[i];
 
       total +=
-          (item.pose.duration + PREP_TIME) *
+          (item.pose.duration + prepTime) *
           (item.pose.isUnilateral && item.side == Side.both ? 2 : 1);
     }
 
@@ -66,12 +67,8 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         _timerFontSize = 100;
         _updatePoseData();
       } else {
-        _currentColor = Color.fromARGB(
-          255,
-          _random.nextInt(256),
-          _random.nextInt(256),
-          _random.nextInt(256),
-        );
+        _currentColor =
+            Colors.primaries[_random.nextInt(Colors.primaries.length)];
       }
     });
 
@@ -101,28 +98,28 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         if (current.side == Side.both) {
           // Left pose has already been trained
           if (_currentSide == Side.left) {
-            _timeRemainingInPose = current.pose.duration + PREP_TIME;
+            _timeRemainingInPose = current.pose.duration + prepTime;
             _currentSide = Side.right;
           }
           // Start with left pose
           else {
             _currentSide = Side.left;
             _timeRemainingInPose =
-                widget.poses[_currentPose].pose.duration + PREP_TIME;
+                widget.poses[_currentPose].pose.duration + prepTime;
           }
         }
         // User has selected a custom side
         else {
           _currentSide = current.side;
           _timeRemainingInPose =
-              widget.poses[_currentPose].pose.duration + PREP_TIME;
+              widget.poses[_currentPose].pose.duration + prepTime;
         }
       }
       // Pose trains whole body so no side has to be displayes
       else {
         _currentSide = null;
         _timeRemainingInPose =
-            widget.poses[_currentPose].pose.duration + PREP_TIME;
+            widget.poses[_currentPose].pose.duration + prepTime;
       }
     }
 
@@ -255,7 +252,6 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
           ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Card.filled(
               color: theme.colorScheme.surfaceContainerHighest,
@@ -273,29 +269,36 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
                 ),
               ),
             ),
-            SizedBox(),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: _timeExceededTotal < _totalTimerDuration
-          ? (_workoutPaused
-                ? FloatingActionButton(
-                    elevation: 0,
-                    onPressed: () => setState(() => _workoutPaused = false),
-                    child: Icon(Symbols.resume),
-                  )
-                : FloatingActionButton(
-                    elevation: 0,
-                    onPressed: () => setState(() => _workoutPaused = true),
-                    child: Icon(Symbols.pause),
-                  ))
+          ? FloatingActionButton(
+              elevation: 0,
+              onPressed: () => setState(() => _workoutPaused = !_workoutPaused),
+              child: Icon(_workoutPaused ? Symbols.resume : Symbols.pause),
+            )
           : FloatingActionButton(
               elevation: 0,
               onPressed: () => context.navigateBack(),
-              child: Icon(Symbols.stop, fill: 1),
+              child: Icon(Symbols.exit_to_app, fill: 1),
             ),
     );
+  }
+
+  @override
+  void activate() {
+    super.activate();
+
+    WakelockPlus.enable();
+  }
+
+  @override
+  void deactivate() {
+    WakelockPlus.disable();
+
+    super.deactivate();
   }
 
   @override
@@ -303,6 +306,8 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
     if (_timer?.isActive ?? false) {
       _timer!.cancel();
     }
+
+    WakelockPlus.disable();
 
     super.dispose();
   }
