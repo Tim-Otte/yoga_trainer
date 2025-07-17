@@ -13,6 +13,7 @@ import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/play_workout.dart';
 import 'package:yoga_trainer/pages/select_poses_for_workout.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class WorkoutDetailsPage extends StatefulWidget {
   const WorkoutDetailsPage({
@@ -88,6 +89,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     var theme = Theme.of(context);
     var localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
+    var settingsController = Provider.of<SettingsController>(context);
 
     return PopScope(
       canPop: !_isInEditMode,
@@ -208,12 +210,10 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                   HapticFeedback.selectionClick();
 
                   context.navigateTo(
-                    (_) => Provider(
-                      create: (_) => database,
-                      child: PlayWorkoutPage(
-                        workout: _workoutInfos,
-                        poses: _poses ?? [],
-                      ),
+                    (_) => PlayWorkoutPage(
+                      settingsController: settingsController,
+                      workout: _workoutInfos,
+                      poses: _poses ?? [],
                     ),
                   );
                 },

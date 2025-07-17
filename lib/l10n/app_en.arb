@@ -180,6 +180,10 @@
     "@finishedWorkout": {
         "description": "The text to show when the user finished the workout"
     },
+    "workoutPrepTime": "Get ready!",
+    "@workoutPrepTime": {
+        "description": "The text to show when the workout prep time is active"
+    },
     "ttsPoseAnnouncement": "{poseName} in {prepTime}",
     "@ttsPoseAnnouncement": {
         "description": "The text that will be announced when a new pose is displayed",
@@ -192,9 +196,56 @@
             }
         }
     },
+    "ttsPoseWithSideAnnouncement": "{poseName}, {side} in {prepTime}",
+    "@ttsPoseWithSideAnnouncement": {
+        "description": "The text that will be announced when a new pose with a side is displayed",
+        "placeholders": {
+            "poseName": {
+                "type": "String"
+            },
+            "side": {
+                "type": "String"
+            },
+            "prepTime": {
+                "type": "int"
+            }
+        }
+    },
     "ttsWorkoutFinished": "Workout finished! Well done!",
     "@ttsWorkoutFinished": {
         "description": "The text that will be announced when the workout is done"
+    },
+    "settingsGeneralSection": "General settings",
+    "@settingsGeneralSection": {
+        "description": "The section header of the general settings"
+    },
+    "settingsTheme": "Theme",
+    "@settingsTheme": {
+        "description": "The title of the theme setting"
+    },
+    "settingsLanguage": "Language",
+    "@settingsLanguage": {
+        "description": "The title of the language setting"
+    },
+    "settingsPrepTimeSection": "Preperation time settings",
+    "@settingsPrepTimeSection": {
+        "description": "The section header of the prep time settings"
+    },
+    "settingsWorkoutPrepTime": "Before workouts",
+    "@settingsWorkoutPrepTime": {
+        "description": "The title of the workoutPrepTime setting"
+    },
+    "settingsEasyPrepTime": "Easy difficulty",
+    "@settingsEasyPrepTime": {
+        "description": "The title of the easyPrepTime setting"
+    },
+    "settingsMediumPrepTime": "Medium difficulty",
+    "@settingsMediumPrepTime": {
+        "description": "The title of the mediumPrepTime setting"
+    },
+    "settingsHardPrepTime": "Hard difficulty",
+    "@settingsHardPrepTime": {
+        "description": "The title of the hardPrepTime setting"
     },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
@@ -203,6 +254,14 @@
     "deleteDialogContent": "Do you really want to delete this?",
     "@deleteDialogContent": {
         "description": "The content of the confirm_delete dialog"
+    },
+    "left": "Left",
+    "@left": {
+        "description": "The label for the left side of a pose"
+    },
+    "right": "Right",
+    "@right": {
+        "description": "The label for the right side of a pose"
     },
     "save": "Save",
     "@save": {
@@ -231,5 +290,21 @@
     "no": "No",
     "@no": {
         "description": "The label text for no buttons"
+    },
+    "apply": "Apply",
+    "@apply": {
+        "description": "The label text for apply buttons"
+    },
+    "themeModeSystem": "System default",
+    "@themeModeSystem": {
+        "description": "The label text for the system theme mode"
+    },
+    "themeModeLight": "Light",
+    "@themeModeLight": {
+        "description": "The label text for the light theme mode"
+    },
+    "themeModeDark": "Dark",
+    "@themeModeDark": {
+        "description": "The label text for the dark theme mode"
     }
 }

@@ -11,6 +11,7 @@ import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/add_workout.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
 import 'package:yoga_trainer/pages/workout_details.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class WorkoutsPage extends StatelessWidget implements PageInfos {
   const WorkoutsPage({super.key});
@@ -43,6 +44,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<AppDatabase>(context);
+    final settingsController = Provider.of<SettingsController>(context);
 
     return StreamListView(
       stream: database.streamAllWorkouts(),
@@ -72,8 +74,11 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
           ),
           onTap: () {
             context.navigateTo(
-              (_) => Provider(
-                create: (_) => database,
+              (_) => MultiProvider(
+                providers: [
+                  Provider(create: (_) => database),
+                  ChangeNotifierProvider.value(value: settingsController),
+                ],
                 child: WorkoutDetailsPage(workoutInfos: item),
               ),
             );

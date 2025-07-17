@@ -11,14 +11,17 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class PlayWorkoutPage extends StatefulWidget {
   const PlayWorkoutPage({
     super.key,
+    required this.settingsController,
     required this.workout,
     required this.poses,
   });
 
+  final SettingsController settingsController;
   final WorkoutWithInfos workout;
   final List<PoseWithBodyPartAndSide> poses;
 
@@ -32,12 +35,10 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
   int _timeExceededTotal = 0;
   int _timeRemainingInPose = 0;
   Side? _currentSide;
-  IconData _currentPoseIcon = Symbols.sports_gymnastics;
+  IconData _currentPoseIcon = Symbols.hourglass;
   Timer? _timer;
   bool _workoutPaused = false;
   bool _stopIncreasingTimer = false;
-
-  static const prepTime = 3;
 
   final _flutterTTS = FlutterTts();
   final _timerNotifier = ValueNotifier<int>(0);
@@ -50,13 +51,12 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
   void initState() {
     super.initState();
 
+    _timerNotifier.value = widget.settingsController.workoutPrepTime;
+
     Future.wait([
       WakelockPlus.enable(),
       _flutterTTS.awaitSpeakCompletion(true),
-    ]).then((_) {
-      _updatePoseData(force: true);
-      _startTimer();
-    });
+    ]).then((_) => _startTimer());
   }
 
   @override
@@ -67,93 +67,22 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
       onPopInvokedWithResult: (_, _) => WakelockPlus.disable(),
       child: Scaffold(
         appBar: AppBar(
-          title: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 15,
-            children: [
-              CircleAvatar(
-                backgroundColor: widget.workout.difficulty.getBackgroundColor(
-                  context,
-                ),
-                foregroundColor: widget.workout.difficulty.getForegroundColor(
-                  context,
-                ),
-                child: Icon(widget.workout.difficulty.getIcon()),
-              ),
-              Text(widget.workout.workout.name),
-            ],
-          ),
+          backgroundColor: theme.colorScheme.surfaceContainer,
+          title: Text(widget.workout.workout.name),
           centerTitle: true,
-          bottom: _timeExceededTotal < _totalTimerDuration
+          automaticallyImplyLeading: _workoutPaused,
+          bottom:
+              _timeExceededTotal < _totalTimerDuration &&
+                  _timeExceededTotal > widget.settingsController.workoutPrepTime
               ? PreferredSize(
                   preferredSize: Size.fromHeight(6),
                   child: LinearProgressIndicator(
-                    value: _totalTimerDuration == 0
-                        ? 0
-                        : _timeExceededTotal.toDouble() /
-                              _totalTimerDuration.toDouble(),
+                    value: _totalTimerDuration == 0 ? 0 : _getProgress(),
                   ),
                 )
               : null,
         ),
-        body: _timeExceededTotal < _totalTimerDuration
-            ? Container(
-                padding: EdgeInsets.all(40),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _currentPoseIcon,
-                        size: 50,
-                        color: theme.colorScheme.primary,
-                      ),
-                      Text(
-                        widget.poses[_currentPose].pose.name,
-                        style: theme.textTheme.displaySmall,
-                      ),
-                      Text(
-                        widget.poses[_currentPose].pose.description,
-                        style: theme.textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 50),
-                      SizedBox(
-                        height: 130,
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            style: theme.textTheme.displayLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: _timerFontSize,
-                            ),
-                            duration: Duration(milliseconds: 300),
-                            child: ValueListenableBuilder(
-                              valueListenable: _timerNotifier,
-                              builder: (context, timerData, _) =>
-                                  Text(timerData.toString()),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            : Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Symbols.celebration, size: 72, color: _currentColor),
-                    SizedBox(height: 20),
-                    Text(
-                      AppLocalizations.of(context).finishedWorkout,
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+        body: _getBody(context),
         bottomNavigationBar: BottomAppBar(
           shape: AutomaticNotchedShape(
             RoundedRectangleBorder(
@@ -231,13 +160,139 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
     super.dispose();
   }
 
+  Widget _getBody(BuildContext context) {
+    var theme = Theme.of(context);
+    if (_timeExceededTotal <= widget.settingsController.workoutPrepTime) {
+      if (widget.settingsController.workoutPrepTime > 0) {
+        return Container(
+          padding: EdgeInsets.all(40),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _currentPoseIcon,
+                  size: 50,
+                  color: theme.colorScheme.primary,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  AppLocalizations.of(context).workoutPrepTime,
+                  style: theme.textTheme.displaySmall,
+                ),
+                SizedBox(height: 50),
+                SizedBox(
+                  height: 130,
+                  child: Center(
+                    child: AnimatedDefaultTextStyle(
+                      style: theme.textTheme.displayLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: _timerFontSize,
+                      ),
+                      duration: Duration(milliseconds: 300),
+                      child: ValueListenableBuilder(
+                        valueListenable: _timerNotifier,
+                        builder: (context, timerData, _) =>
+                            Text(timerData.toString()),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        return Center(child: CircularProgressIndicator());
+      }
+    } else if (_timeExceededTotal < _totalTimerDuration) {
+      return Container(
+        padding: EdgeInsets.all(40),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _currentPoseIcon,
+                size: 50,
+                color: theme.colorScheme.primary,
+              ),
+              SizedBox(height: 5),
+              Text(
+                widget.poses[_currentPose].pose.name,
+                style: theme.textTheme.displaySmall,
+              ),
+              Text(
+                widget.poses[_currentPose].pose.description,
+                style: theme.textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 50),
+              SizedBox(
+                height: 130,
+                child: Center(
+                  child: AnimatedDefaultTextStyle(
+                    style: theme.textTheme.displayLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: _timerFontSize,
+                    ),
+                    duration: Duration(milliseconds: 300),
+                    child: ValueListenableBuilder(
+                      valueListenable: _timerNotifier,
+                      builder: (context, timerData, _) =>
+                          Text(timerData.toString()),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Symbols.celebration, size: 72, color: _currentColor),
+            SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context).finishedWorkout,
+              style: theme.textTheme.displaySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  double _getProgress() {
+    return (_timeExceededTotal -
+                (widget.settingsController.workoutPrepTime + 1))
+            .toDouble() /
+        (_totalTimerDuration - (widget.settingsController.workoutPrepTime + 1))
+            .toDouble();
+  }
+
+  int _getPrepTime(Difficulty difficulty) {
+    if (!mounted) return 3;
+
+    return switch (difficulty) {
+      Difficulty.easy => widget.settingsController.easyPrepTime,
+      Difficulty.medium => widget.settingsController.mediumPrepTime,
+      Difficulty.hard => widget.settingsController.hardPrepTime,
+    };
+  }
+
   void _startTimer() {
-    int total = 0;
+    int total = widget.settingsController.workoutPrepTime + 1;
     for (int i = 0; i < widget.poses.length; i++) {
       final item = widget.poses[i];
 
       total +=
-          (item.pose.duration + prepTime) *
+          (item.pose.duration + _getPrepTime(item.pose.difficulty)) *
           (item.pose.isUnilateral && item.side == Side.both ? 2 : 1);
     }
 
@@ -272,38 +327,22 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
     });
   }
 
-  void _updatePoseData({bool? force}) {
+  void _updatePoseData() {
     PoseWithBodyPartAndSide? current = _currentPose >= 0
         ? widget.poses[_currentPose]
         : null;
 
-    if (force == true ||
+    if (_timeExceededTotal > widget.settingsController.workoutPrepTime &&
         (_timeRemainingInPose <= 0 && _currentPose + 1 < widget.poses.length)) {
+      bool announcePose = false;
+
       if (current == null ||
           (current.side == Side.both && _currentSide == Side.right) ||
           current.side != Side.both) {
         _currentPose++;
         current = widget.poses[_currentPose];
 
-        if (_currentPose > 0) {
-          Vibration.vibrate(preset: VibrationPreset.softPulse);
-        }
-
-        if (mounted) {
-          _stopIncreasingTimer = true;
-
-          _flutterTTS
-              .speak(
-                AppLocalizations.of(
-                  context,
-                ).ttsPoseAnnouncement(current.pose.name, prepTime),
-              )
-              .then((_) {
-                if (mounted) {
-                  setState(() => _stopIncreasingTimer = false);
-                }
-              });
-        }
+        announcePose = true;
       }
 
       // Pose is unilateral
@@ -312,48 +351,114 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         if (current.side == Side.both) {
           // Left pose has already been trained
           if (_currentSide == Side.left) {
-            _timeRemainingInPose = current.pose.duration + prepTime;
+            _timeRemainingInPose =
+                current.pose.duration + _getPrepTime(current.pose.difficulty);
             _currentSide = Side.right;
           }
           // Start with left pose
           else {
             _currentSide = Side.left;
             _timeRemainingInPose =
-                widget.poses[_currentPose].pose.duration + prepTime;
+                widget.poses[_currentPose].pose.duration +
+                _getPrepTime(current.pose.difficulty);
           }
         }
         // User has selected a custom side
         else {
           _currentSide = current.side;
           _timeRemainingInPose =
-              widget.poses[_currentPose].pose.duration + prepTime;
+              widget.poses[_currentPose].pose.duration +
+              _getPrepTime(current.pose.difficulty);
         }
       }
       // Pose trains whole body so no side has to be displayes
       else {
         _currentSide = null;
         _timeRemainingInPose =
-            widget.poses[_currentPose].pose.duration + prepTime;
+            widget.poses[_currentPose].pose.duration +
+            _getPrepTime(current.pose.difficulty);
+      }
+
+      if (announcePose) {
+        if (_currentPose > 0) {
+          Vibration.vibrate(preset: VibrationPreset.softPulse);
+        }
+
+        if (mounted) {
+          _stopIncreasingTimer = true;
+
+          var localizations = AppLocalizations.of(context);
+
+          _flutterTTS
+              .speak(
+                current.pose.isUnilateral
+                    ? localizations.ttsPoseWithSideAnnouncement(
+                        current.pose.name,
+                        switch (_currentSide) {
+                          Side.left => localizations.left,
+                          Side.right => localizations.right,
+                          _ => '',
+                        },
+                        _getPrepTime(current.pose.difficulty),
+                      )
+                    : localizations.ttsPoseAnnouncement(
+                        current.pose.name,
+                        _getPrepTime(current.pose.difficulty),
+                      ),
+              )
+              .then((_) {
+                if (mounted) {
+                  setState(() => _stopIncreasingTimer = false);
+                }
+              });
+        }
       }
     }
 
-    _currentPoseIcon = _getIcon(current!);
+    if (current != null) {
+      _currentPoseIcon = _getIcon(current);
 
-    if (_timeRemainingInPose > current.pose.duration) {
-      _timerNotifier.value = _timeRemainingInPose - current.pose.duration;
+      if (_timeRemainingInPose > current.pose.duration) {
+        _timerNotifier.value = _timeRemainingInPose - current.pose.duration;
+      } else {
+        _timerNotifier.value = _timeRemainingInPose;
+      }
     } else {
-      _timerNotifier.value = _timeRemainingInPose;
+      _timerNotifier.value =
+          (widget.settingsController.workoutPrepTime + 1) - _timeExceededTotal;
     }
 
-    if (!_stopIncreasingTimer &&
-        _timerNotifier.value <= 3 &&
-        _timerNotifier.value > 0) {
-      _stopIncreasingTimer = true;
-      _flutterTTS.speak(_timerNotifier.value.toString()).then((_) {
-        if (mounted) {
-          setState(() => _stopIncreasingTimer = false);
-        }
-      });
+    if (!_stopIncreasingTimer) {
+      // Its the workout prep time
+      if (_timeExceededTotal <= widget.settingsController.workoutPrepTime) {
+        _stopIncreasingTimer = true;
+        _flutterTTS.speak(_timerNotifier.value.toString()).then((_) {
+          if (mounted) {
+            setState(() => _stopIncreasingTimer = false);
+          }
+        });
+      }
+      // Its the pose prep time
+      else if (current != null &&
+          _timeRemainingInPose - current.pose.duration <=
+              _getPrepTime(current.pose.difficulty) &&
+          _timeRemainingInPose - current.pose.duration > 0) {
+        _stopIncreasingTimer = true;
+        _flutterTTS.speak(_timerNotifier.value.toString()).then((_) {
+          if (mounted) {
+            setState(() => _stopIncreasingTimer = false);
+          }
+        });
+      }
+      // Its the last 3 seconds of the pose
+      else if (_timeRemainingInPose <= 3 && _timeRemainingInPose > 0) {
+        _stopIncreasingTimer = true;
+        _flutterTTS.speak(_timerNotifier.value.toString()).then((_) {
+          if (mounted) {
+            setState(() => _stopIncreasingTimer = false);
+          }
+        });
+      }
     }
 
     if (_timeExceededTotal > 0 &&
