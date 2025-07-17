@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
@@ -115,6 +116,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
             ? null
             : FloatingActionButton(
                 onPressed: () async {
+                  HapticFeedback.selectionClick();
                   var pose = await database.getPose(_pose.id.value);
 
                   if (context.mounted) {

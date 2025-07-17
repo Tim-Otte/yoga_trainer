@@ -180,6 +180,22 @@
     "@finishedWorkout": {
         "description": "The text to show when the user finished the workout"
     },
+    "ttsPoseAnnouncement": "{poseName} in {prepTime}",
+    "@ttsPoseAnnouncement": {
+        "description": "The text that will be announced when a new pose is displayed",
+        "placeholders": {
+            "poseName": {
+                "type": "String"
+            },
+            "prepTime": {
+                "type": "int"
+            }
+        }
+    },
+    "ttsWorkoutFinished": "Workout finished! Well done!",
+    "@ttsWorkoutFinished": {
+        "description": "The text that will be announced when the workout is done"
+    },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
         "description": "The title of the confirm_delete dialog"

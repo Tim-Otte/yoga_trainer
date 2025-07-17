@@ -45,6 +45,8 @@
     "editWorkout": "Workout bearbeiten",
     "selectWorkoutToUpdate": "Workout auswählen",
     "finishedWorkout": "Fertig!",
+    "ttsPoseAnnouncement": "{poseName} in {prepTime}",
+    "ttsWorkoutFinished": "Sehr gut! Übung geschafft!",
     "deleteDialogTitle": "Löschen bestätigen",
     "deleteDialogContent": "Möchtest Du dies wirklich löschen?",
     "save": "Speichern",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/stream_loader.dart';
@@ -29,9 +30,12 @@ class PosesPage extends StatelessWidget implements PageInfos {
 
     return FloatingActionButton(
       child: Icon(Symbols.add_2),
-      onPressed: () => context.navigateTo(
-        (_) => Provider(create: (_) => database, child: AddPosePage()),
-      ),
+      onPressed: () {
+        HapticFeedback.selectionClick();
+        context.navigateTo(
+          (_) => Provider(create: (_) => database, child: AddPosePage()),
+        );
+      },
     );
   }
 
