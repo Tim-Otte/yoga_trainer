@@ -71,12 +71,16 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
       context,
       listen: false,
     ).getAllPosesForWorkout(_workout.id.value).then((data) {
-      if (widget.poseToAdd != null) {
+      if (widget.poseToAdd != null && mounted) {
         data.add(
           PoseWithBodyPartAndSide(
             pose: widget.poseToAdd!.pose,
             bodyPart: widget.poseToAdd!.bodyPart,
             side: _getSideForPose(data, widget.poseToAdd!.pose),
+            prepTime: Provider.of<SettingsController>(
+              context,
+              listen: false,
+            ).posePrepTime,
           ),
         );
       }
@@ -87,7 +91,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
     var settingsController = Provider.of<SettingsController>(context);
 
@@ -194,6 +198,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                               pose: item.pose,
                               bodyPart: item.bodyPart,
                               side: _getSideForPose(_poses!, item.pose),
+                              prepTime: settingsController.posePrepTime,
                             ),
                           ),
                         ),
@@ -226,7 +231,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
 
   Widget _getDisplayWidget(BuildContext context) {
     var theme = Theme.of(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Padding(
       padding: EdgeInsets.all(20),
@@ -244,7 +249,9 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                 ),
               ),
               Text(
-                _workout.description.value,
+                _workout.description.value.isEmpty
+                    ? localizations.workoutDescriptionEmpty
+                    : _workout.description.value,
                 style: theme.textTheme.bodyLarge,
               ),
               SizedBox(height: 15),
@@ -299,7 +306,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
   }
 
   Widget _getEditMode(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
 
     return Padding(

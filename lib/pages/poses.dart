@@ -84,7 +84,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
     }
 
     var database = Provider.of<AppDatabase>(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
 
     String title = switch (difficulty) {

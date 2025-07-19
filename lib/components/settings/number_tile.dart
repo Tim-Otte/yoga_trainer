@@ -11,6 +11,7 @@ class MaterialNumberSettingsTile extends MaterialSettingsTile {
     required int value,
     required int min,
     required int max,
+    required int step,
     required Function(int) onChanged,
     super.enabled = true,
     super.key,
@@ -20,12 +21,12 @@ class MaterialNumberSettingsTile extends MaterialSettingsTile {
          suffix: Wrap(
            spacing: 10,
            children: [
-             IconButton(
-               onPressed: value > min ? () => onChanged(value - 1) : null,
+             IconButton.filledTonal(
+               onPressed: value > min ? () => onChanged(value - step) : null,
                icon: Icon(Symbols.remove),
              ),
-             IconButton(
-               onPressed: value < max ? () => onChanged(value + 1) : null,
+             IconButton.filledTonal(
+               onPressed: value < max ? () => onChanged(value + step) : null,
                icon: Icon(Symbols.add),
              ),
            ],

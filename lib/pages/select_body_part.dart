@@ -18,7 +18,7 @@ class _SelectBodyPartPageState extends State<SelectBodyPartPage> {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
 
     return Scaffold(

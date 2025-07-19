@@ -31,7 +31,7 @@ class _NameInputState extends State<NameInput> {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
 
     return TextFormField(

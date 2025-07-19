@@ -28,7 +28,7 @@ class _DescriptionInputState extends State<DescriptionInput> {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return TextFormField(
       decoration: InputDecoration(

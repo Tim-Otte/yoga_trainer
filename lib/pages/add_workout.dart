@@ -7,6 +7,7 @@ import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/select_poses_for_workout.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class AddWorkoutPage extends StatefulWidget {
   const AddWorkoutPage({super.key});
@@ -26,7 +27,11 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
   @override
   Widget build(BuildContext context) {
     var database = Provider.of<AppDatabase>(context);
-    var localizations = AppLocalizations.of(context);
+    var settingsController = Provider.of<SettingsController>(
+      context,
+      listen: false,
+    );
+    final localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
 
     return Scaffold(
@@ -153,6 +158,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                       pose: item.pose,
                       bodyPart: item.bodyPart,
                       side: side,
+                      prepTime: settingsController.posePrepTime,
                     );
                   }),
                 ),

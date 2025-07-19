@@ -29,13 +29,20 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
   @override
   Widget? getFAB(BuildContext context) {
     var database = Provider.of<AppDatabase>(context);
+    var settingsController = Provider.of<SettingsController>(context);
 
     return FloatingActionButton(
       child: Icon(Symbols.add_2),
       onPressed: () {
         HapticFeedback.selectionClick();
         context.navigateTo(
-          (_) => Provider(create: (_) => database, child: AddWorkoutPage()),
+          (_) => MultiProvider(
+            providers: [
+              Provider(create: (_) => database, child: AddWorkoutPage()),
+              ChangeNotifierProvider.value(value: settingsController),
+            ],
+            child: AddWorkoutPage(),
+          ),
         );
       },
     );
@@ -43,6 +50,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final database = Provider.of<AppDatabase>(context);
     final settingsController = Provider.of<SettingsController>(context);
 
@@ -54,7 +62,12 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
         return ListTile(
           title: Text(workout.name),
-          subtitle: Text(workout.description, overflow: TextOverflow.ellipsis),
+          subtitle: Text(
+            workout.description.isEmpty
+                ? localizations.workoutDescriptionEmpty
+                : workout.description,
+            overflow: TextOverflow.ellipsis,
+          ),
           leading: CircleAvatar(
             backgroundColor: item.difficulty.getBackgroundColor(context),
             foregroundColor: item.difficulty.getForegroundColor(context),

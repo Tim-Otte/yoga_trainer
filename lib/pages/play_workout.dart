@@ -55,6 +55,13 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
 
     Future.wait([
       WakelockPlus.enable(),
+      _flutterTTS.setVoice({
+        'name': widget.settingsController.ttsVoice['name'].toString(),
+        'locale': widget.settingsController.ttsVoice['locale'].toString(),
+      }),
+      _flutterTTS.setVolume(widget.settingsController.ttsVolume),
+      _flutterTTS.setPitch(widget.settingsController.ttsPitch),
+      _flutterTTS.setSpeechRate(widget.settingsController.ttsRate),
       _flutterTTS.awaitSpeakCompletion(true),
     ]).then((_) => _startTimer());
   }
@@ -276,23 +283,13 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
             .toDouble();
   }
 
-  int _getPrepTime(Difficulty difficulty) {
-    if (!mounted) return 3;
-
-    return switch (difficulty) {
-      Difficulty.easy => widget.settingsController.easyPrepTime,
-      Difficulty.medium => widget.settingsController.mediumPrepTime,
-      Difficulty.hard => widget.settingsController.hardPrepTime,
-    };
-  }
-
   void _startTimer() {
     int total = widget.settingsController.workoutPrepTime + 1;
     for (int i = 0; i < widget.poses.length; i++) {
       final item = widget.poses[i];
 
       total +=
-          (item.pose.duration + _getPrepTime(item.pose.difficulty)) *
+          (item.pose.duration + item.prepTime) *
           (item.pose.isUnilateral && item.side == Side.both ? 2 : 1);
     }
 
@@ -351,32 +348,28 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         if (current.side == Side.both) {
           // Left pose has already been trained
           if (_currentSide == Side.left) {
-            _timeRemainingInPose =
-                current.pose.duration + _getPrepTime(current.pose.difficulty);
+            _timeRemainingInPose = current.pose.duration + current.prepTime;
             _currentSide = Side.right;
           }
           // Start with left pose
           else {
             _currentSide = Side.left;
             _timeRemainingInPose =
-                widget.poses[_currentPose].pose.duration +
-                _getPrepTime(current.pose.difficulty);
+                widget.poses[_currentPose].pose.duration + current.prepTime;
           }
         }
         // User has selected a custom side
         else {
           _currentSide = current.side;
           _timeRemainingInPose =
-              widget.poses[_currentPose].pose.duration +
-              _getPrepTime(current.pose.difficulty);
+              widget.poses[_currentPose].pose.duration + current.prepTime;
         }
       }
       // Pose trains whole body so no side has to be displayes
       else {
         _currentSide = null;
         _timeRemainingInPose =
-            widget.poses[_currentPose].pose.duration +
-            _getPrepTime(current.pose.difficulty);
+            widget.poses[_currentPose].pose.duration + current.prepTime;
       }
 
       if (announcePose) {
@@ -387,7 +380,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         if (mounted) {
           _stopIncreasingTimer = true;
 
-          var localizations = AppLocalizations.of(context);
+          final localizations = AppLocalizations.of(context);
 
           _flutterTTS
               .speak(
@@ -399,11 +392,11 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
                           Side.right => localizations.right,
                           _ => '',
                         },
-                        _getPrepTime(current.pose.difficulty),
+                        current.prepTime,
                       )
                     : localizations.ttsPoseAnnouncement(
                         current.pose.name,
-                        _getPrepTime(current.pose.difficulty),
+                        current.prepTime,
                       ),
               )
               .then((_) {
@@ -440,8 +433,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
       }
       // Its the pose prep time
       else if (current != null &&
-          _timeRemainingInPose - current.pose.duration <=
-              _getPrepTime(current.pose.difficulty) &&
+          _timeRemainingInPose - current.pose.duration <= 3 &&
           _timeRemainingInPose - current.pose.duration > 0) {
         _stopIncreasingTimer = true;
         _flutterTTS.speak(_timerNotifier.value.toString()).then((_) {

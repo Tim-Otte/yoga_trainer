@@ -28,7 +28,7 @@ class _DifficultyInputState extends State<DifficultyInput> {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,

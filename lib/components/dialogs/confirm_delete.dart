@@ -14,7 +14,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
 
     return AlertDialog(

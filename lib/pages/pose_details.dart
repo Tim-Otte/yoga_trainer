@@ -42,7 +42,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
     var database = Provider.of<AppDatabase>(context);
 
     return PopScope(
@@ -138,7 +138,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
 
   Widget _getDisplayWidget(BuildContext context) {
     var theme = Theme.of(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Padding(
       padding: EdgeInsets.all(20),

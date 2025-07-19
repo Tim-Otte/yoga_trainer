@@ -215,7 +215,7 @@
     "@ttsWorkoutFinished": {
         "description": "The text that will be announced when the workout is done"
     },
-    "settingsGeneralSection": "General settings",
+    "settingsGeneralSection": "General",
     "@settingsGeneralSection": {
         "description": "The section header of the general settings"
     },
@@ -227,7 +227,7 @@
     "@settingsLanguage": {
         "description": "The title of the language setting"
     },
-    "settingsPrepTimeSection": "Preperation time settings",
+    "settingsPrepTimeSection": "Preperation time",
     "@settingsPrepTimeSection": {
         "description": "The section header of the prep time settings"
     },
@@ -235,17 +235,41 @@
     "@settingsWorkoutPrepTime": {
         "description": "The title of the workoutPrepTime setting"
     },
-    "settingsEasyPrepTime": "Easy difficulty",
-    "@settingsEasyPrepTime": {
-        "description": "The title of the easyPrepTime setting"
+    "settingsPosePrepTime": "Pose default",
+    "@settingsPosePrepTime": {
+        "description": "The title of the posePrepTime setting"
     },
-    "settingsMediumPrepTime": "Medium difficulty",
-    "@settingsMediumPrepTime": {
-        "description": "The title of the mediumPrepTime setting"
+    "settingsTtsSection": "Voice announcements",
+    "@settingsTtsSection": {
+        "description": "The section header of the TTS settings"
     },
-    "settingsHardPrepTime": "Hard difficulty",
-    "@settingsHardPrepTime": {
-        "description": "The title of the hardPrepTime setting"
+    "settingsTtsVolume": "Volume",
+    "@settingsTtsVolume": {
+        "description": "The title of the volume settings"
+    },
+    "settingsTtsVoice": "Voice",
+    "@settingsTtsVoice": {
+        "description": "The title of the voice settings"
+    },
+    "settingsTtsVoiceDefault": "Default",
+    "@settingsTtsVoiceDefault": {
+        "description": "The label of the default voice"
+    },
+    "settingsTtsVoiceNetwork": "Online",
+    "@settingsTtsVoiceNetwork": {
+        "description": "The label of network voices"
+    },
+    "settingsTtsVoiceLocal": "Offline",
+    "@settingsTtsVoiceLocal": {
+        "description": "The label of local voices"
+    },
+    "settingsTtsPitch": "Pitch",
+    "@settingsTtsPitch": {
+        "description": "The title of the pitch settings"
+    },
+    "settingsTtsRate": "Speech rate",
+    "@settingsTtsRate": {
+        "description": "The title of the rate settings"
     },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:yoga_trainer/services/settings_service.dart';
 
 /// A class that many Widgets can interact with to read user settings, update
@@ -13,28 +14,38 @@ class SettingsController with ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.system;
   String? _locale;
-  int _easyPrepTime = 3;
-  int _mediumPrepTime = 3;
-  int _hardPrepTime = 3;
   int _workoutPrepTime = 3;
+  int _posePrepTime = 3;
+  Map<Object?, Object?> _ttsVoice = <Object?, Object?>{};
+  double _ttsVolume = 1.0;
+  double _ttsPitch = 1.0;
+  double _ttsRate = 0.5;
 
   ThemeMode get themeMode => _themeMode;
   Locale? get locale =>
       _locale != null ? Locale.fromSubtags(languageCode: _locale!) : null;
 
-  int get easyPrepTime => _easyPrepTime;
-  int get mediumPrepTime => _mediumPrepTime;
-  int get hardPrepTime => _hardPrepTime;
   int get workoutPrepTime => _workoutPrepTime;
+  int get posePrepTime => _posePrepTime;
+  Map<Object?, Object?> get ttsVoice => _ttsVoice;
+  double get ttsVolume => _ttsVolume;
+  double get ttsPitch => _ttsPitch;
+  double get ttsRate => _ttsRate;
 
   /// Load the user's settings from the SettingsService
   Future loadSettings() async {
     _themeMode = await _settingsService.getThemeMode();
     _locale = await _settingsService.getLocale();
-    _easyPrepTime = await _settingsService.getEasyPrepTime();
-    _mediumPrepTime = await _settingsService.getMediumPrepTime();
-    _hardPrepTime = await _settingsService.getHardPrepTime();
+    _posePrepTime = await _settingsService.getPosePrepTime();
     _workoutPrepTime = await _settingsService.getWorkoutPrepTime();
+    _ttsVoice = await _settingsService.getTtsVoice();
+    _ttsVolume = await _settingsService.getTtsVolume();
+    _ttsPitch = await _settingsService.getTtsPitch();
+    _ttsRate = await _settingsService.getTtsRate();
+
+    if (_ttsVoice.isEmpty) {
+      _ttsVoice = await (FlutterTts()).getDefaultVoice;
+    }
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
@@ -58,33 +69,6 @@ class SettingsController with ChangeNotifier {
     await _settingsService.updateLocale(value);
   }
 
-  /// Update and persist the prep time for easy poses
-  Future<void> updateEasyPrepTime(int value) async {
-    if (value == _easyPrepTime) return;
-
-    _easyPrepTime = value;
-    notifyListeners();
-    await _settingsService.updateEasyPrepTime(value);
-  }
-
-  /// Update and persist the prep time for medium poses
-  Future<void> updateMediumPrepTime(int value) async {
-    if (value == _mediumPrepTime) return;
-
-    _mediumPrepTime = value;
-    notifyListeners();
-    await _settingsService.updateMediumPrepTime(value);
-  }
-
-  /// Update and persist the prep time for hard poses
-  Future<void> updateHardPrepTime(int value) async {
-    if (value == _hardPrepTime) return;
-
-    _hardPrepTime = value;
-    notifyListeners();
-    await _settingsService.updateHardPrepTime(value);
-  }
-
   /// Update and persist the prep time for hard poses
   Future<void> updateWorkoutPrepTime(int value) async {
     if (value == _workoutPrepTime) return;
@@ -92,5 +76,50 @@ class SettingsController with ChangeNotifier {
     _workoutPrepTime = value;
     notifyListeners();
     await _settingsService.updateWorkoutPrepTime(value);
+  }
+
+  /// Update and persist the default prep time for poses
+  Future<void> updatePosePrepTime(int value) async {
+    if (value == _posePrepTime) return;
+
+    _posePrepTime = value;
+    notifyListeners();
+    await _settingsService.updatePosePrepTime(value);
+  }
+
+  /// Update and persist the TTS voice
+  Future<void> updateTtsVoice(Map<Object?, Object?> value) async {
+    if (value == _ttsVoice) return;
+
+    _ttsVoice = value;
+    notifyListeners();
+    await _settingsService.updateTtsVoice(value);
+  }
+
+  /// Update and persist the TTS volume
+  Future<void> updateTtsVolume(double value) async {
+    if (value == _ttsVolume) return;
+
+    _ttsVolume = value;
+    notifyListeners();
+    await _settingsService.updateTtsVolume(value);
+  }
+
+  /// Update and persist the TTS pitch
+  Future<void> updateTtsPitch(double value) async {
+    if (value == _ttsPitch) return;
+
+    _ttsPitch = value;
+    notifyListeners();
+    await _settingsService.updateTtsPitch(value);
+  }
+
+  /// Update and persist the TTS rate
+  Future<void> updateTtsRate(double value) async {
+    if (value == _ttsRate) return;
+
+    _ttsRate = value;
+    notifyListeners();
+    await _settingsService.updateTtsRate(value);
   }
 }

@@ -29,7 +29,7 @@ class _DurationInputState extends State<DurationInput> {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return TextFormField(
       decoration: InputDecoration(

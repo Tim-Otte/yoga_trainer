@@ -27,7 +27,7 @@ class _AddPosePageState extends State<AddPosePage> {
   @override
   Widget build(BuildContext context) {
     var database = Provider.of<AppDatabase>(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(

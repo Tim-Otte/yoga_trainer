@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,36 +31,6 @@ class SettingsService {
     return asyncPrefs.setString('locale', value);
   }
 
-  /// Loads the user's preferred prep time for easy poses
-  Future<int> getEasyPrepTime() {
-    return asyncPrefs.getInt('easyPrepTime').then((value) => value ?? 3);
-  }
-
-  /// Saves the user's preferred prep time for easy poses
-  Future updateEasyPrepTime(int value) {
-    return asyncPrefs.setInt('easyPrepTime', value);
-  }
-
-  /// Loads the user's preferred prep time for medium poses
-  Future<int> getMediumPrepTime() {
-    return asyncPrefs.getInt('mediumPrepTime').then((value) => value ?? 3);
-  }
-
-  /// Saves the user's preferred prep time for medium poses
-  Future updateMediumPrepTime(int value) {
-    return asyncPrefs.setInt('mediumPrepTime', value);
-  }
-
-  /// Loads the user's preferred prep time for hard poses
-  Future<int> getHardPrepTime() {
-    return asyncPrefs.getInt('hardPrepTime').then((value) => value ?? 3);
-  }
-
-  /// Saves the user's preferred prep time for hard poses
-  Future updateHardPrepTime(int value) {
-    return asyncPrefs.setInt('hardPrepTime', value);
-  }
-
   /// Loads the user's preferred prep time for a workout
   Future<int> getWorkoutPrepTime() {
     return asyncPrefs.getInt('workoutPrepTime').then((value) => value ?? 3);
@@ -67,5 +39,61 @@ class SettingsService {
   /// Saves the user's preferred prep time for a workout
   Future updateWorkoutPrepTime(int value) {
     return asyncPrefs.setInt('workoutPrepTime', value);
+  }
+
+  /// Loads the user's preferred default prep time for poses
+  Future<int> getPosePrepTime() {
+    return asyncPrefs.getInt('posePrepTime').then((value) => value ?? 3);
+  }
+
+  /// Saves the user's preferred default prep time for poses
+  Future updatePosePrepTime(int value) {
+    return asyncPrefs.setInt('posePrepTime', value);
+  }
+
+  /// Loads the user's preferred tts voice
+  Future<Map<Object?, Object?>> getTtsVoice() {
+    return asyncPrefs.getString('ttsVoice').then((value) {
+      if ((value ?? '').isEmpty) {
+        return <Object?, Object?>{};
+      } else {
+        return jsonDecode(value!) as Map<Object?, Object?>;
+      }
+    });
+  }
+
+  /// Saves the user's preferred tts voice
+  Future updateTtsVoice(Map<Object?, Object?> value) {
+    return asyncPrefs.setString('ttsVoice', jsonEncode(value));
+  }
+
+  /// Loads the user's preferred tts volume
+  Future<double> getTtsVolume() {
+    return asyncPrefs.getDouble('ttsVolume').then((value) => value ?? 1.0);
+  }
+
+  /// Saves the user's preferred tts volume
+  Future updateTtsVolume(double value) {
+    return asyncPrefs.setDouble('ttsVolume', value);
+  }
+
+  /// Loads the user's preferred tts pitch
+  Future<double> getTtsPitch() {
+    return asyncPrefs.getDouble('ttsPitch').then((value) => value ?? 1.0);
+  }
+
+  /// Saves the user's preferred tts pitch
+  Future updateTtsPitch(double value) {
+    return asyncPrefs.setDouble('ttsPitch', value);
+  }
+
+  /// Loads the user's preferred tts rate
+  Future<double> getTtsRate() {
+    return asyncPrefs.getDouble('ttsRate').then((value) => value ?? 0.5);
+  }
+
+  /// Saves the user's preferred tts rate
+  Future updateTtsRate(double value) {
+    return asyncPrefs.setDouble('ttsRate', value);
   }
 }

@@ -9,7 +9,7 @@ class ThemeModeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return RadioDialog(
       title: localizations.settingsTheme,

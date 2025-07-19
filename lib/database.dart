@@ -243,6 +243,7 @@ class AppDatabase extends _$AppDatabase {
             pose: row.readTable(poses),
             bodyPart: row.readTable(bodyParts),
             side: row.readTable(workoutPoses).side,
+            prepTime: row.readTable(workoutPoses).prepTime,
           ),
         )
         .get();

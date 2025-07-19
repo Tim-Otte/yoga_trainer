@@ -77,7 +77,7 @@ class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
     }
 
     var theme = Theme.of(context);
-    var localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
