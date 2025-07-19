@@ -7,10 +7,12 @@ import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 class NameInput extends StatefulWidget {
   const NameInput({
     super.key,
+    this.id,
     required this.initialValue,
     required this.onChanged,
   });
 
+  final int? id;
   final String initialValue;
   final Function(String value) onChanged;
 
@@ -53,7 +55,7 @@ class _NameInputState extends State<NameInput> {
         bool nameCheck = false;
 
         if (value.isNotEmpty) {
-          nameCheck = await database.hasWorkoutWithName(value);
+          nameCheck = await database.hasWorkoutWithName(value, id: widget.id);
         }
 
         setState(() {

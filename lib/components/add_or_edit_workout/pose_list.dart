@@ -1,8 +1,12 @@
 import 'dart:ui';
 
+import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:yoga_trainer/components/dialogs/number_dialog.dart';
 import 'package:yoga_trainer/entities/all.dart';
+import 'package:yoga_trainer/extensions/menu_controller.dart';
+import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
 class PoseList extends StatefulWidget {
   const PoseList({super.key, required this.poses, this.onChanged});
@@ -59,6 +63,7 @@ class _PoseListState extends State<PoseList> {
 
   Widget _getListTile(BuildContext context, PoseWithBodyPartAndSide item) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     final pose = item.pose;
     final bodyPart = item.bodyPart;
@@ -67,7 +72,20 @@ class _PoseListState extends State<PoseList> {
     return ListTile(
       key: ValueKey(item),
       contentPadding: EdgeInsets.symmetric(horizontal: 5),
-      title: Text(pose.name),
+      title: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: pose.name,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+              text: ' (${bodyPart.name})',
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ],
+        ),
+      ),
       subtitle: Row(
         children: [
           Icon(
@@ -78,52 +96,87 @@ class _PoseListState extends State<PoseList> {
           SizedBox(width: 4),
           Text(pose.difficulty.getTranslation(context)),
           SizedBox(width: 10),
-          Icon(
-            Symbols.person_search,
-            size: 16,
-            color: theme.colorScheme.primary,
-          ),
-          SizedBox(width: 4),
-          Text(bodyPart.name),
-          SizedBox(width: 10),
           Icon(Symbols.timer, size: 16, color: theme.colorScheme.primary),
           SizedBox(width: 4),
-          Text('${pose.duration}s'),
+          Text(Duration(seconds: pose.duration).pretty(abbreviated: true)),
+          SizedBox(width: 10),
+          Icon(Symbols.hourglass, size: 16, color: theme.colorScheme.primary),
+          SizedBox(width: 4),
+          Text(Duration(seconds: item.prepTime).pretty(abbreviated: true)),
+          SizedBox(width: 10),
+          ...(pose.isUnilateral
+              ? [
+                  Icon(
+                    item.side!.getIcon(),
+                    size: 16,
+                    color: theme.colorScheme.primary,
+                  ),
+                  SizedBox(width: 4),
+                  Text(item.side!.getTranslation(context)),
+                ]
+              : []),
         ],
       ),
       leading: CircleAvatar(child: Text('${index + 1}')),
       trailing: widget.onChanged != null
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ...(item.side != null
-                    ? [
-                        IconButton(
-                          onPressed: () => setState(() {
-                            item.side = switch (item.side) {
-                              Side.both => Side.right,
-                              Side.right => Side.left,
-                              Side.left => Side.both,
-                              _ => Side.both,
-                            };
-                          }),
-                          icon: Icon(item.side!.getIcon()),
-                        ),
-                      ]
-                    : []),
-                IconButton(
+          ? MenuAnchor(
+              alignmentOffset: Offset(-125, 0),
+              menuChildren: [
+                if (pose.isUnilateral)
+                  MenuItemButton(
+                    onPressed: () => setState(() {
+                      item.side = switch (item.side) {
+                        Side.both => Side.left,
+                        Side.left => Side.right,
+                        Side.right => Side.both,
+                        _ => Side.both,
+                      };
+                      widget.onChanged!(_poses);
+                    }),
+                    leadingIcon: Icon(Symbols.arrow_range),
+                    child: Text(localizations.editPoseSide),
+                  ),
+                MenuItemButton(
+                  onPressed: () async {
+                    var result = await showDialog(
+                      context: context,
+                      builder: (_) => NumberDialog(
+                        title: localizations.editPosePrepTimeTitle,
+                        description: localizations.editPosePrepTimeContent,
+                        initialValue: item.prepTime,
+                        min: 3,
+                        max: 60,
+                        unit: 's',
+                      ),
+                    );
+
+                    if (result != null) {
+                      setState(() => item.prepTime = result);
+                      widget.onChanged!(_poses);
+                    }
+                  },
+                  leadingIcon: Icon(Symbols.timer),
+                  child: Text(localizations.editPosePrepTime),
+                ),
+                MenuItemButton(
+                  style: MenuItemButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                    iconColor: theme.colorScheme.error,
+                  ),
                   onPressed: () => setState(() {
                     _poses.removeAt(index);
                     widget.onChanged!(_poses);
                   }),
-                  icon: Icon(Symbols.close),
-                  color: theme.colorScheme.error,
+                  leadingIcon: Icon(Symbols.delete),
+                  child: Text(localizations.delete),
                 ),
               ],
+              builder: (context, controller, child) => IconButton(
+                onPressed: () => controller.toggle(),
+                icon: Icon(Symbols.more_vert),
+              ),
             )
-          : (item.side != null
-                ? Icon(item.side!.getIcon(), color: theme.colorScheme.primary)
-                : null),
+          : null,
     );
   }
 

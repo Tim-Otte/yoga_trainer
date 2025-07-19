@@ -348,7 +348,8 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         if (current.side == Side.both) {
           // Left pose has already been trained
           if (_currentSide == Side.left) {
-            _timeRemainingInPose = current.pose.duration + current.prepTime;
+            _timeRemainingInPose =
+                widget.settingsController.posePrepTime + current.prepTime;
             _currentSide = Side.right;
           }
           // Start with left pose
@@ -387,11 +388,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
                 current.pose.isUnilateral
                     ? localizations.ttsPoseWithSideAnnouncement(
                         current.pose.name,
-                        switch (_currentSide) {
-                          Side.left => localizations.left,
-                          Side.right => localizations.right,
-                          _ => '',
-                        },
+                        _currentSide?.getTranslation(context) ?? '',
                         current.prepTime,
                       )
                     : localizations.ttsPoseAnnouncement(

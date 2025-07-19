@@ -334,6 +334,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
               runSpacing: 15,
               children: [
                 NameInput(
+                  id: _workout.id.value,
                   initialValue: _workout.name.value,
                   onChanged: (value) => setState(() {
                     _workout = _workout.copyWith(name: Value(value));

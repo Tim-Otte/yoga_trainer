@@ -55,7 +55,10 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
     final settingsController = Provider.of<SettingsController>(context);
 
     return StreamListView(
-      stream: database.streamAllWorkouts(),
+      stream: database.streamAllWorkouts(
+        settingsController.workoutPrepTime,
+        settingsController.posePrepTime,
+      ),
       noDataText: AppLocalizations.of(context).noWorkouts,
       itemBuilder: (context, item, _) {
         final workout = item.workout;

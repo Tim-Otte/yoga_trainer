@@ -176,6 +176,34 @@
     "@selectWorkoutToUpdate": {
         "description": "The title of the select_workout_to_update page"
     },
+    "editPosePrepTime": "Preperation time",
+    "@editPosePrepTime": {
+        "description": "The label of the edit_prep_time button"
+    },
+    "editPosePrepTimeTitle": "Edit preparation time",
+    "@editPosePrepTimeTitle": {
+        "description": "The title of the edit_prep_time dialog"
+    },
+    "editPosePrepTimeContent": "You can choose a preparation time between 3 and 60 seconds:",
+    "@editPosePrepTimeContent": {
+        "description": "The subject of the edit_prep_time dialog"
+    },
+    "editPoseSide": "Switch side",
+    "@editPoseSide": {
+        "description": "The label of the switch_side button"
+    },
+    "sideBoth": "Both",
+    "@sideBoth": {
+        "description": "The label text of both sides of the body"
+    },
+    "sideLeft": "Left",
+    "@sideLeft": {
+        "description": "The label text of both sides of the body"
+    },
+    "sideRight": "Right",
+    "@sideRight": {
+        "description": "The label text of both sides of the body"
+    },
     "finishedWorkout": "Finished!",
     "@finishedWorkout": {
         "description": "The text to show when the user finished the workout"
@@ -278,14 +306,6 @@
     "deleteDialogContent": "Do you really want to delete this?",
     "@deleteDialogContent": {
         "description": "The content of the confirm_delete dialog"
-    },
-    "left": "Left",
-    "@left": {
-        "description": "The label for the left side of a pose"
-    },
-    "right": "Right",
-    "@right": {
-        "description": "The label for the right side of a pose"
     },
     "save": "Save",
     "@save": {

@@ -27,14 +27,23 @@ class AppDatabase extends _$AppDatabase {
   /// If [search] is provided, only workouts matching the search criteria will be included
   /// in the resulting list. The stream emits updates whenever the underlying data changes.
   ///
+  /// The [workoutPrepTime] and the [defaultPrepTime] are included in the duration calculation.
+  ///
   /// Returns a [Stream] that emits lists of [WorkoutWithInfos] objects.
-  Stream<List<WorkoutWithInfos>> streamAllWorkouts({String? search}) {
+  Stream<List<WorkoutWithInfos>> streamAllWorkouts(
+    int workoutPrepTime,
+    int defaultPosePrepTime, {
+    String? search,
+  }) {
     final duration =
-        (poses.duration *
-                workoutPoses.side.caseMatch<int>(
-                  when: {Constant(Side.both.index): Constant(2)},
-                  orElse: Constant(1),
-                ))
+        Variable(workoutPrepTime) +
+        (workoutPoses.prepTime +
+                Variable(defaultPosePrepTime) +
+                (poses.duration *
+                    workoutPoses.side.caseMatch<int>(
+                      when: {Constant(Side.both.index): Constant(2)},
+                      orElse: Constant(1),
+                    )))
             .sum();
 
     final difficulty = poses.difficulty.max();
@@ -116,12 +125,17 @@ class AppDatabase extends _$AppDatabase {
 
   /// Checks if a workout with the specified [name] exists in the database.
   ///
+  /// If an [id] is given, only rows without this id are checked.
+  ///
   /// Returns `true` if a workout with the given name is found, otherwise `false`.
-  Future<bool> hasWorkoutWithName(String name) async {
-    return (await (select(
-          workouts,
-        )..where((p) => p.name.like(name))).getSingleOrNull()) !=
-        null;
+  Future<bool> hasWorkoutWithName(String name, {int? id}) async {
+    final query = select(workouts)..where((p) => p.name.like(name));
+
+    if (id != null) {
+      query.where((w) => w.id.equals(id).not());
+    }
+
+    return (await query.getSingleOrNull()) != null;
   }
 
   /// Inserts a new workout entry into the database.
@@ -174,6 +188,7 @@ class AppDatabase extends _$AppDatabase {
             pose: item.pose.id,
             order: index,
             side: Value(item.side),
+            prepTime: Value(item.prepTime),
           ),
         ),
       ),
@@ -267,13 +282,17 @@ class AppDatabase extends _$AppDatabase {
 
   /// Checks if a pose with the given [name] exists in the database.
   ///
+  /// If an [id] is given, only rows without this id are checked.
+  ///
   /// Returns `true` if a pose with the specified name is found, otherwise `false`.
   /// This is an asynchronous operation.
-  Future<bool> hasPoseWithName(String name) async {
-    return (await (select(
-          poses,
-        )..where((p) => p.name.like(name))).getSingleOrNull()) !=
-        null;
+  Future<bool> hasPoseWithName(String name, {int? id}) async {
+    final query = (select(poses)..where((p) => p.name.like(name)));
+
+    if (id != null) {
+      query.where((p) => p.id.equals(id).not());
+    }
+    return (await query.getSingleOrNull()) != null;
   }
 
   /// Inserts a new pose into the database.

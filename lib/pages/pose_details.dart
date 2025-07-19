@@ -9,6 +9,7 @@ import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/select_workout_to_update.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class PoseDetailsPage extends StatefulWidget {
   const PoseDetailsPage({
@@ -43,7 +44,8 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     final localizations = AppLocalizations.of(context);
-    var database = Provider.of<AppDatabase>(context);
+    final database = Provider.of<AppDatabase>(context);
+    final settingsController = Provider.of<SettingsController>(context);
 
     return PopScope(
       canPop: !_isInEditMode,
@@ -121,8 +123,13 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
 
                   if (context.mounted) {
                     context.navigateTo(
-                      (_) => Provider(
-                        create: (_) => database,
+                      (_) => MultiProvider(
+                        providers: [
+                          Provider(create: (_) => database),
+                          ChangeNotifierProvider.value(
+                            value: settingsController,
+                          ),
+                        ],
                         child: SelectWorkoutToUpdatePage(poseToAdd: pose),
                       ),
                     );
@@ -212,6 +219,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
               }),
             ),
             NameInput(
+              id: _pose.id.value,
               initialValue: _pose.name.value,
               onChanged: (value) => setState(() {
                 _pose = _pose.copyWith(name: Value(value));

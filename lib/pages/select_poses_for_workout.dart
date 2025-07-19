@@ -1,3 +1,4 @@
+import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:yoga_trainer/entities/all.dart';
@@ -132,7 +133,9 @@ class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
                     color: theme.colorScheme.primary,
                   ),
                   SizedBox(width: 4),
-                  Text('${pose.duration}s'),
+                  Text(
+                    Duration(seconds: pose.duration).pretty(abbreviated: true),
+                  ),
                 ],
               ),
               leading: Checkbox(

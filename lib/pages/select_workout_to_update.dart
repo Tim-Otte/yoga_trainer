@@ -7,6 +7,7 @@ import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/workout_details.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class SelectWorkoutToUpdatePage extends StatefulWidget {
   const SelectWorkoutToUpdatePage({super.key, required this.poseToAdd});
@@ -24,7 +25,11 @@ class _SelectWorkoutToUpdatePageState extends State<SelectWorkoutToUpdatePage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
-    var database = Provider.of<AppDatabase>(context);
+    final database = Provider.of<AppDatabase>(context);
+    final settingsController = Provider.of<SettingsController>(
+      context,
+      listen: false,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +53,11 @@ class _SelectWorkoutToUpdatePageState extends State<SelectWorkoutToUpdatePage> {
           ),
           Expanded(
             child: StreamListView(
-              stream: database.streamAllWorkouts(search: _searchText),
+              stream: database.streamAllWorkouts(
+                settingsController.workoutPrepTime,
+                settingsController.posePrepTime,
+                search: _searchText,
+              ),
               noDataText: AppLocalizations.of(context).noWorkouts,
               itemBuilder: (context, item, _) => ListTile(
                 title: Text(item.workout.name),
