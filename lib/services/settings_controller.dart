@@ -17,7 +17,7 @@ class SettingsController with ChangeNotifier {
   int _workoutPrepTime = 3;
   int _posePrepTime = 3;
   Map<Object?, Object?> _ttsVoice = <Object?, Object?>{};
-  double _ttsVolume = 1.0;
+  double _ttsVolume = 0.5;
   double _ttsPitch = 1.0;
   double _ttsRate = 0.5;
 

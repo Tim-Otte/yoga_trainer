@@ -5,6 +5,7 @@ import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
 import 'package:yoga_trainer/components/settings/all.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -138,7 +139,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     final settingsController = Provider.of<SettingsController>(context);
     final localizations = AppLocalizations.of(context);
     var currentLang = Localizations.localeOf(context).languageCode;
-    var flutterTts = FlutterTts();
+    var flutterTTS = FlutterTts();
 
     return MaterialSettingsSection(
       title: Text(localizations.settingsTtsSection),
@@ -153,10 +154,39 @@ class SettingsPage extends StatelessWidget implements PageInfos {
               settingsController.ttsVoice['network_required'] == '1',
             ),
           ),
+          disableSuffixPadding: true,
+          suffix: IconButton.filled(
+            onPressed: () async {
+              // Init TTS settings all at once
+              await Future.wait([
+                flutterTTS.setVoice({
+                  'name': settingsController.ttsVoice['name'].toString(),
+                  'locale': settingsController.ttsVoice['locale'].toString(),
+                }),
+                flutterTTS.setPitch(settingsController.ttsPitch),
+                flutterTTS.setSpeechRate(settingsController.ttsRate),
+                flutterTTS.awaitSpeakCompletion(true),
+              ]);
+
+              // Set volume to preferred volume
+              VolumeController.instance.showSystemUI = false;
+              var initialVolume = await VolumeController.instance.getVolume();
+              await VolumeController.instance.setVolume(
+                settingsController.ttsVolume,
+              );
+
+              // Say test phrase
+              await flutterTTS.speak(localizations.ttsTestPhrase);
+
+              // Reset volume to previous value
+              await VolumeController.instance.setVolume(initialVolume);
+            },
+            icon: Icon(Symbols.play_arrow),
+          ),
           onTap: (context) async {
-            var defaultVoice = await flutterTts.getDefaultVoice;
+            var defaultVoice = await flutterTTS.getDefaultVoice;
             var voices =
-                ((await flutterTts.getVoices) as List<Object?>)
+                ((await flutterTTS.getVoices) as List<Object?>)
                     .where(
                       (x) => (x as Map<Object?, Object?>)['locale']
                           .toString()
@@ -192,18 +222,23 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           },
         ),
         MaterialNumberSettingsTile(
-          prefix: Icon(Symbols.volume_up),
+          prefix: Icon(switch (settingsController.ttsVolume) {
+            >= 0.66 => Symbols.volume_up,
+            >= 0.33 => Symbols.volume_down,
+            > 0 => Symbols.volume_mute,
+            _ => Symbols.volume_off,
+          }),
           title: Text(localizations.settingsTtsVolume),
           value: (settingsController.ttsVolume * 100).toInt(),
           description: Text('${(settingsController.ttsVolume * 100).toInt()}%'),
           min: 0,
           max: 100,
-          step: 10,
+          step: 5,
           onChanged: (value) =>
               settingsController.updateTtsVolume(value / 100.0),
         ),
         MaterialNumberSettingsTile(
-          prefix: Icon(Symbols.edit_audio),
+          prefix: Icon(Symbols.music_note),
           title: Text(localizations.settingsTtsPitch),
           value: (settingsController.ttsPitch * 100).toInt(),
           description: Text('${(settingsController.ttsPitch * 100).toInt()}%'),

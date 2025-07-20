@@ -243,6 +243,10 @@
     "@ttsWorkoutFinished": {
         "description": "The text that will be announced when the workout is done"
     },
+    "ttsTestPhrase": "Hello world!",
+    "@ttsTestPhrase": {
+        "description": "The text that will be announced when testing the TTS settings"
+    },
     "settingsGeneralSection": "General",
     "@settingsGeneralSection": {
         "description": "The section header of the general settings"

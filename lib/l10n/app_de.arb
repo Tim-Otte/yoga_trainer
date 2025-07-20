@@ -56,6 +56,7 @@
     "ttsPoseAnnouncement": "{poseName} in {prepTime}",
     "ttsPoseWithSideAnnouncement": "{poseName}, {side} in {prepTime}",
     "ttsWorkoutFinished": "Sehr gut! Übung geschafft!",
+    "ttsTestPhrase": "Hallo Welt!",
     "settingsGeneralSection": "Allgemein",
     "settingsTheme": "Design",
     "settingsLanguage": "Sprache",

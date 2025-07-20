@@ -7,6 +7,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vibration/vibration_presets.dart';
+import 'package:volume_controller/volume_controller.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
@@ -30,6 +31,7 @@ class PlayWorkoutPage extends StatefulWidget {
 }
 
 class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
+  double _initialVolume = 0;
   int _currentPose = -1;
   int _totalTimerDuration = 0;
   int _timeExceededTotal = 0;
@@ -53,17 +55,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
 
     _timerNotifier.value = widget.settingsController.workoutPrepTime;
 
-    Future.wait([
-      WakelockPlus.enable(),
-      _flutterTTS.setVoice({
-        'name': widget.settingsController.ttsVoice['name'].toString(),
-        'locale': widget.settingsController.ttsVoice['locale'].toString(),
-      }),
-      _flutterTTS.setVolume(widget.settingsController.ttsVolume),
-      _flutterTTS.setPitch(widget.settingsController.ttsPitch),
-      _flutterTTS.setSpeechRate(widget.settingsController.ttsRate),
-      _flutterTTS.awaitSpeakCompletion(true),
-    ]).then((_) => _startTimer());
+    _init();
   }
 
   @override
@@ -71,7 +63,10 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
     var theme = Theme.of(context);
 
     return PopScope(
-      onPopInvokedWithResult: (_, _) => WakelockPlus.disable(),
+      onPopInvokedWithResult: (_, _) async => Future.wait([
+        WakelockPlus.disable(),
+        VolumeController.instance.setVolume(_initialVolume),
+      ]),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: theme.colorScheme.surfaceContainer,
@@ -165,6 +160,32 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
     WakelockPlus.disable();
 
     super.dispose();
+  }
+
+  Future _init() async {
+    // Prevent display from going to sleep
+    await WakelockPlus.enable();
+
+    // Init TTS settings all at once
+    await Future.wait([
+      _flutterTTS.setVoice({
+        'name': widget.settingsController.ttsVoice['name'].toString(),
+        'locale': widget.settingsController.ttsVoice['locale'].toString(),
+      }),
+      _flutterTTS.setPitch(widget.settingsController.ttsPitch),
+      _flutterTTS.setSpeechRate(widget.settingsController.ttsRate),
+      _flutterTTS.awaitSpeakCompletion(true),
+    ]);
+
+    // Set volume to preferred volume
+    VolumeController.instance.showSystemUI = false;
+    var volume = await VolumeController.instance.getVolume();
+    setState(() => _initialVolume = volume);
+    await VolumeController.instance.setVolume(
+      widget.settingsController.ttsVolume,
+    );
+
+    _startTimer();
   }
 
   Widget _getBody(BuildContext context) {
