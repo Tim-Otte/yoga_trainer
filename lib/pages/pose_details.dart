@@ -162,7 +162,12 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
                   color: theme.colorScheme.primary,
                 ),
               ),
-              Text(_pose.description.value, style: theme.textTheme.bodyLarge),
+              Text(
+                _pose.description.value.isEmpty
+                    ? localizations.poseDescriptionEmpty
+                    : _pose.description.value,
+                style: theme.textTheme.bodyLarge,
+              ),
               SizedBox(height: 15),
               Wrap(
                 spacing: 10,
