@@ -303,6 +303,14 @@
     "@settingsTtsRate": {
         "description": "The title of the rate settings"
     },
+    "settingsAboutSection": "About",
+    "@settingsAboutSection": {
+        "description": "The section header of the about section in the settings"
+    },
+    "settingsAboutLicenses": "Open Source Licenses",
+    "@settingsAboutLicenses": {
+        "description": "The title of the open source licenses button"
+    },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
         "description": "The title of the confirm_delete dialog"

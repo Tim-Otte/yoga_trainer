@@ -39,6 +39,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           _getGeneralSettingsSection(context),
           _getPrepTimeSettingsSection(context),
           _getTtsSettingsSection(context),
+          _getAboutSection(context),
         ],
       ),
     );
@@ -259,6 +260,22 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           max: 100,
           step: 10,
           onChanged: (value) => settingsController.updateTtsRate(value / 100.0),
+        ),
+      ],
+    );
+  }
+
+  Widget _getAboutSection(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return MaterialSettingsSection(
+      title: Text(localizations.settingsAboutSection),
+      tiles: [
+        MaterialBasicSettingsTile(
+          prefix: Icon(Symbols.favorite, color: theme.colorScheme.error),
+          title: Text(localizations.settingsAboutLicenses),
+          onTap: (context) => showLicensePage(context: context),
         ),
       ],
     );

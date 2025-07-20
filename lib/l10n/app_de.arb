@@ -71,6 +71,8 @@
     "settingsTtsVoiceLocal": "Offline",
     "settingsTtsPitch": "Tonhöhe",
     "settingsTtsRate": "Geschwindigkeit",
+    "settingsAboutSection": "Über",
+    "settingsAboutLicenses": "Open Source Lizenzen",
     "deleteDialogTitle": "Löschen bestätigen",
     "deleteDialogContent": "Möchtest Du dies wirklich löschen?",
     "save": "Speichern",
