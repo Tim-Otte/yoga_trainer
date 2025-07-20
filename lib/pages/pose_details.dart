@@ -207,7 +207,9 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
         key: _formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: () => setState(() {
-          _isFormValid = _formKey.currentState?.validate() ?? false;
+          _isFormValid =
+              (_formKey.currentState?.validate() ?? false) &&
+              _pose.name.value.isNotEmpty;
         }),
         child: Wrap(
           runSpacing: 15,
@@ -220,10 +222,14 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
             ),
             NameInput(
               id: _pose.id.value,
+              bodyPart: _bodyPart,
               initialValue: _pose.name.value,
-              onChanged: (value) => setState(() {
-                _pose = _pose.copyWith(name: Value(value));
-              }),
+              onChanged: (value) {
+                setState(() {
+                  _pose = _pose.copyWith(name: Value(value));
+                });
+                _formKey.currentState?.validate();
+              },
             ),
             DescriptionInput(
               initialValue: _pose.description.value,

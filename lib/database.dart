@@ -280,18 +280,29 @@ class AppDatabase extends _$AppDatabase {
         .getSingle();
   }
 
-  /// Checks if a pose with the given [name] exists in the database.
+  /// Checks if a pose with the given [name] and [bodyPart] exists in the database.
   ///
   /// If an [id] is given, only rows without this id are checked.
   ///
   /// Returns `true` if a pose with the specified name is found, otherwise `false`.
   /// This is an asynchronous operation.
-  Future<bool> hasPoseWithName(String name, {int? id}) async {
-    final query = (select(poses)..where((p) => p.name.like(name)));
+  Future<bool> hasPoseWithName(
+    String name,
+    BodyPart? bodyPart, {
+    int? id,
+  }) async {
+    final query = select(poses);
 
     if (id != null) {
-      query.where((p) => p.id.equals(id).not());
+      query.where((p) => p.name.like(name) & p.id.equals(id).not());
+    } else {
+      query.where((p) => p.name.like(name));
     }
+
+    if (bodyPart != null) {
+      query.where((p) => p.affectedBodyPart.equals(bodyPart.id));
+    }
+
     return (await query.getSingleOrNull()) != null;
   }
 

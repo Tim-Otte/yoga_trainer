@@ -67,24 +67,26 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
       _isInEditMode = true;
     }
 
-    Provider.of<AppDatabase>(
-      context,
-      listen: false,
-    ).getAllPosesForWorkout(_workout.id.value).then((data) {
-      if (widget.poseToAdd != null && mounted) {
-        data.add(
-          PoseWithBodyPartAndSide(
-            pose: widget.poseToAdd!.pose,
-            bodyPart: widget.poseToAdd!.bodyPart,
-            side: _getSideForPose(data, widget.poseToAdd!.pose),
-            prepTime: Provider.of<SettingsController>(
-              context,
-              listen: false,
-            ).posePrepTime,
-          ),
-        );
-      }
-      setState(() => _poses = data);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AppDatabase>(
+        context,
+        listen: false,
+      ).getAllPosesForWorkout(_workout.id.value).then((data) {
+        if (widget.poseToAdd != null && mounted) {
+          data.add(
+            PoseWithBodyPartAndSide(
+              pose: widget.poseToAdd!.pose,
+              bodyPart: widget.poseToAdd!.bodyPart,
+              side: _getSideForPose(data, widget.poseToAdd!.pose),
+              prepTime: Provider.of<SettingsController>(
+                context,
+                listen: false,
+              ).posePrepTime,
+            ),
+          );
+        }
+        setState(() => _poses = data);
+      });
     });
   }
 

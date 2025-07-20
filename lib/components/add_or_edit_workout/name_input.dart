@@ -42,6 +42,7 @@ class _NameInputState extends State<NameInput> {
         label: Text(localizations.workoutName),
         icon: Icon(Symbols.label_outline),
       ),
+      textCapitalization: TextCapitalization.sentences,
       maxLength: 100,
       validator: (value) {
         if ((value?.isEmpty ?? true) || _workoutWithNameAlreadyExists) {

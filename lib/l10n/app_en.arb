@@ -32,7 +32,7 @@
     "@poseName": {
         "description": "The label of the text input for the name of a pose"
     },
-    "poseNameInvalid": "The name must be unique and not empty",
+    "poseNameInvalid": "The name must be unique (body part may vary)",
     "@poseNameInvalid": {
         "description": "The error to display if the input is invalid"
     },

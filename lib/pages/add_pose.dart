@@ -33,7 +33,8 @@ class _AddPosePageState extends State<AddPosePage> {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: _isFormValid && _affectedBodyPart != null
+            onPressed:
+                _isFormValid && _name.isNotEmpty && _affectedBodyPart != null
                 ? () async {
                     await database.insertPose(
                       _name,
@@ -74,6 +75,7 @@ class _AddPosePageState extends State<AddPosePage> {
                 }),
               ),
               NameInput(
+                bodyPart: _affectedBodyPart,
                 initialValue: _name,
                 onChanged: (value) => setState(() {
                   _name = value;
@@ -93,9 +95,10 @@ class _AddPosePageState extends State<AddPosePage> {
               ),
               BodyPartsSelector(
                 initialValue: _affectedBodyPart,
-                onChanged: (value) => setState(() {
-                  _affectedBodyPart = value;
-                }),
+                onChanged: (value) {
+                  setState(() => _affectedBodyPart = value);
+                  _formKey.currentState?.validateGranularly();
+                },
               ),
               IsUnilateralInput(
                 initialValue: _isUnilateral,

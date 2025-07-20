@@ -37,6 +37,7 @@ class _DescriptionInputState extends State<DescriptionInput> {
         icon: Icon(Symbols.info),
         alignLabelWithHint: true,
       ),
+      textCapitalization: TextCapitalization.sentences,
       maxLines: 3,
       maxLength: 250,
       textInputAction: TextInputAction.next,

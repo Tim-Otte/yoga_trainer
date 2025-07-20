@@ -8,7 +8,7 @@
     "settings": "Einstellungen",
     "addPose": "Pose hinzufügen",
     "poseName": "Name",
-    "poseNameInvalid": "Der Name muss einzigartig und nicht leer sein",
+    "poseNameInvalid": "Name & Körperteil existieren bereits in Kombination",
     "poseDescription": "Beschreibung",
     "poseDescriptionEmpty": "Keine Beschreibung hinterlegt",
     "poseDuration": "Dauer",
@@ -80,8 +80,6 @@
     "yes": "Ja",
     "no": "Nein",
     "apply": "Anwenden",
-    "left": "Links",
-    "right": "Rechts",
     "themeModeSystem": "Systemvorgabe",
     "themeModeLight": "Hell",
     "themeModeDark": "Dunkel"

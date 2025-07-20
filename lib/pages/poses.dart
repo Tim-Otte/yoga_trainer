@@ -10,6 +10,7 @@ import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/add_pose.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
 import 'package:yoga_trainer/pages/pose_details.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class PosesPage extends StatelessWidget implements PageInfos {
   const PosesPage({super.key});
@@ -84,6 +85,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
     }
 
     var database = Provider.of<AppDatabase>(context);
+    var settingsController = Provider.of<SettingsController>(context);
     final localizations = AppLocalizations.of(context);
     var theme = Theme.of(context);
 
@@ -153,8 +155,11 @@ class PosesPage extends StatelessWidget implements PageInfos {
                 child: Icon(pose.difficulty.getIcon()),
               ),
               onTap: () => context.navigateTo(
-                (_) => Provider(
-                  create: (_) => database,
+                (_) => MultiProvider(
+                  providers: [
+                    Provider(create: (_) => database),
+                    ChangeNotifierProvider.value(value: settingsController),
+                  ],
                   child: PoseDetailsPage(pose: pose, bodyPart: bodyPart),
                 ),
                 fullscreenDialog: true,
