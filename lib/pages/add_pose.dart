@@ -57,7 +57,7 @@ class _AddPosePageState extends State<AddPosePage> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         title: Text(localizations.addPose),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
         child: Form(
           key: _formKey,

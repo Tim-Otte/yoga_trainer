@@ -47,7 +47,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
     return StreamLoader(
       stream: database.streamAllPoses(),
       noDataText: AppLocalizations.of(context).noPoses,
-      builder: (context, poses) => Padding(
+      builder: (context, poses) => SingleChildScrollView(
         padding: EdgeInsetsGeometry.symmetric(vertical: 20),
         child: Wrap(
           runSpacing: 20,

@@ -206,7 +206,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
   }
 
   Widget _getEditMode(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
       child: Form(
         key: _formKey,

@@ -40,7 +40,7 @@ class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
           SizedBox(width: 10),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsetsGeometry.symmetric(vertical: 20),
         child: Wrap(
           runSpacing: 20,
