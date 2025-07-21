@@ -69,7 +69,7 @@ class SettingsService {
 
   /// Loads the user's preferred tts volume
   Future<double> getTtsVolume() {
-    return asyncPrefs.getDouble('ttsVolume').then((value) => value ?? 1.0);
+    return asyncPrefs.getDouble('ttsVolume').then((value) => value ?? 0.5);
   }
 
   /// Saves the user's preferred tts volume
