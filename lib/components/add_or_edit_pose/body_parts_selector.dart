@@ -85,9 +85,11 @@ class _BodyPartsSelectorState extends State<BodyPartsSelector> {
                       Text(
                         _selected?.name ?? localizations.poseBodyPartEmpty,
                         style: theme.textTheme.bodyMedium!.copyWith(
-                          color: theme.textTheme.bodyMedium!.color!.useOpacity(
-                            0.7,
-                          ),
+                          color: _selected != null
+                              ? theme.textTheme.bodyMedium!.color!.useOpacity(
+                                  0.7,
+                                )
+                              : theme.colorScheme.error,
                         ),
                       ),
                     ],
