@@ -259,6 +259,27 @@
     "@settingsLanguage": {
         "description": "The title of the language setting"
     },
+    "settingsNotificationSection": "Notification",
+    "@settingsNotificationSection": {
+        "description": "The section header of the notification settings"
+    },
+    "settingsEnableNotification": "Enable notification",
+    "@settingsEnableNotification": {
+        "description": "The title of the enable notification setting"
+    },
+    "settingsNotificationTime": "Notify me daily at:",
+    "@settingsNotificationTime": {
+        "description": "The title of the notification time setting"
+    },
+    "settingsNotificationTimeValue": "{time} o'clock",
+    "@settingsNotificationTimeValue": {
+        "description": "The value of the notification time setting",
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
     "settingsPrepTimeSection": "Preperation time",
     "@settingsPrepTimeSection": {
         "description": "The section header of the prep time settings"
@@ -310,6 +331,22 @@
     "settingsAboutLicenses": "Open Source Licenses",
     "@settingsAboutLicenses": {
         "description": "The title of the open source licenses button"
+    },
+    "notificationChannelName": "Daily Yoga Reminder",
+    "@notificationChannelName": {
+        "description": "The name of the notification channel for daily reminders"
+    },
+    "notificationChannelDescription": "Reminds you to do yoga every day",
+    "@notificationChannelDescription": {
+        "description": "The description of the notification channel for daily reminders"
+    },
+    "notificationTitle": "Time for yoga!",
+    "@notificationTitle": {
+        "description": "The title of the daily yoga reminder notification"
+    },
+    "notificationBody": "Don't forget to do your daily yoga workout!",
+    "@notificationBody": {
+        "description": "The body text of the daily yoga reminder notification"
     },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {

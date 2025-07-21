@@ -1,10 +1,14 @@
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
 import 'package:yoga_trainer/components/settings/all.dart';
@@ -37,6 +41,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
       child: Column(
         children: [
           _getGeneralSettingsSection(context),
+          _getNotificationSettingsSection(context),
           _getPrepTimeSettingsSection(context),
           _getTtsSettingsSection(context),
           _getAboutSection(context),
@@ -88,6 +93,83 @@ class SettingsPage extends StatelessWidget implements PageInfos {
               ),
             );
             settingsController.updateLocale(result);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _getNotificationSettingsSection(BuildContext context) {
+    final settingsController = Provider.of<SettingsController>(context);
+    final localizations = AppLocalizations.of(context);
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final androidNotifications = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()!;
+
+    return MaterialSettingsSection(
+      title: Text(localizations.settingsNotificationSection),
+      tiles: [
+        MaterialSwitchSettingsTile(
+          prefix: Icon(Symbols.notification_settings),
+          title: Text(localizations.settingsEnableNotification),
+          onToggle: (value) async {
+            if (value) {
+              bool hasNotificationPermission =
+                  await androidNotifications.areNotificationsEnabled() ?? false;
+
+              if (!hasNotificationPermission) {
+                hasNotificationPermission =
+                    await androidNotifications
+                        .requestNotificationsPermission() ??
+                    false;
+              }
+
+              if (hasNotificationPermission) {
+                hasNotificationPermission =
+                    await androidNotifications.requestExactAlarmsPermission() ??
+                    false;
+              }
+
+              if (hasNotificationPermission && context.mounted) {
+                _scheduleNotification(context);
+              }
+
+              return settingsController.updateNotificationState(
+                hasNotificationPermission,
+              );
+            } else {
+              // Cancel all pending notifications if disabled
+              await flutterLocalNotificationsPlugin
+                  .cancelAllPendingNotifications();
+            }
+
+            return settingsController.updateNotificationState(value);
+          },
+          value: settingsController.notificationState,
+        ),
+        MaterialBasicSettingsTile(
+          prefix: Icon(Symbols.notification_add),
+          title: Text(localizations.settingsNotificationTime),
+          enabled: settingsController.notificationState,
+          value: Text(
+            localizations.settingsNotificationTimeValue(
+              settingsController.notificationTime.format(context),
+            ),
+          ),
+          onTap: (context) async {
+            var result = await showTimePicker(
+              context: context,
+              initialTime: settingsController.notificationTime,
+            );
+            if (result != null) {
+              settingsController.updateNotificationTime(result);
+
+              if (context.mounted) {
+                await _scheduleNotification(context);
+              }
+            }
           },
         ),
       ],
@@ -278,6 +360,51 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           onTap: (context) => showLicensePage(context: context),
         ),
       ],
+    );
+  }
+
+  Future _scheduleNotification(BuildContext context) async {
+    final localizations = AppLocalizations.of(context);
+    final settingsController = Provider.of<SettingsController>(
+      context,
+      listen: false,
+    );
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final currentTimeZone = await FlutterTimezone.getLocalTimezone();
+
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      settingsController.notificationTime.hour,
+      settingsController.notificationTime.minute,
+    );
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      localizations.notificationTitle,
+      localizations.notificationBody,
+      scheduledDate,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_yoga_notification',
+          localizations.notificationChannelName,
+          channelDescription: localizations.notificationChannelDescription,
+          icon: '@drawable/self_improvement',
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 }

@@ -15,6 +15,7 @@ class MaterialSwitchSettingsTile extends MaterialSettingsTile {
   }) : super(
          tileType: SettingsTileType.switchTile,
          initialValue: value,
+         onTap: enabled ? (_) => onToggle(!value) : null,
          suffix: suffix != null
              ? Row(
                  children: [

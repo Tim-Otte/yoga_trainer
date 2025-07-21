@@ -31,6 +31,37 @@ class SettingsService {
     return asyncPrefs.setString('locale', value);
   }
 
+  /// Loads the user's preferred notification state.
+  Future<bool> getNotificationState() {
+    return asyncPrefs
+        .getBool('notificationState')
+        .then((value) => value ?? false);
+  }
+
+  /// Saves the user's preferred notification state.
+  Future updateNotificationState(bool value) {
+    return asyncPrefs.setBool('notificationState', value);
+  }
+
+  /// Loads the user's preferred notification time.
+  Future<TimeOfDay> getNotificationTime() {
+    return asyncPrefs.getString('notificationTime').then((value) {
+      var timeParts = value != null ? value.split(':') : ['18', '00'];
+      return TimeOfDay(
+        hour: int.parse(timeParts.first),
+        minute: int.parse(timeParts.last),
+      );
+    });
+  }
+
+  /// Saves the user's preferred notification time.
+  Future updateNotificationTime(TimeOfDay value) {
+    return asyncPrefs.setString(
+      'notificationTime',
+      '${value.hour}:${value.minute}',
+    );
+  }
+
   /// Loads the user's preferred prep time for a workout
   Future<int> getWorkoutPrepTime() {
     return asyncPrefs.getInt('workoutPrepTime').then((value) => value ?? 3);

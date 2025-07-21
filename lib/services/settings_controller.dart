@@ -14,6 +14,8 @@ class SettingsController with ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.system;
   String? _locale;
+  bool _notificationState = false;
+  TimeOfDay _notificationTime = const TimeOfDay(hour: 18, minute: 0);
   int _workoutPrepTime = 3;
   int _posePrepTime = 3;
   Map<Object?, Object?> _ttsVoice = <Object?, Object?>{};
@@ -25,6 +27,8 @@ class SettingsController with ChangeNotifier {
   Locale? get locale =>
       _locale != null ? Locale.fromSubtags(languageCode: _locale!) : null;
 
+  bool get notificationState => _notificationState;
+  TimeOfDay get notificationTime => _notificationTime;
   int get workoutPrepTime => _workoutPrepTime;
   int get posePrepTime => _posePrepTime;
   Map<Object?, Object?> get ttsVoice => _ttsVoice;
@@ -36,6 +40,8 @@ class SettingsController with ChangeNotifier {
   Future loadSettings() async {
     _themeMode = await _settingsService.getThemeMode();
     _locale = await _settingsService.getLocale();
+    _notificationState = await _settingsService.getNotificationState();
+    _notificationTime = await _settingsService.getNotificationTime();
     _posePrepTime = await _settingsService.getPosePrepTime();
     _workoutPrepTime = await _settingsService.getWorkoutPrepTime();
     _ttsVoice = await _settingsService.getTtsVoice();
@@ -67,6 +73,24 @@ class SettingsController with ChangeNotifier {
     _locale = value;
     notifyListeners();
     await _settingsService.updateLocale(value);
+  }
+
+  /// Update and persist the notification state
+  Future<void> updateNotificationState(bool value) async {
+    if (value == _notificationState) return;
+
+    _notificationState = value;
+    notifyListeners();
+    await _settingsService.updateNotificationState(value);
+  }
+
+  /// Update and persist the notification time
+  Future<void> updateNotificationTime(TimeOfDay value) async {
+    if (value == _notificationTime) return;
+
+    _notificationTime = value;
+    notifyListeners();
+    await _settingsService.updateNotificationTime(value);
   }
 
   /// Update and persist the prep time for hard poses

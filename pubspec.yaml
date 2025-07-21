@@ -36,6 +36,9 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_localized_locales: ^2.0.5
   volume_controller: ^3.4.0
+  flutter_local_notifications: ^19.3.1
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
 
 dev_dependencies:
   drift_dev: ^2.27.0

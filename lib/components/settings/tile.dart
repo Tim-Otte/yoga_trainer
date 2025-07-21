@@ -59,7 +59,9 @@ class MaterialSettingsTile<T> extends StatelessWidget {
                   padding: EdgeInsetsDirectional.only(start: 12),
                   child: IconTheme(
                     data: theme.iconTheme.copyWith(
-                      color: theme.colorScheme.primary,
+                      color: theme.colorScheme.primary.useOpacity(
+                        enabled ? 1.0 : 0.6,
+                      ),
                     ),
                     child: prefix!,
                   ),
@@ -77,7 +79,9 @@ class MaterialSettingsTile<T> extends StatelessWidget {
                     children: [
                       DefaultTextStyle(
                         style: TextStyle(
-                          color: theme.textTheme.titleMedium!.color,
+                          color: theme.textTheme.titleMedium!.color?.useOpacity(
+                            enabled ? 1.0 : 0.6,
+                          ),
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
                         ),
@@ -87,7 +91,11 @@ class MaterialSettingsTile<T> extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: DefaultTextStyle(
-                            style: TextStyle(color: secondaryBodyColor),
+                            style: TextStyle(
+                              color: secondaryBodyColor.useOpacity(
+                                enabled ? 1.0 : 0.6,
+                              ),
+                            ),
                             child: value!,
                           ),
                         )
@@ -95,7 +103,11 @@ class MaterialSettingsTile<T> extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: DefaultTextStyle(
-                            style: TextStyle(color: secondaryBodyColor),
+                            style: TextStyle(
+                              color: secondaryBodyColor.useOpacity(
+                                enabled ? 1.0 : 0.6,
+                              ),
+                            ),
                             child: description!,
                           ),
                         ),

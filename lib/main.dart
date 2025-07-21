@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,18 @@ void main() {
   });
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  const initializationSettingsAndroid = AndroidInitializationSettings(
+    'app_icon',
+  );
+
+  final initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   var settingsController = SettingsController(SettingsService());
 
