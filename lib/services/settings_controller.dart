@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:yoga_trainer/services/settings_service.dart';
@@ -51,6 +52,10 @@ class SettingsController with ChangeNotifier {
 
     if (_ttsVoice.isEmpty) {
       _ttsVoice = await (FlutterTts()).getDefaultVoice;
+    }
+
+    if (_notificationState) {
+      _notificationState = await AwesomeNotifications().isNotificationAllowed();
     }
 
     // Important! Inform listeners a change has occurred.

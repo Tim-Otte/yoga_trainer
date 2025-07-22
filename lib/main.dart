@@ -1,10 +1,11 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:yoga_trainer/constants.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/layout.dart';
@@ -21,17 +22,15 @@ void main() {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  const initializationSettingsAndroid = AndroidInitializationSettings(
-    'app_icon',
-  );
-
-  final initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-  );
-
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  AwesomeNotifications().initialize('resource://drawable/self_improvement', [
+    NotificationChannel(
+      channelKey: Constants.dailyReminderChannelKey,
+      channelName: 'Daily Yoga Reminder',
+      channelDescription: 'Reminds you to do yoga every day',
+      defaultColor: Color(0xFF2196F3),
+      channelShowBadge: true,
+    ),
+  ], debug: true);
 
   var settingsController = SettingsController(SettingsService());
 

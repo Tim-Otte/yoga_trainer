@@ -1,17 +1,15 @@
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
 import 'package:yoga_trainer/components/settings/all.dart';
+import 'package:yoga_trainer/constants.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
 import 'package:yoga_trainer/services/settings_controller.dart';
@@ -102,11 +100,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
   Widget _getNotificationSettingsSection(BuildContext context) {
     final settingsController = Provider.of<SettingsController>(context);
     final localizations = AppLocalizations.of(context);
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final androidNotifications = flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()!;
+    final awesomeNotifications = AwesomeNotifications();
 
     return MaterialSettingsSection(
       title: Text(localizations.settingsNotificationSection),
@@ -116,20 +110,30 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           title: Text(localizations.settingsEnableNotification),
           onToggle: (value) async {
             if (value) {
-              bool hasNotificationPermission =
-                  await androidNotifications.areNotificationsEnabled() ?? false;
+              const requiredPermissions = [
+                NotificationPermission.Alert,
+                NotificationPermission.Sound,
+                NotificationPermission.Vibration,
+                NotificationPermission.Badge,
+              ];
 
-              if (!hasNotificationPermission) {
-                hasNotificationPermission =
-                    await androidNotifications
-                        .requestNotificationsPermission() ??
-                    false;
-              }
+              bool hasNotificationPermission = await awesomeNotifications
+                  .isNotificationAllowed();
 
               if (hasNotificationPermission) {
                 hasNotificationPermission =
-                    await androidNotifications.requestExactAlarmsPermission() ??
-                    false;
+                    (await awesomeNotifications.checkPermissionList(
+                      permissions: requiredPermissions,
+                    )).every(
+                      (permission) => requiredPermissions.contains(permission),
+                    );
+              }
+
+              if (!hasNotificationPermission) {
+                hasNotificationPermission = await awesomeNotifications
+                    .requestPermissionToSendNotifications(
+                      permissions: requiredPermissions,
+                    );
               }
 
               if (hasNotificationPermission && context.mounted) {
@@ -140,9 +144,10 @@ class SettingsPage extends StatelessWidget implements PageInfos {
                 hasNotificationPermission,
               );
             } else {
-              // Cancel all pending notifications if disabled
-              await flutterLocalNotificationsPlugin
-                  .cancelAllPendingNotifications();
+              // Cancel pending notifications when disabling notifications
+              await awesomeNotifications.cancel(
+                Constants.dailyReminderNotificationId,
+              );
             }
 
             return settingsController.updateNotificationState(value);
@@ -365,46 +370,57 @@ class SettingsPage extends StatelessWidget implements PageInfos {
 
   Future _scheduleNotification(BuildContext context) async {
     final localizations = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final settingsController = Provider.of<SettingsController>(
       context,
       listen: false,
     );
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final currentTimeZone = await FlutterTimezone.getLocalTimezone();
+    final awesomeNotifications = AwesomeNotifications();
 
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+    // Ensure we have the necessary permissions
+    var hasNotificationPermission = await awesomeNotifications
+        .isNotificationAllowed();
 
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    var scheduledDate = tz.TZDateTime(
-      tz.local,
+    if (!hasNotificationPermission) return;
+
+    // Update the notification channel to use localized values
+    awesomeNotifications.setChannel(
+      NotificationChannel(
+        channelKey: Constants.dailyReminderChannelKey,
+        channelName: localizations.notificationChannelName,
+        channelDescription: localizations.notificationChannelDescription,
+        defaultColor: theme.colorScheme.primary,
+        channelShowBadge: true,
+      ),
+    );
+
+    // Calculate the datetime for the notification
+    final now = DateTime.now();
+    final scheduledTime = DateTime(
       now.year,
       now.month,
       now.day,
       settingsController.notificationTime.hour,
       settingsController.notificationTime.minute,
     );
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
 
-    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+    // Remove any pending notifications with the same ID
+    await awesomeNotifications.cancel(Constants.dailyReminderNotificationId);
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      localizations.notificationTitle,
-      localizations.notificationBody,
-      scheduledDate,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_yoga_notification',
-          localizations.notificationChannelName,
-          channelDescription: localizations.notificationChannelDescription,
-          icon: '@drawable/self_improvement',
-        ),
+    await awesomeNotifications.createNotification(
+      content: NotificationContent(
+        id: Constants.dailyReminderNotificationId,
+        channelKey: Constants.dailyReminderChannelKey,
+        title: localizations.notificationTitle,
+        body: localizations.notificationBody,
+        wakeUpScreen: true,
+        category: NotificationCategory.Reminder,
+        autoDismissible: false,
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
+      schedule: NotificationAndroidCrontab.daily(
+        referenceDateTime: scheduledTime,
+        allowWhileIdle: true,
+      ),
     );
   }
 }
