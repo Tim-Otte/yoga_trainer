@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/entities/all.dart';
+import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
 class AddPosePage extends StatefulWidget {
@@ -46,7 +47,8 @@ class _AddPosePageState extends State<AddPosePage> {
                     );
 
                     if (context.mounted) {
-                      Navigator.pop(context);
+                      context.showSnackBar(localizations.snackbarPoseAdded);
+                      context.navigateBack();
                     }
                   }
                 : null,

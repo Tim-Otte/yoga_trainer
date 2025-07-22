@@ -72,6 +72,12 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
                         ? () async {
                             await database.updatePose(_pose);
 
+                            if (context.mounted) {
+                              context.showSnackBar(
+                                localizations.snackbarPoseUpdated,
+                              );
+                            }
+
                             setState(() => _isInEditMode = false);
                           }
                         : null,
@@ -97,7 +103,10 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
                           await database.deletePose(widget.pose.id);
 
                           if (context.mounted) {
-                            Navigator.pop(context);
+                            context.showSnackBar(
+                              localizations.snackbarPoseDeleted,
+                            );
+                            context.navigateBack();
                           }
                         }
                       },

@@ -127,9 +127,18 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
 
                             if (widget.poseToAdd != null) {
                               if (context.mounted) {
+                                context.showSnackBar(
+                                  localizations.snackbarPoseUpdated,
+                                );
                                 context.navigateBack();
                               }
                             } else {
+                              if (context.mounted) {
+                                context.showSnackBar(
+                                  localizations.snackbarPoseUpdated,
+                                );
+                              }
+
                               setState(() {
                                 _isInEditMode = false;
                                 _workoutInfos = updatedInfos;
@@ -161,7 +170,10 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                           await database.deleteWorkout(_workout.id.value);
 
                           if (context.mounted) {
-                            Navigator.pop(context);
+                            context.showSnackBar(
+                              localizations.snackbarWorkoutDeleted,
+                            );
+                            context.navigateBack();
                           }
                         }
                       },

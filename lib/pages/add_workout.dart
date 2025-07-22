@@ -43,6 +43,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                     await database.insertWorkout(_name, _description, _poses);
 
                     if (context.mounted) {
+                      context.showSnackBar(localizations.snackbarWorkoutAdded);
                       context.navigateBack();
                     }
                   }

@@ -10,6 +10,7 @@ import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
 import 'package:yoga_trainer/components/settings/all.dart';
 import 'package:yoga_trainer/constants.dart';
+import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
 import 'package:yoga_trainer/services/settings_controller.dart';
@@ -148,6 +149,12 @@ class SettingsPage extends StatelessWidget implements PageInfos {
               await awesomeNotifications.cancel(
                 Constants.dailyReminderNotificationId,
               );
+
+              if (context.mounted) {
+                context.showSnackBar(
+                  localizations.snackbarNotificationDisabled,
+                );
+              }
             }
 
             return settingsController.updateNotificationState(value);
@@ -381,7 +388,14 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     var hasNotificationPermission = await awesomeNotifications
         .isNotificationAllowed();
 
-    if (!hasNotificationPermission) return;
+    if (!hasNotificationPermission) {
+      if (context.mounted) {
+        context.showSnackBar(
+          localizations.snackbarNotificationMissingPermissions,
+        );
+      }
+      return;
+    }
 
     // Update the notification channel to use localized values
     awesomeNotifications.setChannel(
@@ -422,5 +436,17 @@ class SettingsPage extends StatelessWidget implements PageInfos {
         allowWhileIdle: true,
       ),
     );
+
+    var success = (await awesomeNotifications.listScheduledNotifications()).any(
+      (x) => x.content?.id == Constants.dailyReminderNotificationId,
+    );
+
+    if (context.mounted) {
+      if (success) {
+        context.showSnackBar(localizations.snackbarNotificationScheduled);
+      } else {
+        context.showSnackBar(localizations.snackbarNotificationNotScheduled);
+      }
+    }
   }
 }

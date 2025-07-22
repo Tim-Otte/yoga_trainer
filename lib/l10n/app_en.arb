@@ -348,6 +348,46 @@
     "@notificationBody": {
         "description": "The body text of the daily yoga reminder notification"
     },
+    "snackbarPoseAdded": "Pose successfully added",
+    "@snackbarPoseAdded": {
+        "description": "The text to show when the pose is successfully added"
+    },
+    "snackbarPoseUpdated": "Pose successfully updated",
+    "@snackbarPoseUpdated": {
+        "description": "The text to show when the pose is successfully updated"
+    },
+    "snackbarPoseDeleted": "Pose successfully deleted",
+    "@snackbarPoseDeleted": {
+        "description": "The text to show when the pose is successfully deleted"
+    },
+    "snackbarWorkoutAdded": "Workout successfully added",
+    "@snackbarWorkoutAdded": {
+        "description": "The text to show when the workout is successfully added"
+    },
+    "snackbarWorkoutUpdated": "Workout successfully updated",
+    "@snackbarWorkoutUpdated": {
+        "description": "The text to show when the workout is successfully updated"
+    },
+    "snackbarWorkoutDeleted": "Workout successfully deleted",
+    "@snackbarWorkoutDeleted": {
+        "description": "The text to show when the workout is successfully deleted"
+    },
+    "snackbarNotificationMissingPermissions": "Missing permissions to schedule notifications",
+    "@snackbarNotificationMissingPermissions": {
+        "description": "The text to show when permissions for notifications are missing"
+    },
+    "snackbarNotificationScheduled": "Notification successfully scheduled",
+    "@snackbarNotificationScheduled": {
+        "description": "The text to show when the notification is successfully scheduled"
+    },
+    "snackbarNotificationNotScheduled": "Unable to schedule notification",
+    "@snackbarNotificationNotScheduled": {
+        "description": "The text to show when the notification could not be scheduled"
+    },
+    "snackbarNotificationDisabled": "Notifications successfully disabled",
+    "@snackbarNotificationDisabled": {
+        "description": "The text to show when notifications are successfully disabled"
+    },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
         "description": "The title of the confirm_delete dialog"

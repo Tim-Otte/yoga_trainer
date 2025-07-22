@@ -44,4 +44,18 @@ extension BuildContextExtensions on BuildContext {
   void navigateBack<T extends Object?>([T? result]) {
     Navigator.pop(this, result);
   }
+
+  /// Displays a [SnackBar] with the given [message] in the current [BuildContext].
+  ///
+  /// Useful for showing brief notifications or messages to the user.
+  ///
+  /// Example:
+  /// ```dart
+  /// context.showSnackBar('Operation successful');
+  /// ```
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(this).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 5)),
+    );
+  }
 }
