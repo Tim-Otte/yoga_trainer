@@ -22,15 +22,16 @@ void main() {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  AwesomeNotifications().initialize('resource://drawable/self_improvement', [
-    NotificationChannel(
-      channelKey: Constants.dailyReminderChannelKey,
-      channelName: 'Daily Yoga Reminder',
-      channelDescription: 'Reminds you to do yoga every day',
-      defaultColor: Color(0xFF2196F3),
-      channelShowBadge: true,
-    ),
-  ], debug: true);
+  AwesomeNotifications()
+      .initialize('resource://drawable/res_self_improvement', [
+        NotificationChannel(
+          channelKey: Constants.dailyReminderChannelKey,
+          channelName: 'Daily Yoga Reminder',
+          channelDescription: 'Reminds you to do yoga every day',
+          defaultColor: Color(0xFF2196F3),
+          channelShowBadge: true,
+        ),
+      ], debug: true);
 
   var settingsController = SettingsController(SettingsService());
 
