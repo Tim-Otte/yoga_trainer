@@ -123,6 +123,10 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                             await database.updateWorkout(_workout, _poses!);
                             final updatedInfos = await database.getWorkout(
                               _workout.id.value,
+                              workoutPrepTime:
+                                  settingsController.workoutPrepTime,
+                              defaultPosePrepTime:
+                                  settingsController.posePrepTime,
                             );
 
                             if (widget.poseToAdd != null) {

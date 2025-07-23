@@ -54,8 +54,8 @@ class _SelectWorkoutToUpdatePageState extends State<SelectWorkoutToUpdatePage> {
           Expanded(
             child: StreamListView(
               stream: database.streamAllWorkouts(
-                settingsController.workoutPrepTime,
-                settingsController.posePrepTime,
+                workoutPrepTime: settingsController.workoutPrepTime,
+                defaultPosePrepTime: settingsController.posePrepTime,
                 search: _searchText,
               ),
               noDataText: AppLocalizations.of(context).noWorkouts,

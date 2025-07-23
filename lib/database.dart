@@ -30,15 +30,25 @@ class AppDatabase extends _$AppDatabase {
   /// The [workoutPrepTime] and the [defaultPrepTime] are included in the duration calculation.
   ///
   /// Returns a [Stream] that emits lists of [WorkoutWithInfos] objects.
-  Stream<List<WorkoutWithInfos>> streamAllWorkouts(
-    int workoutPrepTime,
-    int defaultPosePrepTime, {
+  Stream<List<WorkoutWithInfos>> streamAllWorkouts({
+    required int workoutPrepTime,
+    required int defaultPosePrepTime,
     String? search,
   }) {
     final duration =
+        // Workout prep time
         Variable(workoutPrepTime) +
-        (workoutPoses.prepTime +
-                Variable(defaultPosePrepTime) +
+        (
+            // Pose prep time
+            workoutPoses.prepTime +
+                // Prep time if both sides are trained
+                workoutPoses.side.caseMatch<int>(
+                  when: {
+                    Constant(Side.both.index): Variable(defaultPosePrepTime),
+                  },
+                  orElse: Constant(0),
+                ) +
+                // Duration of the poses, multiplied by 2 if both sides are trained
                 (poses.duration *
                     workoutPoses.side.caseMatch<int>(
                       when: {Constant(Side.both.index): Constant(2)},
@@ -86,13 +96,30 @@ class AppDatabase extends _$AppDatabase {
   /// Retrieves a [WorkoutWithInfos] object for the workout with the given [id].
   ///
   /// Returns a [Future] that completes with the workout and its associated information.
-  Future<WorkoutWithInfos> getWorkout(int id) async {
+  Future<WorkoutWithInfos> getWorkout(
+    int id, {
+    required int workoutPrepTime,
+    required int defaultPosePrepTime,
+  }) async {
     final duration =
-        (poses.duration *
-                workoutPoses.side.caseMatch(
-                  when: {Constant(Side.both.index): Constant(2)},
-                  orElse: Constant(1),
-                ))
+        // Workout prep time
+        Variable(workoutPrepTime) +
+        (
+            // Pose prep time
+            workoutPoses.prepTime +
+                // Prep time if both sides are trained
+                workoutPoses.side.caseMatch<int>(
+                  when: {
+                    Constant(Side.both.index): Variable(defaultPosePrepTime),
+                  },
+                  orElse: Constant(0),
+                ) +
+                // Duration of the poses, multiplied by 2 if both sides are trained
+                (poses.duration *
+                    workoutPoses.side.caseMatch<int>(
+                      when: {Constant(Side.both.index): Constant(2)},
+                      orElse: Constant(1),
+                    )))
             .sum();
 
     final difficulty = poses.difficulty.max();
@@ -110,8 +137,11 @@ class AppDatabase extends _$AppDatabase {
             ),
           ])
           ..addColumns([duration, difficulty])
-          ..groupBy([workouts.id, workouts.name, workouts.description])
-          ..where(workouts.id.equals(id))
+          ..groupBy([
+            workouts.id,
+            workouts.name,
+            workouts.description,
+          ], having: workouts.id.equals(id))
           ..orderBy([OrderingTerm.asc(workouts.name)]))
         .map(
           (row) => WorkoutWithInfos(
