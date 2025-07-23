@@ -56,8 +56,8 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
     return StreamListView(
       stream: database.streamAllWorkouts(
-        settingsController.workoutPrepTime,
-        settingsController.posePrepTime,
+        workoutPrepTime: settingsController.workoutPrepTime,
+        defaultPosePrepTime: settingsController.posePrepTime,
       ),
       noDataText: AppLocalizations.of(context).noWorkouts,
       itemBuilder: (context, item, _) {
@@ -78,13 +78,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
           ),
           trailing: Chip(
             label: Text(
-              Duration(minutes: (item.duration / 60.0).ceil()).pretty(
-                abbreviated: true,
-                delimiter: ' ',
-                locale: DurationLocale.fromLanguageCode(
-                  Localizations.localeOf(context).languageCode,
-                )!,
-              ),
+              '~${Duration(minutes: (item.duration / 60.0).ceil()).pretty(abbreviated: true, delimiter: ' ', locale: DurationLocale.fromLanguageCode(Localizations.localeOf(context).languageCode)!)}',
             ),
             avatar: Icon(Symbols.timer),
           ),
