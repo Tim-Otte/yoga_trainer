@@ -36,8 +36,19 @@ class AppDatabase extends _$AppDatabase {
     String? search,
   }) {
     final duration =
+        // Workout prep time
         Variable(workoutPrepTime) +
-        (workoutPoses.prepTime +
+        (
+            // Pose prep time
+            workoutPoses.prepTime +
+                // Prep time if both sides are trained
+                workoutPoses.side.caseMatch<int>(
+                  when: {
+                    Constant(Side.both.index): Variable(defaultPosePrepTime),
+                  },
+                  orElse: Constant(0),
+                ) +
+                // Duration of the poses, multiplied by 2 if both sides are trained
                 (poses.duration *
                     workoutPoses.side.caseMatch<int>(
                       when: {Constant(Side.both.index): Constant(2)},
@@ -91,8 +102,19 @@ class AppDatabase extends _$AppDatabase {
     required int defaultPosePrepTime,
   }) async {
     final duration =
+        // Workout prep time
         Variable(workoutPrepTime) +
-        (workoutPoses.prepTime +
+        (
+            // Pose prep time
+            workoutPoses.prepTime +
+                // Prep time if both sides are trained
+                workoutPoses.side.caseMatch<int>(
+                  when: {
+                    Constant(Side.both.index): Variable(defaultPosePrepTime),
+                  },
+                  orElse: Constant(0),
+                ) +
+                // Duration of the poses, multiplied by 2 if both sides are trained
                 (poses.duration *
                     workoutPoses.side.caseMatch<int>(
                       when: {Constant(Side.both.index): Constant(2)},
