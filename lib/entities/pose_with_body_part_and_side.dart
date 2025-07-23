@@ -12,5 +12,5 @@ class PoseWithBodyPartAndSide {
   Pose pose;
   BodyPart bodyPart;
   Side? side;
-  int prepTime;
+  int? prepTime;
 }

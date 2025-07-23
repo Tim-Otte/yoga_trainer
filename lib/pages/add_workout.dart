@@ -109,11 +109,14 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                   ),
                 ),
                 _poses.isNotEmpty
-                    ? PoseList(
-                        poses: _poses,
-                        onChanged: (value) => setState(() {
-                          _poses = value;
-                        }),
+                    ? ChangeNotifierProvider.value(
+                        value: settingsController,
+                        child: PoseList(
+                          poses: _poses,
+                          onChanged: (value) => setState(() {
+                            _poses = value;
+                          }),
+                        ),
                       )
                     : Text(
                         localizations.workoutPosesEmpty,
@@ -159,7 +162,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                       pose: item.pose,
                       bodyPart: item.bodyPart,
                       side: side,
-                      prepTime: settingsController.posePrepTime,
+                      prepTime: null,
                     );
                   }),
                 ),

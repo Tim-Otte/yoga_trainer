@@ -216,7 +216,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                               pose: item.pose,
                               bodyPart: item.bodyPart,
                               side: _getSideForPose(_poses!, item.pose),
-                              prepTime: settingsController.posePrepTime,
+                              prepTime: null,
                             ),
                           ),
                         ),

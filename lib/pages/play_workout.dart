@@ -305,17 +305,8 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
   }
 
   void _startTimer() {
-    int total = widget.settingsController.workoutPrepTime + 1;
-    for (int i = 0; i < widget.poses.length; i++) {
-      final item = widget.poses[i];
-
-      total +=
-          (item.pose.duration + item.prepTime) *
-          (item.pose.isUnilateral && item.side == Side.both ? 2 : 1);
-    }
-
     setState(() {
-      _totalTimerDuration = total;
+      _totalTimerDuration = widget.workout.duration;
       _timer = Timer.periodic(Duration(seconds: 1), _timerCallback);
     });
   }
@@ -370,28 +361,32 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
           // Left pose has already been trained
           if (_currentSide == Side.left) {
             _timeRemainingInPose =
-                widget.settingsController.posePrepTime + current.prepTime;
+                widget.settingsController.posePrepTime +
+                (current.prepTime ?? widget.settingsController.posePrepTime);
             _currentSide = Side.right;
           }
           // Start with left pose
           else {
             _currentSide = Side.left;
             _timeRemainingInPose =
-                widget.poses[_currentPose].pose.duration + current.prepTime;
+                widget.poses[_currentPose].pose.duration +
+                (current.prepTime ?? widget.settingsController.posePrepTime);
           }
         }
         // User has selected a custom side
         else {
           _currentSide = current.side;
           _timeRemainingInPose =
-              widget.poses[_currentPose].pose.duration + current.prepTime;
+              widget.poses[_currentPose].pose.duration +
+              (current.prepTime ?? widget.settingsController.posePrepTime);
         }
       }
       // Pose trains whole body so no side has to be displayes
       else {
         _currentSide = null;
         _timeRemainingInPose =
-            widget.poses[_currentPose].pose.duration + current.prepTime;
+            widget.poses[_currentPose].pose.duration +
+            (current.prepTime ?? widget.settingsController.posePrepTime);
       }
 
       if (announcePose) {
@@ -410,11 +405,13 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
                     ? localizations.ttsPoseWithSideAnnouncement(
                         current.pose.name,
                         _currentSide?.getTranslation(context) ?? '',
-                        current.prepTime,
+                        (current.prepTime ??
+                            widget.settingsController.posePrepTime),
                       )
                     : localizations.ttsPoseAnnouncement(
                         current.pose.name,
-                        current.prepTime,
+                        (current.prepTime ??
+                            widget.settingsController.posePrepTime),
                       ),
               )
               .then((_) {

@@ -6,5 +6,5 @@ class WorkoutPoses extends Table {
   IntColumn get pose => integer().references(Poses, #id)();
   IntColumn get order => integer()();
   IntColumn get side => intEnum<Side>().nullable()();
-  IntColumn get prepTime => integer().withDefault(Constant(3))();
+  IntColumn get prepTime => integer().nullable()();
 }
