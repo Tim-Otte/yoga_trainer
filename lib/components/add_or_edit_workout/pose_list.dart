@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/dialogs/number_dialog.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/menu_controller.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
+import 'package:yoga_trainer/services/settings_controller.dart';
 
 class PoseList extends StatefulWidget {
   const PoseList({super.key, required this.poses, this.onChanged});
@@ -64,6 +66,10 @@ class _PoseListState extends State<PoseList> {
   Widget _getListTile(BuildContext context, PoseWithBodyPartAndSide item) {
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context);
+    final settingsController = Provider.of<SettingsController>(
+      context,
+      listen: false,
+    );
 
     final pose = item.pose;
     final bodyPart = item.bodyPart;
@@ -102,7 +108,11 @@ class _PoseListState extends State<PoseList> {
           SizedBox(width: 10),
           Icon(Symbols.hourglass, size: 16, color: theme.colorScheme.primary),
           SizedBox(width: 4),
-          Text(Duration(seconds: item.prepTime).pretty(abbreviated: true)),
+          Text(
+            Duration(
+              seconds: item.prepTime ?? settingsController.posePrepTime,
+            ).pretty(abbreviated: true),
+          ),
           SizedBox(width: 10),
           ...(pose.isUnilateral
               ? [
@@ -143,7 +153,8 @@ class _PoseListState extends State<PoseList> {
                       builder: (_) => NumberDialog(
                         title: localizations.editPosePrepTimeTitle,
                         description: localizations.editPosePrepTimeContent,
-                        initialValue: item.prepTime,
+                        initialValue:
+                            item.prepTime ?? settingsController.posePrepTime,
                         min: 3,
                         max: 60,
                         unit: 's',

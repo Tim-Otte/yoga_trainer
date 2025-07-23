@@ -42,6 +42,9 @@ dependencies:
 dev_dependencies:
   drift_dev: any
   build_runner: any
+  
+  flutter_test:
+    sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

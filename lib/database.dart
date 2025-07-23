@@ -1,3 +1,5 @@
+import 'database.steps.dart';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,13 +13,24 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'app_database',
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
+      ),
+    );
+  }
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: stepByStep(
+        from1To2: (m, schema) async {
+          await m.alterTable(TableMigration(workoutPoses));
+        },
       ),
     );
   }
@@ -186,7 +199,7 @@ class AppDatabase extends _$AppDatabase {
         pose: p.pose.id,
         order: index,
         side: Value(p.side),
-        prepTime: Value(p.prepTime),
+        prepTime: Value.absentIfNull(p.prepTime),
       ),
     );
 
@@ -219,7 +232,7 @@ class AppDatabase extends _$AppDatabase {
             pose: item.pose.id,
             order: index,
             side: Value(item.side),
-            prepTime: Value(item.prepTime),
+            prepTime: Value.absentIfNull(item.prepTime),
           ),
         ),
       ),
