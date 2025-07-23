@@ -186,6 +186,7 @@ class AppDatabase extends _$AppDatabase {
         pose: p.pose.id,
         order: index,
         side: Value(p.side),
+        prepTime: Value(p.prepTime),
       ),
     );
 
