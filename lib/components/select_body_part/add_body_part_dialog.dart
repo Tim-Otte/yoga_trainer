@@ -31,6 +31,7 @@ class _AddBodyPartDialogState extends State<AddBodyPartDialog> {
         child: TextFormField(
           autofocus: true,
           decoration: InputDecoration(label: Text(localizations.bodyPartName)),
+          textCapitalization: TextCapitalization.sentences,
           initialValue: _value,
           onChanged: (value) async {
             bool nameCheck =

@@ -1,10 +1,11 @@
 import 'dart:ui';
 
-import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:yoga_trainer/components/details_list.dart';
 import 'package:yoga_trainer/components/dialogs/number_dialog.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/menu_controller.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -78,6 +79,7 @@ class _PoseListState extends State<PoseList> {
     return ListTile(
       key: ValueKey(item),
       contentPadding: EdgeInsets.symmetric(horizontal: 5),
+      subtitleTextStyle: theme.textTheme.bodySmall,
       title: Text.rich(
         TextSpan(
           children: [
@@ -92,39 +94,29 @@ class _PoseListState extends State<PoseList> {
           ],
         ),
       ),
-      subtitle: Row(
+      subtitle: DetailsList(
         children: [
-          Icon(
+          DetailsListItem(
             pose.difficulty.getIcon(),
-            size: 16,
-            color: theme.colorScheme.primary,
+            Text(pose.difficulty.getTranslation(context)),
           ),
-          SizedBox(width: 4),
-          Text(pose.difficulty.getTranslation(context)),
-          SizedBox(width: 10),
-          Icon(Symbols.timer, size: 16, color: theme.colorScheme.primary),
-          SizedBox(width: 4),
-          Text(Duration(seconds: pose.duration).pretty(abbreviated: true)),
-          SizedBox(width: 10),
-          Icon(Symbols.hourglass, size: 16, color: theme.colorScheme.primary),
-          SizedBox(width: 4),
-          Text(
-            Duration(
-              seconds: item.prepTime ?? settingsController.posePrepTime,
-            ).pretty(abbreviated: true),
+          DetailsListItem(
+            Symbols.timer,
+            DurationText(Duration(seconds: pose.duration)),
           ),
-          SizedBox(width: 10),
-          ...(pose.isUnilateral
-              ? [
-                  Icon(
-                    item.side!.getIcon(),
-                    size: 16,
-                    color: theme.colorScheme.primary,
-                  ),
-                  SizedBox(width: 4),
-                  Text(item.side!.getTranslation(context)),
-                ]
-              : []),
+          DetailsListItem(
+            Symbols.hourglass,
+            DurationText(
+              Duration(
+                seconds: item.prepTime ?? settingsController.posePrepTime,
+              ),
+            ),
+          ),
+          if (pose.isUnilateral && item.side != null)
+            DetailsListItem(
+              item.side!.getIcon(),
+              Text(item.side!.getTranslation(context)),
+            ),
         ],
       ),
       leading: CircleAvatar(child: Text('${index + 1}')),
@@ -143,7 +135,7 @@ class _PoseListState extends State<PoseList> {
                       };
                       widget.onChanged!(_poses);
                     }),
-                    leadingIcon: Icon(Symbols.arrow_range),
+                    leadingIcon: Icon(Symbols.arrows_outward),
                     child: Text(localizations.editPoseSide),
                   ),
                 MenuItemButton(

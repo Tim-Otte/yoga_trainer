@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_pose/all.dart';
 import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -202,7 +203,9 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
                     ),
                   ),
                   Chip(
-                    label: Text('${_pose.duration.value}s'),
+                    label: DurationText(
+                      Duration(seconds: _pose.duration.value),
+                    ),
                     avatar: Icon(Symbols.timer),
                   ),
                 ],

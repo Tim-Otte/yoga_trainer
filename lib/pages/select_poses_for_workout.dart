@@ -1,6 +1,7 @@
-import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:yoga_trainer/components/details_list.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
@@ -105,36 +106,25 @@ class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
 
             return ListTile(
               title: Text(pose.name),
-              subtitle: Row(
+              subtitle: DetailsList(
                 children: [
-                  Icon(
+                  DetailsListItem(
                     Symbols.person_search,
-                    size: 16,
-                    color: theme.colorScheme.primary,
+                    Text(bodyPart.name),
+                    iconNeedsExtraSpace: true,
                   ),
-                  SizedBox(width: 4),
-                  Text(bodyPart.name),
-                  SizedBox(width: 10),
-                  Icon(
+                  DetailsListItem(
                     pose.isUnilateral ? Symbols.swap_horiz : Symbols.threesixty,
-                    size: 16,
-                    color: theme.colorScheme.primary,
+                    Text(
+                      pose.isUnilateral
+                          ? localizations.poseIsUnilateralLabelTrue
+                          : localizations.poseIsUnilateralLabelFalse,
+                    ),
+                    iconNeedsExtraSpace: true,
                   ),
-                  SizedBox(width: 4),
-                  Text(
-                    pose.isUnilateral
-                        ? localizations.poseIsUnilateralLabelTrue
-                        : localizations.poseIsUnilateralLabelFalse,
-                  ),
-                  SizedBox(width: 10),
-                  Icon(
+                  DetailsListItem(
                     Symbols.timer,
-                    size: 16,
-                    color: theme.colorScheme.primary,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    Duration(seconds: pose.duration).pretty(abbreviated: true),
+                    DurationText(Duration(seconds: pose.duration)),
                   ),
                 ],
               ),

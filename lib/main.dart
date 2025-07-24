@@ -9,6 +9,7 @@ import 'package:yoga_trainer/constants.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/layout.dart';
+import 'package:yoga_trainer/services/notifications_controller.dart';
 import 'package:yoga_trainer/services/settings_controller.dart';
 import 'package:yoga_trainer/services/settings_service.dart';
 
@@ -32,6 +33,10 @@ void main() {
           channelShowBadge: true,
         ),
       ], debug: true);
+
+  AwesomeNotifications().setListeners(
+    onActionReceivedMethod: NotificationsController.onActionReceivedMethod,
+  );
 
   var settingsController = SettingsController(SettingsService());
 

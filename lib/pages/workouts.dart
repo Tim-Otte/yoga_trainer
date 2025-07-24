@@ -1,9 +1,8 @@
-import 'package:duration/duration.dart';
-import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/components/stream_list_view.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
@@ -77,8 +76,9 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
             child: Icon(item.difficulty.getIcon()),
           ),
           trailing: Chip(
-            label: Text(
-              '~${Duration(minutes: (item.duration / 60.0).ceil()).pretty(abbreviated: true, delimiter: ' ', locale: DurationLocale.fromLanguageCode(Localizations.localeOf(context).languageCode)!)}',
+            label: DurationText(
+              Duration(minutes: (item.duration / 60.0).ceil()),
+              prefixText: '~',
             ),
             avatar: Icon(Symbols.timer),
           ),

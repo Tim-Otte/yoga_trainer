@@ -1,12 +1,11 @@
 import 'package:drift/drift.dart' show Value;
-import 'package:duration/duration.dart';
-import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_workout/all.dart';
 import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
@@ -283,14 +282,8 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                     avatar: Icon(_workoutInfos.difficulty.getIcon()),
                   ),
                   Chip(
-                    label: Text(
-                      Duration(seconds: _workoutInfos.duration).pretty(
-                        abbreviated: true,
-                        delimiter: ' ',
-                        locale: DurationLocale.fromLanguageCode(
-                          Localizations.localeOf(context).languageCode,
-                        )!,
-                      ),
+                    label: DurationText(
+                      Duration(seconds: _workoutInfos.duration),
                     ),
                     avatar: Icon(Symbols.timer),
                   ),

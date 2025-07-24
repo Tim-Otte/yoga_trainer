@@ -1,5 +1,3 @@
-import 'package:duration/duration.dart';
-import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
@@ -8,6 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/components/settings/all.dart';
 import 'package:yoga_trainer/constants.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
@@ -191,7 +190,6 @@ class SettingsPage extends StatelessWidget implements PageInfos {
   Widget _getPrepTimeSettingsSection(BuildContext context) {
     final settingsController = Provider.of<SettingsController>(context);
     final localizations = AppLocalizations.of(context);
-    var currentLang = Localizations.localeOf(context).languageCode;
 
     return MaterialSettingsSection(
       title: Text(localizations.settingsPrepTimeSection),
@@ -200,11 +198,8 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           prefix: Icon(Symbols.self_improvement),
           title: Text(localizations.settingsWorkoutPrepTime),
           value: settingsController.workoutPrepTime,
-          description: Text(
-            Duration(seconds: settingsController.workoutPrepTime).pretty(
-              delimiter: ' ',
-              locale: DurationLocale.fromLanguageCode(currentLang)!,
-            ),
+          description: DurationText(
+            Duration(seconds: settingsController.workoutPrepTime),
           ),
           min: 0,
           max: 10,
@@ -215,11 +210,8 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           prefix: Icon(Symbols.sports_gymnastics),
           title: Text(localizations.settingsPosePrepTime),
           value: settingsController.posePrepTime,
-          description: Text(
-            Duration(seconds: settingsController.posePrepTime).pretty(
-              delimiter: ' ',
-              locale: DurationLocale.fromLanguageCode(currentLang)!,
-            ),
+          description: DurationText(
+            Duration(seconds: settingsController.posePrepTime),
           ),
           min: 3,
           max: 60,

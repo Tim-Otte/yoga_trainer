@@ -55,7 +55,7 @@ extension BuildContextExtensions on BuildContext {
   /// ```
   void showSnackBar(String message) {
     ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 5)),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
     );
   }
 }
