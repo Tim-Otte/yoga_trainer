@@ -39,6 +39,26 @@ dependencies:
   awesome_notifications_core: any
   awesome_notifications: any
 
+dependency_overrides:
+  _fe_analyzer_shared: any
+  analyzer: any
+  build: any
+  build_resolvers: any
+  build_runner: any
+  build_runner_core: any
+  characters: any
+  leak_tracker: any
+  leak_tracker_flutter_testing: any
+  leak_tracker_testing: any
+  material_color_utilities: any
+  meta: any
+  petitparser: any
+  source_gen: any
+  test_api: any
+  vector_math: any
+  vm_service: any
+  xml: any
+
 dev_dependencies:
   drift_dev: any
   build_runner: any
