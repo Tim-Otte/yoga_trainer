@@ -1,3 +1,5 @@
+[![Test database migration](https://github.com/Tim-Otte/yoga_trainer/actions/workflows/test_migrations.yaml/badge.svg)](https://github.com/Tim-Otte/yoga_trainer/actions/workflows/test_migrations.yaml)
+
 # Yoga Trainer
 
 A modern Flutter app to help users create, manage, and follow custom yoga workouts.
