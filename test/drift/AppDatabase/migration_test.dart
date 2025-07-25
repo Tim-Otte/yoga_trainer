@@ -4,6 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yoga_trainer/entities/difficulty.dart';
+import 'package:yoga_trainer/entities/side.dart';
 import 'generated/schema.dart';
 
 import 'generated/schema_v1.dart' as v1;
@@ -36,29 +38,102 @@ void main() {
     }
   });
 
-  // The following template shows how to write tests ensuring your migrations
-  // preserve existing data.
-  // Testing this can be useful for migrations that change existing columns
-  // (e.g. by alterating their type or constraints). Migrations that only add
-  // tables or columns typically don't need these advanced tests. For more
-  // information, see https://drift.simonbinder.eu/migrations/tests/#verifying-data-integrity
-  // TODO: This generated template shows how these tests could be written. Adopt
-  // it to your own needs when testing migrations with data integrity.
   test('migration from v1 to v2 does not corrupt data', () async {
-    // Add data to insert into the old database, and the expected rows after the
-    // migration.
-    // TODO: Fill these lists
-    final oldBodyPartsData = <v1.BodyPartsData>[];
-    final expectedNewBodyPartsData = <v2.BodyPartsData>[];
+    final oldBodyPartsData = <v1.BodyPartsData>[
+      v1.BodyPartsData(id: 1, name: 'Head'),
+      v1.BodyPartsData(id: 2, name: 'Back'),
+    ];
+    final expectedNewBodyPartsData = <v2.BodyPartsData>[
+      v2.BodyPartsData(id: 1, name: 'Head'),
+      v2.BodyPartsData(id: 2, name: 'Back'),
+    ];
 
-    final oldPosesData = <v1.PosesData>[];
-    final expectedNewPosesData = <v2.PosesData>[];
+    final oldPosesData = <v1.PosesData>[
+      v1.PosesData(
+        id: 1,
+        name: 'Test pose 1',
+        description: 'Description for Test pose 1',
+        duration: 10,
+        difficulty: Difficulty.easy.index,
+        affectedBodyPart: 1,
+        isUnilateral: true,
+      ),
+      v1.PosesData(
+        id: 2,
+        name: 'Test pose 2',
+        description: 'Description for Test pose 2',
+        duration: 20,
+        difficulty: Difficulty.hard.index,
+        affectedBodyPart: 2,
+        isUnilateral: false,
+      ),
+    ];
+    final expectedNewPosesData = <v2.PosesData>[
+      v2.PosesData(
+        id: 1,
+        name: 'Test pose 1',
+        description: 'Description for Test pose 1',
+        duration: 10,
+        difficulty: Difficulty.easy.index,
+        affectedBodyPart: 1,
+        isUnilateral: true,
+      ),
+      v2.PosesData(
+        id: 2,
+        name: 'Test pose 2',
+        description: 'Description for Test pose 2',
+        duration: 20,
+        difficulty: Difficulty.hard.index,
+        affectedBodyPart: 2,
+        isUnilateral: false,
+      ),
+    ];
 
-    final oldWorkoutsData = <v1.WorkoutsData>[];
-    final expectedNewWorkoutsData = <v2.WorkoutsData>[];
+    final oldWorkoutsData = <v1.WorkoutsData>[
+      v1.WorkoutsData(
+        id: 1,
+        name: 'Test workout 1',
+        description: 'Description for Test workout 1',
+      ),
+      v1.WorkoutsData(
+        id: 2,
+        name: 'Test workout 2',
+        description: 'Description for Test workout 2',
+      ),
+    ];
+    final expectedNewWorkoutsData = <v2.WorkoutsData>[
+      v2.WorkoutsData(
+        id: 1,
+        name: 'Test workout 1',
+        description: 'Description for Test workout 1',
+      ),
+      v2.WorkoutsData(
+        id: 2,
+        name: 'Test workout 2',
+        description: 'Description for Test workout 2',
+      ),
+    ];
 
-    final oldWorkoutPosesData = <v1.WorkoutPosesData>[];
-    final expectedNewWorkoutPosesData = <v2.WorkoutPosesData>[];
+    final oldWorkoutPosesData = <v1.WorkoutPosesData>[
+      v1.WorkoutPosesData(
+        workout: 1,
+        pose: 1,
+        order: 1,
+        prepTime: 3,
+        side: Side.left.index,
+      ),
+      v1.WorkoutPosesData(workout: 2, pose: 2, order: 2, prepTime: 4),
+    ];
+    final expectedNewWorkoutPosesData = <v2.WorkoutPosesData>[
+      v2.WorkoutPosesData(
+        workout: 1,
+        pose: 1,
+        order: 1,
+        prepTime: 3,
+        side: Side.left.index,
+      ),
+      v2.WorkoutPosesData(workout: 2, pose: 2, order: 2, prepTime: 4),
+    ];
 
     await verifier.testWithDataIntegrity(
       oldVersion: 1,
