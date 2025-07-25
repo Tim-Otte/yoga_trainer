@@ -1,0 +1,43 @@
+name: Test database migration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/test_migrations.yaml'
+      - 'test/drift/AppDatabase/migration_test.dart'
+      - 'lib/entities/**'
+      - 'lib/database.dart'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/test_migrations.yaml'
+      - 'test/drift/AppDatabase/migration_test.dart'
+      - 'lib/entities/**'
+      - 'lib/database.dart'
+
+jobs:
+  migration-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+            channel: stable
+            flutter-version: 3.32.7
+            cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate drift database file
+        run: dart run build_runner build
+
+      - name: Run migration_test.dart
+        run: flutter test test/drift/AppDatabase/migration_test.dart
