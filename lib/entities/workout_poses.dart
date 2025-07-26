@@ -7,4 +7,7 @@ class WorkoutPoses extends Table {
   IntColumn get order => integer()();
   IntColumn get side => intEnum<Side>().nullable()();
   IntColumn get prepTime => integer().nullable()();
+
+  @override
+  Set<Column<Object>>? get primaryKey => {workout, pose, order};
 }
