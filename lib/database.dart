@@ -62,7 +62,7 @@ class AppDatabase extends _$AppDatabase {
         Variable(workoutPrepTime) +
         (
             // Pose prep time
-            workoutPoses.prepTime +
+            coalesce([workoutPoses.prepTime, Variable(defaultPosePrepTime)]) +
                 // Prep time if both sides are trained
                 workoutPoses.side.caseMatch<int>(
                   when: {
@@ -140,7 +140,7 @@ class AppDatabase extends _$AppDatabase {
         Variable(workoutPrepTime) +
         (
             // Pose prep time
-            workoutPoses.prepTime +
+            coalesce([workoutPoses.prepTime, Variable(defaultPosePrepTime)]) +
                 // Prep time if both sides are trained
                 workoutPoses.side.caseMatch<int>(
                   when: {
