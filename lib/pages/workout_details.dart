@@ -32,6 +32,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
   late WorkoutsCompanion _workout;
   late WorkoutWithInfos _workoutInfos;
   List<PoseWithBodyPartAndSide>? _poses;
+  List<Weekday> _weekdays = [];
   bool _isInEditMode = false;
   bool _isFormValid = true;
   final _formKey = GlobalKey<FormState>();
@@ -67,10 +68,9 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AppDatabase>(
-        context,
-        listen: false,
-      ).getAllPosesForWorkout(_workout.id.value).then((data) {
+      final database = Provider.of<AppDatabase>(context, listen: false);
+
+      database.getAllPosesForWorkout(_workout.id.value).then((data) {
         if (widget.poseToAdd != null && mounted) {
           data.add(
             PoseWithBodyPartAndSide(
@@ -85,6 +85,10 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
           );
         }
         setState(() => _poses = data);
+      });
+
+      database.getAllWeekdaysForWorkout(_workout.id.value).then((data) {
+        setState(() => _weekdays = data);
       });
     });
   }
@@ -101,10 +105,15 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
       onPopInvokedWithResult: (didPop, result) async {
         if (_isInEditMode && widget.poseToAdd == null) {
           var poses = await database.getAllPosesForWorkout(_workout.id.value);
+          var weekdays = await database.getAllWeekdaysForWorkout(
+            _workout.id.value,
+          );
+
           setState(() {
             _isInEditMode = false;
             _workout = _workoutInfos.workout.toCompanion(true);
             _poses = poses;
+            _weekdays = weekdays;
           });
         }
       },
@@ -119,7 +128,11 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                   IconButton(
                     onPressed: _isFormValid && (_poses ?? []).isNotEmpty
                         ? () async {
-                            await database.updateWorkout(_workout, _poses!);
+                            await database.updateWorkout(
+                              _workout,
+                              _poses!,
+                              _weekdays,
+                            );
                             final updatedInfos = await database.getWorkout(
                               _workout.id.value,
                               workoutPrepTime:
@@ -272,6 +285,22 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                 style: theme.textTheme.bodyLarge,
               ),
               SizedBox(height: 15),
+              Text(
+                localizations.workoutWeekdays,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              Text(
+                _weekdays.isEmpty
+                    ? localizations.workoutWeekdaysEmpty
+                    : _weekdays
+                          .map((w) => w.getAbbreviation(context))
+                          .join(', '),
+                style: theme.textTheme.bodyLarge,
+              ),
+              SizedBox(height: 15),
               Wrap(
                 spacing: 10,
                 children: [
@@ -355,6 +384,12 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                   initialValue: _workout.description.value,
                   onChanged: (value) => setState(() {
                     _workout = _workout.copyWith(description: Value(value));
+                  }),
+                ),
+                WeekdaysSelector(
+                  initialValue: _weekdays,
+                  onChanged: (value) => setState(() {
+                    _weekdays = value;
                   }),
                 ),
               ],

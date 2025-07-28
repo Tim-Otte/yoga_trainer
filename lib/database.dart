@@ -8,12 +8,14 @@ import 'package:yoga_trainer/extensions/iterable.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [BodyParts, Poses, Workouts, WorkoutPoses])
+@DriftDatabase(
+  tables: [BodyParts, Poses, Workouts, WorkoutPoses, WorkoutWeekdays],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
@@ -33,6 +35,9 @@ class AppDatabase extends _$AppDatabase {
         },
         from2To3: (m, schema) async {
           await m.alterTable(TableMigration(schema.workoutPoses));
+        },
+        from3To4: (m, schema) async {
+          await m.createTable(schema.workoutWeekdays);
         },
       ),
     );
@@ -191,6 +196,7 @@ class AppDatabase extends _$AppDatabase {
     String name,
     String description,
     List<PoseWithBodyPartAndSide> poses,
+    List<Weekday> weekdays,
   ) async {
     final workoutId = await into(
       workouts,
@@ -206,7 +212,14 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
 
-    await batch((batch) => batch.insertAll(workoutPoses, posesToInsert));
+    final weekdaysToInsert = weekdays.map(
+      (w) => WorkoutWeekdaysCompanion.insert(workout: workoutId, weekday: w),
+    );
+
+    await batch((batch) {
+      batch.insertAll(workoutPoses, posesToInsert);
+      batch.insertAll(workoutWeekdays, weekdaysToInsert);
+    });
   }
 
   /// Updates an existing workout in the database.
@@ -217,17 +230,21 @@ class AppDatabase extends _$AppDatabase {
   Future updateWorkout(
     WorkoutsCompanion workout,
     List<PoseWithBodyPartAndSide> poses,
+    List<Weekday> weekdays,
   ) async {
-    await (update(
-      workouts,
-    )..where((w) => w.id.equals(workout.id.value))).write(workout);
-
-    await (delete(
-      workoutPoses,
-    )..where((wp) => wp.workout.equals(workout.id.value))).go();
-
-    await batch(
-      (batch) => batch.insertAll(
+    await batch((batch) {
+      // Workout
+      batch.update(
+        workouts,
+        workout,
+        where: (w) => w.id.equals(workout.id.value),
+      );
+      // Poses
+      batch.deleteWhere(
+        workoutPoses,
+        (wp) => wp.workout.equals(workout.id.value),
+      );
+      batch.insertAll(
         workoutPoses,
         poses.mapWithIndex(
           (item, index) => WorkoutPosesCompanion.insert(
@@ -238,17 +255,33 @@ class AppDatabase extends _$AppDatabase {
             prepTime: Value.absentIfNull(item.prepTime),
           ),
         ),
-      ),
-    );
+      );
+      // Weekdays
+      batch.deleteWhere(
+        workoutWeekdays,
+        (ww) => ww.workout.equals(workout.id.value),
+      );
+      batch.insertAll(
+        workoutWeekdays,
+        weekdays.map(
+          (item) => WorkoutWeekdaysCompanion.insert(
+            workout: workout.id.value,
+            weekday: item,
+          ),
+        ),
+      );
+    });
   }
 
   /// Deletes a workout from the database by its [id].
   ///
   /// Returns a [Future] that completes when the workout has been deleted.
   Future deleteWorkout(int id) async {
-    await (delete(workoutPoses)..where((wp) => wp.workout.equals(id))).go();
-
-    await (delete(workouts)..where((w) => w.id.equals(id))).go();
+    await batch((batch) {
+      batch.deleteWhere(workoutPoses, (wp) => wp.workout.equals(id));
+      batch.deleteWhere(workoutWeekdays, (ww) => ww.workout.equals(id));
+      batch.deleteWhere(workouts, (w) => w.id.equals(id));
+    });
   }
 
   /// Returns a stream of all poses from the database.
@@ -387,9 +420,10 @@ class AppDatabase extends _$AppDatabase {
   ///
   /// Returns a [Future] that completes when the pose has been deleted.
   Future deletePose(int id) async {
-    await (delete(workoutPoses)..where((wp) => wp.pose.equals(id))).go();
-
-    await (delete(poses)..where((p) => p.id.equals(id))).go();
+    await batch((batch) {
+      batch.deleteWhere(workoutPoses, (wp) => wp.pose.equals(id));
+      batch.deleteWhere(poses, (p) => p.id.equals(id));
+    });
   }
 
   /// Returns a stream of all [BodyPart]s that match the given [search] query.
@@ -422,5 +456,15 @@ class AppDatabase extends _$AppDatabase {
   /// Returns a [Future] that completes when the insertion is finished.
   Future insertBodyPart(String name) async {
     await into(bodyParts).insert(BodyPartsCompanion.insert(name: name));
+  }
+
+  /// Retrieves a list of [Weekday] objects associated with the specified [workoutId].
+  ///
+  /// Returns a [Future] that completes with a list of [Weekday]s for the given workout.
+  Future<List<Weekday>> getAllWeekdaysForWorkout(int workoutId) async {
+    return (select(workoutWeekdays)
+          ..where((ww) => ww.workout.equals(workoutId)))
+        .map((ww) => ww.weekday)
+        .get();
   }
 }

@@ -1,3 +1,4 @@
+export 'checkbox_dialog.dart';
 export 'confirm_delete.dart';
 export 'language_dialog.dart';
 export 'number_dialog.dart';

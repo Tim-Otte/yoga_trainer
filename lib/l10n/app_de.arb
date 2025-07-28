@@ -42,6 +42,8 @@
     "workoutAddPoses": "Übungen hinzufügen",
     "selectPosesForWorkout": "Übungen für Workout auswählen",
     "workoutDescriptionEmpty": "Keine Beschreibung hinterlegt",
+    "workoutWeekdays": "Vorschlagen am",
+    "workoutWeekdaysEmpty": "Kein Wochentag ausgewählt",
     "editWorkout": "Workout bearbeiten",
     "selectWorkoutToUpdate": "Workout auswählen",
     "editPosePrepTime": "Vorbereitungszeit",

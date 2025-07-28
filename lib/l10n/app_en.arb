@@ -152,6 +152,14 @@
     "@workoutDescriptionEmpty": {
         "description": "The text to show if the description is empty"
     },
+    "workoutWeekdays": "Recommend on",
+    "@workoutWeekdays": {
+        "description": "THe label for the selection of the weekday"
+    },
+    "workoutWeekdaysEmpty": "No weekday selected",
+    "@workoutWeekdaysEmpty": {
+        "description": "The text to show if no weekdays are selected"
+    },
     "workoutPoses": "Poses in this workout",
     "@workoutPoses": {
         "description": "The title of the list of poses in a workout"
