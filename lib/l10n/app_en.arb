@@ -4,6 +4,14 @@
     "@appTitle": {
         "description": "The title of the app"
     },
+    "recommendedWorkouts": "Recommended",
+    "@recommendedWorkouts": {
+        "description": "The title of the recommended_workouts page"
+    },
+    "noRecommendedWorkouts": "No recommended workouts available",
+    "@noRecommendedWorkouts": {
+        "description": "Message displayed when there are no recommended workouts available"
+    },
     "workouts": "Workouts",
     "@workouts": {
         "description": "The title of the workout page"

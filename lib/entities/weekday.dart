@@ -14,7 +14,7 @@ enum Weekday {
     final currentLocale = Localizations.localeOf(context).languageCode;
 
     var date = DateTime.now();
-    date = date.add(Duration(days: date.weekday - 1 + index));
+    date = date.add(Duration(days: -(date.weekday - 1) + index));
 
     return DateFormat.EEEE(currentLocale).format(date);
   }
@@ -23,7 +23,7 @@ enum Weekday {
     final currentLocale = Localizations.localeOf(context).languageCode;
 
     var date = DateTime.now();
-    date = date.add(Duration(days: date.weekday - 1 + index));
+    date = date.add(Duration(days: -(date.weekday - 1) + index));
 
     return '${DateFormat.E(currentLocale).format(date)}.';
   }

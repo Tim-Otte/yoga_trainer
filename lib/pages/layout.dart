@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yoga_trainer/pages/poses.dart';
+import 'package:yoga_trainer/pages/recommended_workouts.dart';
 import 'package:yoga_trainer/pages/settings.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
 import 'package:yoga_trainer/pages/workouts.dart';
@@ -13,7 +14,12 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> {
   int _currentIndex = 0;
-  final _pages = [WorkoutsPage(), PosesPage(), SettingsPage()];
+  final _pages = [
+    RecommendedWorkoutsPage(),
+    WorkoutsPage(),
+    PosesPage(),
+    SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +41,7 @@ class _LayoutState extends State<Layout> {
           var page = item as PageInfos;
           return NavigationDestination(
             icon: Icon(page.getIcon()),
+            selectedIcon: Icon(page.getIcon(), fill: 1),
             label: page.getTitle(context),
           );
         }).toList(),

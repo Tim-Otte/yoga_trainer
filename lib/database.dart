@@ -55,6 +55,7 @@ class AppDatabase extends _$AppDatabase {
     required int workoutPrepTime,
     required int defaultPosePrepTime,
     String? search,
+    Weekday? weekday,
   }) {
     final duration =
         // Workout prep time
@@ -79,6 +80,15 @@ class AppDatabase extends _$AppDatabase {
 
     final difficulty = poses.difficulty.max();
 
+    final searchExpression = (search ?? '').isEmpty
+        ? Constant(true)
+        : (workouts.name.contains(search!) |
+              workouts.description.contains(search));
+
+    final weekdayExpression = weekday == null
+        ? Constant(true)
+        : workoutWeekdays.weekday.equals(weekday.index);
+
     return (select(workouts).join([
             innerJoin(
               workoutPoses,
@@ -90,15 +100,18 @@ class AppDatabase extends _$AppDatabase {
               poses.id.equalsExp(workoutPoses.pose),
               useColumns: false,
             ),
+            leftOuterJoin(
+              workoutWeekdays,
+              workoutWeekdays.workout.equalsExp(workouts.id),
+              useColumns: false,
+            ),
           ])
           ..addColumns([duration, difficulty])
-          ..groupBy(
-            [workouts.id, workouts.name, workouts.description],
-            having: (search ?? '').isNotEmpty
-                ? (workouts.name.contains(search!) |
-                      workouts.description.contains(search))
-                : null,
-          )
+          ..groupBy([
+            workouts.id,
+            workouts.name,
+            workouts.description,
+          ], having: searchExpression & weekdayExpression)
           ..orderBy([OrderingTerm.asc(workouts.name)]))
         .watch()
         .map(
