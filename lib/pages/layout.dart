@@ -24,18 +24,13 @@ class _LayoutState extends State<Layout> {
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surfaceContainer,
         foregroundColor: theme.colorScheme.onSurface,
-        title: currentPage.getPageType() == PageType.normal
-            ? Text(
-                currentPage.getTitle(context),
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              )
-            : null,
+        title: Text(
+          currentPage.getTitle(context),
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         titleTextStyle: theme.textTheme.headlineMedium,
-        flexibleSpace: currentPage.getPageType() == PageType.tabs
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [TabBar(tabs: currentPage.getTabs(context))],
-              )
+        bottom: currentPage.getPageType() == PageType.tabs
+            ? TabBar(tabs: currentPage.getTabs(context))
             : null,
       ),
       body: _pages[_currentIndex],

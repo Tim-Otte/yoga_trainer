@@ -54,8 +54,26 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
     final localizations = AppLocalizations.of(context);
 
     return [
-      Tab(icon: Icon(Symbols.star), text: localizations.recommendedWorkouts),
-      Tab(icon: Icon(Symbols.list), text: localizations.allWorkouts),
+      Tab(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Symbols.star),
+            SizedBox(width: 12),
+            Text(localizations.recommendedWorkouts),
+          ],
+        ),
+      ),
+      Tab(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Symbols.list),
+            SizedBox(width: 12),
+            Text(localizations.allWorkouts),
+          ],
+        ),
+      ),
     ];
   }
 

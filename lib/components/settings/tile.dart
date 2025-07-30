@@ -37,7 +37,7 @@ class MaterialSettingsTile<T> extends StatelessWidget {
     );
 
     return IgnorePointer(
-      ignoring: !enabled,
+      ignoring: !enabled || (onTap == null && onToggle == null),
       child: Material(
         child: InkWell(
           onTap: enabled && tileType != SettingsTileType.numberTile

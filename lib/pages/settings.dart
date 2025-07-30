@@ -376,12 +376,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
       title: Text(localizations.settingsAboutSection),
       tiles: [
         MaterialBasicSettingsTile(
-          prefix: Icon(Symbols.favorite, color: theme.colorScheme.error),
-          title: Text(localizations.settingsAboutLicenses),
-          onTap: (context) => showLicensePage(context: context),
-        ),
-        MaterialBasicSettingsTile(
-          prefix: Icon(Symbols.package_2),
+          prefix: Icon(Symbols.tag),
           title: Text(localizations.settingsAboutVersion),
           value: FutureBuilder(
             future: PackageInfo.fromPlatform(),
@@ -391,6 +386,11 @@ class SettingsPage extends StatelessWidget implements PageInfos {
                   : '',
             ),
           ),
+        ),
+        MaterialBasicSettingsTile(
+          prefix: Icon(Symbols.favorite, color: theme.colorScheme.error),
+          title: Text(localizations.settingsAboutLicenses),
+          onTap: (context) => showLicensePage(context: context),
         ),
       ],
     );

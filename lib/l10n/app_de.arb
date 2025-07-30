@@ -1,7 +1,7 @@
 {
     "@@locale": "de",
     "appTitle": "Yoga Trainer",
-    "workouts": "Workout",
+    "workouts": "Workouts",
     "noWorkouts": "Keine Workouts verfügbar",
     "recommendedWorkouts": "Vorschläge",
     "noRecommendedWorkouts": "Keine Workout-Vorschläge verfügbar",

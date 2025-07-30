@@ -14,7 +14,7 @@ class MaterialBasicSettingsTile extends MaterialSettingsTile {
     super.onTap,
     super.enabled = true,
   }) : super(
-         tileType: SettingsTileType.switchTile,
+         tileType: SettingsTileType.simpleTile,
          suffix: suffix != null
              ? (disableSuffixPadding ?? false)
                    ? suffix
