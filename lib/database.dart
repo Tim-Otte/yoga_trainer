@@ -43,6 +43,35 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  /// Calculates the total duration of a workout session as an [Expression<int>].
+  /// This method is typically used to generate a SQL expression for querying
+  /// workout durations from the database.
+  Expression<int> _getWorkoutDurationCalculation(
+    int workoutPrepTime,
+    int defaultPosePrepTime,
+  ) {
+    return
+    // Workout prep time
+    Variable(workoutPrepTime) +
+        (
+            // Pose prep time
+            coalesce([workoutPoses.prepTime, Variable(defaultPosePrepTime)]) +
+                // Prep time if both sides are trained
+                workoutPoses.side.caseMatch<int>(
+                  when: {
+                    Constant(Side.both.index): Variable(defaultPosePrepTime),
+                  },
+                  orElse: Constant(0),
+                ) +
+                // Duration of the poses, multiplied by 2 if both sides are trained
+                (poses.duration *
+                    workoutPoses.side.caseMatch<int>(
+                      when: {Constant(Side.both.index): Constant(2)},
+                      orElse: Constant(1),
+                    )))
+            .sum();
+  }
+
   /// Returns a stream of all workouts, optionally filtered by a search query.
   ///
   /// If [search] is provided, only workouts matching the search criteria will be included
@@ -57,39 +86,14 @@ class AppDatabase extends _$AppDatabase {
     String? search,
     Weekday? weekday,
   }) {
-    final duration =
-        // Workout prep time
-        Variable(workoutPrepTime) +
-        (
-            // Pose prep time
-            coalesce([workoutPoses.prepTime, Variable(defaultPosePrepTime)]) +
-                // Prep time if both sides are trained
-                workoutPoses.side.caseMatch<int>(
-                  when: {
-                    Constant(Side.both.index): Variable(defaultPosePrepTime),
-                  },
-                  orElse: Constant(0),
-                ) +
-                // Duration of the poses, multiplied by 2 if both sides are trained
-                (poses.duration *
-                    workoutPoses.side.caseMatch<int>(
-                      when: {Constant(Side.both.index): Constant(2)},
-                      orElse: Constant(1),
-                    )))
-            .sum();
-
+    final duration = _getWorkoutDurationCalculation(
+      workoutPrepTime,
+      defaultPosePrepTime,
+    );
     final difficulty = poses.difficulty.max();
 
-    final searchExpression = (search ?? '').isEmpty
-        ? Constant(true)
-        : (workouts.name.contains(search!) |
-              workouts.description.contains(search));
-
-    final weekdayExpression = weekday == null
-        ? Constant(true)
-        : workoutWeekdays.weekday.equals(weekday.index);
-
-    return (select(workouts).join([
+    final query =
+        select(workouts).join([
             innerJoin(
               workoutPoses,
               workoutPoses.workout.equalsExp(workouts.id),
@@ -100,31 +104,37 @@ class AppDatabase extends _$AppDatabase {
               poses.id.equalsExp(workoutPoses.pose),
               useColumns: false,
             ),
-            leftOuterJoin(
-              workoutWeekdays,
-              workoutWeekdays.workout.equalsExp(workouts.id),
-              useColumns: false,
-            ),
+            if (weekday != null)
+              leftOuterJoin(
+                workoutWeekdays,
+                workoutWeekdays.workout.equalsExp(workouts.id),
+                useColumns: false,
+              ),
           ])
           ..addColumns([duration, difficulty])
-          ..groupBy([
-            workouts.id,
-            workouts.name,
-            workouts.description,
-          ], having: searchExpression & weekdayExpression)
-          ..orderBy([OrderingTerm.asc(workouts.name)]))
-        .watch()
-        .map(
-          (rows) => rows
-              .map(
-                (row) => WorkoutWithInfos(
-                  workout: row.readTable(workouts),
-                  duration: row.read(duration)!,
-                  difficulty: Difficulty.values[(row.read(difficulty)!)],
-                ),
-              )
-              .toList(),
-        );
+          ..groupBy(
+            [workouts.id, workouts.name, workouts.description],
+            having: (search ?? '').isEmpty
+                ? null
+                : (workouts.name.contains(search!) |
+                      workouts.description.contains(search)),
+          );
+
+    if (weekday != null) {
+      query.where(workoutWeekdays.weekday.equals(weekday.index));
+    }
+
+    return (query..orderBy([OrderingTerm.asc(workouts.name)])).watch().map(
+      (rows) => rows
+          .map(
+            (row) => WorkoutWithInfos(
+              workout: row.readTable(workouts),
+              duration: row.read(duration)!,
+              difficulty: Difficulty.values[(row.read(difficulty)!)],
+            ),
+          )
+          .toList(),
+    );
   }
 
   /// Retrieves a [WorkoutWithInfos] object for the workout with the given [id].
@@ -135,27 +145,10 @@ class AppDatabase extends _$AppDatabase {
     required int workoutPrepTime,
     required int defaultPosePrepTime,
   }) async {
-    final duration =
-        // Workout prep time
-        Variable(workoutPrepTime) +
-        (
-            // Pose prep time
-            coalesce([workoutPoses.prepTime, Variable(defaultPosePrepTime)]) +
-                // Prep time if both sides are trained
-                workoutPoses.side.caseMatch<int>(
-                  when: {
-                    Constant(Side.both.index): Variable(defaultPosePrepTime),
-                  },
-                  orElse: Constant(0),
-                ) +
-                // Duration of the poses, multiplied by 2 if both sides are trained
-                (poses.duration *
-                    workoutPoses.side.caseMatch<int>(
-                      when: {Constant(Side.both.index): Constant(2)},
-                      orElse: Constant(1),
-                    )))
-            .sum();
-
+    final duration = _getWorkoutDurationCalculation(
+      workoutPrepTime,
+      defaultPosePrepTime,
+    );
     final difficulty = poses.difficulty.max();
 
     return (select(workouts).join([

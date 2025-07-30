@@ -4,14 +4,6 @@
     "@appTitle": {
         "description": "The title of the app"
     },
-    "recommendedWorkouts": "Recommended",
-    "@recommendedWorkouts": {
-        "description": "The title of the recommended_workouts page"
-    },
-    "noRecommendedWorkouts": "No recommended workouts available",
-    "@noRecommendedWorkouts": {
-        "description": "Message displayed when there are no recommended workouts available"
-    },
     "workouts": "Workouts",
     "@workouts": {
         "description": "The title of the workout page"
@@ -19,6 +11,18 @@
     "noWorkouts": "No workouts available",
     "@noWorkouts": {
         "description": "Message displayed when there are no workouts available"
+    },
+    "recommendedWorkouts": "Recommended",
+    "@recommendedWorkouts": {
+        "description": "The title of the tab for recommended workouts"
+    },
+    "noRecommendedWorkouts": "No recommended workouts available",
+    "@noRecommendedWorkouts": {
+        "description": "Message displayed when there are no recommended workouts available"
+    },
+    "allWorkouts": "All workouts",
+    "@allWorkouts": {
+        "description": "The title of the tab for all workouts"
     },
     "poses": "Poses",
     "@poses": {

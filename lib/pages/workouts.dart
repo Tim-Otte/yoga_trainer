@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/components/stream_list_view.dart';
 import 'package:yoga_trainer/database.dart';
+import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/add_workout.dart';
@@ -21,9 +22,7 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
   }
 
   @override
-  IconData getIcon() {
-    return Symbols.self_improvement;
-  }
+  IconData getIcon() => Symbols.self_improvement;
 
   @override
   Widget? getFAB(BuildContext context) {
@@ -48,7 +47,29 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
   }
 
   @override
+  PageType getPageType() => PageType.tabs;
+
+  @override
+  List<Tab> getTabs(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
+    return [
+      Tab(icon: Icon(Symbols.star), text: localizations.recommendedWorkouts),
+      Tab(icon: Icon(Symbols.list), text: localizations.allWorkouts),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return TabBarView(
+      children: [
+        _getList(context, Weekday.values[DateTime.now().weekday - 1]),
+        _getList(context, null),
+      ],
+    );
+  }
+
+  Widget _getList(BuildContext context, Weekday? weekday) {
     final localizations = AppLocalizations.of(context);
     final database = Provider.of<AppDatabase>(context);
     final settingsController = Provider.of<SettingsController>(context);
@@ -57,8 +78,11 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
       stream: database.streamAllWorkouts(
         workoutPrepTime: settingsController.workoutPrepTime,
         defaultPosePrepTime: settingsController.posePrepTime,
+        weekday: weekday,
       ),
-      noDataText: AppLocalizations.of(context).noWorkouts,
+      noDataText: weekday != null
+          ? localizations.noRecommendedWorkouts
+          : localizations.noWorkouts,
       itemBuilder: (context, item, _) {
         final workout = item.workout;
 
