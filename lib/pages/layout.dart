@@ -17,17 +17,26 @@ class _LayoutState extends State<Layout> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
+    final currentPage = (_pages[_currentIndex] as PageInfos);
 
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surfaceContainer,
         foregroundColor: theme.colorScheme.onSurface,
-        title: Text(
-          (_pages[_currentIndex] as PageInfos).getTitle(context),
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
+        title: currentPage.getPageType() == PageType.normal
+            ? Text(
+                currentPage.getTitle(context),
+                style: TextStyle(color: theme.colorScheme.onSurface),
+              )
+            : null,
         titleTextStyle: theme.textTheme.headlineMedium,
+        flexibleSpace: currentPage.getPageType() == PageType.tabs
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [TabBar(tabs: currentPage.getTabs(context))],
+              )
+            : null,
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: NavigationBar(
@@ -35,6 +44,7 @@ class _LayoutState extends State<Layout> {
           var page = item as PageInfos;
           return NavigationDestination(
             icon: Icon(page.getIcon()),
+            selectedIcon: Icon(page.getIcon(), fill: 1),
             label: page.getTitle(context),
           );
         }).toList(),
@@ -43,9 +53,16 @@ class _LayoutState extends State<Layout> {
           setState(() => _currentIndex = index);
         },
       ),
-      floatingActionButton: (_pages[_currentIndex] as PageInfos).getFAB(
-        context,
-      ),
+      floatingActionButton: currentPage.getFAB(context),
     );
+
+    if (currentPage.getPageType() == PageType.tabs) {
+      return DefaultTabController(
+        length: currentPage.getTabs(context).length,
+        child: scaffold,
+      );
+    } else {
+      return scaffold;
+    }
   }
 }

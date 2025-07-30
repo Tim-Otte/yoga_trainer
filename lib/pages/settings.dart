@@ -33,6 +33,12 @@ class SettingsPage extends StatelessWidget implements PageInfos {
   }
 
   @override
+  PageType getPageType() => PageType.normal;
+
+  @override
+  List<Tab> getTabs(BuildContext context) => [];
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsetsGeometry.symmetric(vertical: 25, horizontal: 10),

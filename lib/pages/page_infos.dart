@@ -1,4 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+
+enum PageType { normal, tabs }
 
 interface class PageInfos {
   /// Returns the title for the current page.
@@ -25,5 +27,22 @@ interface class PageInfos {
   /// Override or modify this method to supply a custom FAB widget if needed.
   Widget? getFAB(BuildContext context) {
     return null;
+  }
+
+  /// Returns the [PageType] for the current page.
+  ///
+  /// This method determines and provides the type of page being displayed.
+  /// The returned [PageType] can be used to customize behavior or appearance
+  /// based on the specific page context.
+  PageType getPageType() {
+    throw UnimplementedError('getPageType must be implemented');
+  }
+
+  /// Returns a list of [Tab] widgets for use in a [TabBar].
+  ///
+  /// The tabs are generated based on the provided [BuildContext], which can be
+  /// used to access theme, localization, or other context-dependent resources.
+  List<Tab> getTabs(BuildContext context) {
+    return [];
   }
 }

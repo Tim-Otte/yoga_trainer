@@ -12,6 +12,18 @@
     "@noWorkouts": {
         "description": "Message displayed when there are no workouts available"
     },
+    "recommendedWorkouts": "Recommended",
+    "@recommendedWorkouts": {
+        "description": "The title of the tab for recommended workouts"
+    },
+    "noRecommendedWorkouts": "No recommended workouts available",
+    "@noRecommendedWorkouts": {
+        "description": "Message displayed when there are no recommended workouts available"
+    },
+    "allWorkouts": "All workouts",
+    "@allWorkouts": {
+        "description": "The title of the tab for all workouts"
+    },
     "poses": "Poses",
     "@poses": {
         "description": "The title of the poses page"
@@ -151,6 +163,14 @@
     "workoutDescriptionEmpty": "No description provided",
     "@workoutDescriptionEmpty": {
         "description": "The text to show if the description is empty"
+    },
+    "workoutWeekdays": "Recommend on",
+    "@workoutWeekdays": {
+        "description": "THe label for the selection of the weekday"
+    },
+    "workoutWeekdaysEmpty": "No weekday selected",
+    "@workoutWeekdaysEmpty": {
+        "description": "The text to show if no weekdays are selected"
     },
     "workoutPoses": "Poses in this workout",
     "@workoutPoses": {

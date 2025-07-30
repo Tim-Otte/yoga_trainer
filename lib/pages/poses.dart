@@ -43,6 +43,12 @@ class PosesPage extends StatelessWidget implements PageInfos {
   }
 
   @override
+  PageType getPageType() => PageType.normal;
+
+  @override
+  List<Tab> getTabs(BuildContext context) => [];
+
+  @override
   Widget build(BuildContext context) {
     final database = Provider.of<AppDatabase>(context);
 

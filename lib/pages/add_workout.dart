@@ -19,6 +19,7 @@ class AddWorkoutPage extends StatefulWidget {
 class _AddWorkoutPageState extends State<AddWorkoutPage> {
   String _name = '';
   String _description = '';
+  List<Weekday> _weekdays = [];
   List<PoseWithBodyPartAndSide> _poses = [];
   bool _isFormValid = false;
 
@@ -40,7 +41,12 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
           IconButton(
             onPressed: _isFormValid && _poses.isNotEmpty
                 ? () async {
-                    await database.insertWorkout(_name, _description, _poses);
+                    await database.insertWorkout(
+                      _name,
+                      _description,
+                      _poses,
+                      _weekdays,
+                    );
 
                     if (context.mounted) {
                       context.showSnackBar(localizations.snackbarWorkoutAdded);
@@ -93,6 +99,12 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                       }),
                     ),
                   ],
+                ),
+                WeekdaysSelector(
+                  initialValue: _weekdays,
+                  onChanged: (value) => setState(() {
+                    _weekdays = value;
+                  }),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
