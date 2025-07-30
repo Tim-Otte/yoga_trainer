@@ -3,6 +3,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
@@ -140,6 +141,16 @@ class SettingsPage extends StatelessWidget implements PageInfos {
                     .requestPermissionToSendNotifications(
                       permissions: requiredPermissions,
                     );
+              }
+
+              var preciseAlarmPermission = await awesomeNotifications
+                  .checkPermissionList(
+                    permissions: [NotificationPermission.PreciseAlarms],
+                  );
+              if (!preciseAlarmPermission.contains(
+                NotificationPermission.PreciseAlarms,
+              )) {
+                await awesomeNotifications.showAlarmPage();
               }
 
               if (hasNotificationPermission && context.mounted) {
@@ -369,6 +380,18 @@ class SettingsPage extends StatelessWidget implements PageInfos {
           title: Text(localizations.settingsAboutLicenses),
           onTap: (context) => showLicensePage(context: context),
         ),
+        MaterialBasicSettingsTile(
+          prefix: Icon(Symbols.package_2),
+          title: Text(localizations.settingsAboutVersion),
+          value: FutureBuilder(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) => Text(
+              snapshot.hasData
+                  ? '${snapshot.requireData.version}-${snapshot.requireData.buildNumber}'
+                  : '',
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -403,6 +426,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
         channelDescription: localizations.notificationChannelDescription,
         defaultColor: theme.colorScheme.primary,
         channelShowBadge: true,
+        criticalAlerts: true,
       ),
     );
 
@@ -428,10 +452,16 @@ class SettingsPage extends StatelessWidget implements PageInfos {
         wakeUpScreen: true,
         category: NotificationCategory.Reminder,
         autoDismissible: false,
+        criticalAlert: true,
       ),
-      schedule: NotificationAndroidCrontab.daily(
-        referenceDateTime: scheduledTime,
+      schedule: NotificationAndroidCrontab(
+        timeZone: scheduledTime.isUtc
+            ? AwesomeNotifications.utcTimeZoneIdentifier
+            : AwesomeNotifications.localTimeZoneIdentifier,
+        crontabExpression: CronHelper().daily(referenceDateTime: scheduledTime),
+        repeats: false,
         allowWhileIdle: true,
+        preciseAlarm: true,
       ),
     );
 

@@ -352,6 +352,10 @@
     "@settingsAboutLicenses": {
         "description": "The title of the open source licenses button"
     },
+    "settingsAboutVersion": "Version",
+    "@settingsAboutVersion": {
+        "description": "The title of the version label"
+    },
     "notificationChannelName": "Daily Yoga Reminder",
     "@notificationChannelName": {
         "description": "The name of the notification channel for daily reminders"

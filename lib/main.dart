@@ -31,6 +31,7 @@ void main() {
           channelDescription: 'Reminds you to do yoga every day',
           defaultColor: Color(0xFF2196F3),
           channelShowBadge: true,
+          criticalAlerts: true,
         ),
       ], debug: true);
 

@@ -38,6 +38,7 @@ dependencies:
   volume_controller: any
   awesome_notifications_core: any
   awesome_notifications: any
+  package_info_plus: any
 
 dev_dependencies:
   drift_dev: any
