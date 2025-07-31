@@ -74,7 +74,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
           centerTitle: true,
           automaticallyImplyLeading: _workoutPaused,
           bottom:
-              _timeExceededTotal < _totalTimerDuration &&
+              _timeExceededTotal <= _totalTimerDuration &&
                   _timeExceededTotal > widget.settingsController.workoutPrepTime
               ? PreferredSize(
                   preferredSize: Size.fromHeight(6),
@@ -233,7 +233,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
       } else {
         return Center(child: CircularProgressIndicator());
       }
-    } else if (_timeExceededTotal < _totalTimerDuration) {
+    } else if (_timeExceededTotal <= _totalTimerDuration) {
       return Container(
         padding: EdgeInsets.all(40),
         child: Center(
@@ -316,7 +316,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
 
     if (mounted) {
       setState(() {
-        if (_timeExceededTotal < _totalTimerDuration) {
+        if (_timeExceededTotal <= _totalTimerDuration) {
           _timeExceededTotal++;
           _timeRemainingInPose--;
 
@@ -342,14 +342,28 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
         : null;
 
     if (_timeExceededTotal > widget.settingsController.workoutPrepTime &&
-        (_timeRemainingInPose <= 0 && _currentPose + 1 < widget.poses.length)) {
+        (_timeRemainingInPose <= 0 &&
+            (_currentPose + 1 < widget.poses.length ||
+                (current != null &&
+                    current.pose.isUnilateral &&
+                    current.side == Side.both &&
+                    _currentSide == Side.left)))) {
       bool announcePose = false;
+      int prepTimeToAnnounce = 0;
 
-      if (current == null ||
-          (current.side == Side.both && _currentSide == Side.right) ||
-          current.side != Side.both) {
+      if (
+      // Start of the workout
+      current == null ||
+          // Pose is not unilateral
+          !current.pose.isUnilateral ||
+          // Pose is unilateral and training one side
+          current.side != Side.both ||
+          // Pose is unilateral, training both sides and the right is finished
+          _currentSide == Side.right) {
         _currentPose++;
         current = widget.poses[_currentPose];
+        prepTimeToAnnounce =
+            current.prepTime ?? widget.settingsController.posePrepTime;
 
         announcePose = true;
       }
@@ -361,9 +375,11 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
           // Left pose has already been trained
           if (_currentSide == Side.left) {
             _timeRemainingInPose =
-                widget.settingsController.posePrepTime +
-                (current.prepTime ?? widget.settingsController.posePrepTime);
+                widget.poses[_currentPose].pose.duration +
+                widget.settingsController.posePrepTime;
             _currentSide = Side.right;
+            announcePose = true;
+            prepTimeToAnnounce = widget.settingsController.posePrepTime;
           }
           // Start with left pose
           else {
@@ -385,7 +401,7 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
       else {
         _currentSide = null;
         _timeRemainingInPose =
-            widget.poses[_currentPose].pose.duration +
+            current.pose.duration +
             (current.prepTime ?? widget.settingsController.posePrepTime);
       }
 
@@ -405,13 +421,11 @@ class _PlayWorkoutPageState extends State<PlayWorkoutPage> {
                     ? localizations.ttsPoseWithSideAnnouncement(
                         current.pose.name,
                         _currentSide?.getTranslation(context) ?? '',
-                        (current.prepTime ??
-                            widget.settingsController.posePrepTime),
+                        prepTimeToAnnounce,
                       )
                     : localizations.ttsPoseAnnouncement(
                         current.pose.name,
-                        (current.prepTime ??
-                            widget.settingsController.posePrepTime),
+                        prepTimeToAnnounce,
                       ),
               )
               .then((_) {

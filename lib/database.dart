@@ -57,18 +57,26 @@ class AppDatabase extends _$AppDatabase {
             // Pose prep time
             coalesce([workoutPoses.prepTime, Variable(defaultPosePrepTime)]) +
                 // Prep time if both sides are trained
-                workoutPoses.side.caseMatch<int>(
-                  when: {
-                    Constant(Side.both.index): Variable(defaultPosePrepTime),
-                  },
-                  orElse: Constant(0),
-                ) +
+                workoutPoses.side
+                    .caseMatch<int>(
+                      when: {
+                        Constant(Side.both.index): Variable(
+                          defaultPosePrepTime,
+                        ),
+                      },
+                      orElse: Constant(0),
+                    )
+                    // Only if side is unilateral
+                    .iif(poses.isUnilateral, Constant(0)) +
                 // Duration of the poses, multiplied by 2 if both sides are trained
                 (poses.duration *
-                    workoutPoses.side.caseMatch<int>(
-                      when: {Constant(Side.both.index): Constant(2)},
-                      orElse: Constant(1),
-                    )))
+                    workoutPoses.side
+                        .caseMatch<int>(
+                          when: {Constant(Side.both.index): Constant(2)},
+                          orElse: Constant(1),
+                        )
+                        // Only if side is unilateral
+                        .iif(poses.isUnilateral, Constant(1))))
             .sum();
   }
 
@@ -420,6 +428,17 @@ class AppDatabase extends _$AppDatabase {
   /// Returns a [Future] that completes when the update operation is finished.
   Future updatePose(PosesCompanion pose) async {
     await (update(poses)..where((p) => p.id.equals(pose.id.value))).write(pose);
+
+    if (pose.isUnilateral.value) {
+      await (update(workoutPoses)
+            ..where((wp) => wp.pose.equals(pose.id.value) & wp.side.isNull()))
+          .write(WorkoutPosesCompanion(side: Value(Side.both)));
+    } else {
+      await (update(workoutPoses)..where(
+            (wp) => wp.pose.equals(pose.id.value) & wp.side.isNull().not(),
+          ))
+          .write(WorkoutPosesCompanion(side: Value(null)));
+    }
   }
 
   /// Deletes a pose from the database by its [id].

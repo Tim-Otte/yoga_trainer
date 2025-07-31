@@ -61,7 +61,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     super.initState();
 
     _workoutInfos = widget.workoutInfos;
-    _workout = widget.workoutInfos.workout.toCompanion(true);
+    _workout = widget.workoutInfos.workout.toCompanion(false);
 
     if (widget.poseToAdd != null) {
       _isInEditMode = true;
@@ -111,7 +111,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
 
           setState(() {
             _isInEditMode = false;
-            _workout = _workoutInfos.workout.toCompanion(true);
+            _workout = _workoutInfos.workout.toCompanion(false);
             _poses = poses;
             _weekdays = weekdays;
           });
