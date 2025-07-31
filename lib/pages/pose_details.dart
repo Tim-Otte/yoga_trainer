@@ -37,7 +37,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
   void initState() {
     super.initState();
 
-    _pose = widget.pose.toCompanion(true);
+    _pose = widget.pose.toCompanion(false);
     _bodyPart = widget.bodyPart;
   }
 
@@ -55,7 +55,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
           var data = await database.getPose(_pose.id.value);
           setState(() {
             _isInEditMode = false;
-            _pose = data.pose.toCompanion(true);
+            _pose = data.pose.toCompanion(false);
             _bodyPart = data.bodyPart;
           });
         }
