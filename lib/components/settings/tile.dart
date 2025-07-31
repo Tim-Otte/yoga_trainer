@@ -37,10 +37,13 @@ class MaterialSettingsTile<T> extends StatelessWidget {
     );
 
     return IgnorePointer(
-      ignoring: !enabled || (onTap == null && onToggle == null),
+      ignoring: !enabled,
       child: Material(
         child: InkWell(
-          onTap: enabled && tileType != SettingsTileType.numberTile
+          onTap:
+              enabled &&
+                  (onTap != null || onToggle != null) &&
+                  tileType != SettingsTileType.numberTile
               ? () {
                   if (onToggle != null && T is bool) {
                     onToggle!.call(!(initialValue as bool? ?? false));
