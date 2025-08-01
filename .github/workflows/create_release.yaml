@@ -35,7 +35,7 @@ jobs:
 
       - name: Write configs for release
         run: |
-          echo $KEY_STORE | base64 --decode > upload-keystore.jks
+          echo $KEY_STORE | base64 --decode > ./android/upload-keystore.jks
           echo "storePassword=$STORE_SECRET" > ./android/key.properties
           echo "keyPassword=$STORE_SECRET" >> ./android/key.properties
           echo "keyAlias=upload" >> ./android/key.properties
