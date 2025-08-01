@@ -35,9 +35,9 @@ jobs:
 
       - name: Write configs for release
         run: |
-          echo $KEY_STORE | base64 --decode > $GITHUB_WORKSPACE/upload-keystore.jks
-          echo "storePassword=$STORE_SECRET" > $GITHUB_WORKSPACE/android/key.properties
-          echo "keyPassword=$STORE_SECRET" >> $GITHUB_WORKSPACE/android/key.properties
+          echo "${{ secrets.KEY_STORE }}" | base64 --decode > $GITHUB_WORKSPACE/upload-keystore.jks
+          echo "storePassword=${{ secrets.STORE_SECRET }}" > $GITHUB_WORKSPACE/android/key.properties
+          echo "keyPassword=${{ secrets.STORE_SECRET }}" >> $GITHUB_WORKSPACE/android/key.properties
           echo "keyAlias=upload" >> $GITHUB_WORKSPACE/android/key.properties
           echo "storeFile=$GITHUB_WORKSPACE/upload-keystore.jks" >> $GITHUB_WORKSPACE/android/key.properties
 
