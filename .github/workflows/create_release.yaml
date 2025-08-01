@@ -33,6 +33,14 @@ jobs:
       - name: Generate drift database file
         run: dart run build_runner build
 
+      - name: Write configs for release
+        run: |
+          echo $KEY_STORE | base64 --decode > upload-keystore.jks
+          echo "storePassword=$STORE_SECRET" > ./android/key.properties
+          echo "keyPassword=$STORE_SECRET" >> ./android/key.properties
+          echo "keyAlias=upload" >> ./android/key.properties
+          echo "storeFile=../upload-keystore.jks" >> ./android/key.properties
+
       - name: Build Android APK
         run: flutter build apk --build-name=${{ env.VERSION }}
       
