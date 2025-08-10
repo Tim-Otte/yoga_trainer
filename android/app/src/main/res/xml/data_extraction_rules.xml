@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+  <cloud-backup>
+    <!-- For shared preferences -->
+    <include domain="file" path="datastore/." />
+    <!-- For database file -->
+    <include domain="file" path="files/." />
+  </cloud-backup>
+  <device-transfer>
+    <!-- For shared preferences -->
+    <include domain="file" path="datastore/." />
+    <!-- For database file -->
+    <include domain="file" path="files/." />
+  </device-transfer>
+</data-extraction-rules>
