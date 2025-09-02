@@ -93,6 +93,7 @@ class _DurationSelectorState extends State<DurationSelector> {
                       ),
                     ],
                   ),
+                  Icon(Symbols.chevron_forward),
                 ],
               ),
             ),

@@ -1,3 +1,5 @@
+import 'dart:math' show min, max;
+
 import 'package:flutter/material.dart';
 import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
@@ -32,7 +34,10 @@ class _DurationDialogState extends State<DurationDialog> {
   void initState() {
     super.initState();
 
-    _value = widget.initialValue;
+    _value = min(
+      max(widget.initialValue, widget.min.inSeconds),
+      widget.max.inSeconds,
+    );
   }
 
   @override
