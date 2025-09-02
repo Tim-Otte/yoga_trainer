@@ -89,7 +89,7 @@ class _AddPosePageState extends State<AddPosePage> {
                   _description = value;
                 }),
               ),
-              DurationInput(
+              DurationSelector(
                 initialValue: _duration,
                 onChanged: (value) => setState(() {
                   _duration = value;

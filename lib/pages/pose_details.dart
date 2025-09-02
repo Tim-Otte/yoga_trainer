@@ -254,7 +254,7 @@ class _PoseDetailsPageState extends State<PoseDetailsPage> {
                 _pose = _pose.copyWith(description: Value(value));
               }),
             ),
-            DurationInput(
+            DurationSelector(
               initialValue: _pose.duration.value,
               onChanged: (value) => setState(() {
                 _pose = _pose.copyWith(duration: Value(value));
