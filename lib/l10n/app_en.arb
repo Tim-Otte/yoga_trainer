@@ -60,13 +60,13 @@
     "@poseDuration": {
         "description": "The label of the input for the duration of a pose"
     },
-    "poseDurationSuffix": "seconds",
-    "@poseDurationSuffix": {
-        "description": "The suffix of the input for the duration of a pose"
+    "poseDurationTitle": "Select pose duration",
+    "@poseDurationTitle": {
+        "description": "The title of the number_dialog for selecting the pose duration"
     },
-    "poseDurationInvalid": "The value must be a number between 10 and 60",
-    "@poseDurationInvalid": {
-        "description": "The error to display if the input is invalid"
+    "poseDurationContent": "You can choose a duration between 15 seconds and 5 minutes:",
+    "@poseDurationContent": {
+        "description": "The content of the number_dialog for selecting the pose duration"
     },
     "poseDifficulty": "Difficulty",
     "@poseDifficulty": {

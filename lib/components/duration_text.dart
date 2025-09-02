@@ -3,10 +3,18 @@ import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 
 class DurationText extends StatelessWidget {
-  const DurationText(this.duration, {super.key, this.prefixText});
+  const DurationText(
+    this.duration, {
+    super.key,
+    this.prefixText,
+    this.style,
+    this.textAlign,
+  });
 
   final Duration duration;
   final String? prefixText;
+  final TextStyle? style;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +27,8 @@ class DurationText extends StatelessWidget {
               Localizations.localeOf(context).languageCode,
             )!,
           ),
+      style: style,
+      textAlign: textAlign,
     );
   }
 }

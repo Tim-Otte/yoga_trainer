@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/details_list.dart';
-import 'package:yoga_trainer/components/dialogs/number_dialog.dart';
+import 'package:yoga_trainer/components/dialogs/duration_dialog.dart';
 import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/entities/all.dart';
 import 'package:yoga_trainer/extensions/menu_controller.dart';
@@ -142,14 +142,13 @@ class _PoseListState extends State<PoseList> {
                   onPressed: () async {
                     var result = await showDialog(
                       context: context,
-                      builder: (_) => NumberDialog(
+                      builder: (_) => DurationDialog(
                         title: localizations.editPosePrepTimeTitle,
                         description: localizations.editPosePrepTimeContent,
                         initialValue:
                             item.prepTime ?? settingsController.posePrepTime,
-                        min: 3,
-                        max: 60,
-                        unit: 's',
+                        min: Duration(seconds: 3),
+                        max: Duration(seconds: 60),
                       ),
                     );
 

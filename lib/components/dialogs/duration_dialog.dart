@@ -1,39 +1,43 @@
+import 'dart:math' show min, max;
+
 import 'package:flutter/material.dart';
+import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 
-class NumberDialog extends StatefulWidget {
-  const NumberDialog({
+class DurationDialog extends StatefulWidget {
+  const DurationDialog({
     super.key,
     required this.title,
     required this.description,
     required this.initialValue,
     required this.min,
     required this.max,
-    this.unit,
     this.stepSize,
   });
 
   final String title;
   final String description;
   final int initialValue;
-  final int min;
-  final int max;
-  final String? unit;
-  final int? stepSize;
+  final Duration min;
+  final Duration max;
+  final Duration? stepSize;
 
   @override
-  State<StatefulWidget> createState() => _NumberDialogState();
+  State<StatefulWidget> createState() => _DurationDialogState();
 }
 
-class _NumberDialogState extends State<NumberDialog> {
+class _DurationDialogState extends State<DurationDialog> {
   late int _value;
 
   @override
   void initState() {
     super.initState();
 
-    _value = widget.initialValue;
+    _value = min(
+      max(widget.initialValue, widget.min.inSeconds),
+      widget.max.inSeconds,
+    );
   }
 
   @override
@@ -48,8 +52,8 @@ class _NumberDialogState extends State<NumberDialog> {
           SizedBox(height: 5),
           Text(widget.description, textAlign: TextAlign.center),
           SizedBox(height: 20),
-          Text(
-            '$_value${widget.unit ?? ''}',
+          DurationText(
+            Duration(seconds: _value),
             style: Theme.of(
               context,
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -58,11 +62,13 @@ class _NumberDialogState extends State<NumberDialog> {
           SizedBox(height: 10),
           Slider(
             value: _value.toDouble(),
-            min: widget.min.toDouble(),
-            max: widget.max.toDouble(),
+            min: widget.min.inSeconds.toDouble(),
+            max: widget.max.inSeconds.toDouble(),
             divisions: widget.stepSize == null
                 ? null
-                : ((widget.max - widget.min) / widget.stepSize!).toInt(),
+                : ((widget.max.inSeconds - widget.min.inSeconds) /
+                          (widget.stepSize!.inSeconds))
+                      .round(),
             onChanged: (value) => setState(() {
               _value = value.toInt();
             }),
