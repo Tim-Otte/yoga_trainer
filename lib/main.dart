@@ -33,7 +33,7 @@ void main() {
           channelShowBadge: true,
           criticalAlerts: true,
         ),
-      ], debug: true);
+      ], debug: kDebugMode);
 
   AwesomeNotifications().setListeners(
     onActionReceivedMethod: NotificationsController.onActionReceivedMethod,
