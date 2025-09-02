@@ -430,16 +430,6 @@ class SettingsPage extends StatelessWidget implements PageInfos {
       ),
     );
 
-    // Calculate the datetime for the notification
-    final now = DateTime.now();
-    final scheduledTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      settingsController.notificationTime.hour,
-      settingsController.notificationTime.minute,
-    );
-
     // Remove any pending notifications with the same ID
     await awesomeNotifications.cancel(Constants.dailyReminderNotificationId);
 
@@ -454,14 +444,13 @@ class SettingsPage extends StatelessWidget implements PageInfos {
         autoDismissible: false,
         criticalAlert: true,
       ),
-      schedule: NotificationAndroidCrontab(
-        timeZone: scheduledTime.isUtc
-            ? AwesomeNotifications.utcTimeZoneIdentifier
-            : AwesomeNotifications.localTimeZoneIdentifier,
-        crontabExpression: CronHelper().daily(referenceDateTime: scheduledTime),
-        repeats: false,
-        allowWhileIdle: true,
+      schedule: NotificationCalendar(
+        hour: settingsController.notificationTime.hour,
+        minute: settingsController.notificationTime.minute,
+        second: 0,
+        repeats: true,
         preciseAlarm: true,
+        allowWhileIdle: true,
       ),
     );
 
