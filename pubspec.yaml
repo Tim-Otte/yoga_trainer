@@ -39,6 +39,10 @@ dependencies:
   awesome_notifications_core: any
   awesome_notifications: any
   package_info_plus: any
+  json_serializable: any
+  json_annotation: any
+  file_picker: any
+  share_plus: any
 
 dev_dependencies:
   drift_dev: any

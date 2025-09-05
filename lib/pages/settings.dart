@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
@@ -5,14 +8,19 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
 import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/components/settings/all.dart';
 import 'package:yoga_trainer/constants.dart';
+import 'package:yoga_trainer/database.dart';
+import 'package:yoga_trainer/entities/workout_with_poses.dart';
 import 'package:yoga_trainer/extensions/build_context.dart';
 import 'package:yoga_trainer/l10n/generated/app_localizations.dart';
 import 'package:yoga_trainer/pages/page_infos.dart';
+import 'package:yoga_trainer/pages/select_workouts_to_export.dart';
+import 'package:yoga_trainer/pages/select_workouts_to_import.dart';
 import 'package:yoga_trainer/services/settings_controller.dart';
 
 class SettingsPage extends StatelessWidget implements PageInfos {
@@ -99,6 +107,26 @@ class SettingsPage extends StatelessWidget implements PageInfos {
             );
             settingsController.updateLocale(result);
           },
+        ),
+        MaterialBasicSettingsTile(
+          prefix: Icon(Symbols.database),
+          title: Text(localizations.settingsImportExport),
+          disableSuffixPadding: true,
+          suffix: Wrap(
+            spacing: 10,
+            children: [
+              IconButton.filledTonal(
+                onPressed: () => _importWorkouts(context),
+                icon: Icon(Symbols.input_circle),
+                tooltip: localizations.settingsImport,
+              ),
+              IconButton.filledTonal(
+                onPressed: () => _exportWorkouts(context, settingsController),
+                icon: Icon(Symbols.output_circle),
+                tooltip: localizations.settingsExport,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -394,6 +422,119 @@ class SettingsPage extends StatelessWidget implements PageInfos {
         ),
       ],
     );
+  }
+
+  Future _importWorkouts(BuildContext context) async {
+    final localizations = AppLocalizations.of(context);
+    final database = Provider.of<AppDatabase>(context, listen: false);
+
+    final inputFile = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+      withData: true,
+    );
+
+    if (inputFile == null) {
+      if (context.mounted) {
+        context.showSnackBar(localizations.snackbarWorkoutImportNoFileSelected);
+      }
+      return;
+    }
+
+    try {
+      final jsonData = await inputFile.xFiles[0].readAsBytes();
+      final List<dynamic> json = jsonDecode(utf8.decode(jsonData));
+      final workouts = json.map((x) => WorkoutWithPoses.fromJson(x)).toList();
+
+      if (!context.mounted) return;
+
+      final workoutsToImport = await context.navigateTo<List<WorkoutWithPoses>>(
+        (_) => Provider.value(
+          value: database,
+          child: SelectWorkoutsToImportPage(workouts: workouts),
+        ),
+      );
+
+      if ((workoutsToImport ?? []).isEmpty) return;
+
+      await database.importWorkouts(workoutsToImport!);
+
+      if (context.mounted) {
+        context.showSnackBar(
+          localizations.snackbarWorkoutsImportedSuccessfully,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        context.showSnackBar(localizations.snackbarWorkoutsImportFailed);
+      }
+    }
+  }
+
+  Future _exportWorkouts(
+    BuildContext context,
+    SettingsController settingsController,
+  ) async {
+    final localizations = AppLocalizations.of(context);
+    final database = Provider.of<AppDatabase>(context, listen: false);
+
+    final workoutIds = await context.navigateTo<List<int>>(
+      (_) => MultiProvider(
+        providers: [
+          Provider.value(value: database),
+          ChangeNotifierProvider.value(value: settingsController),
+        ],
+        child: SelectWorkoutsToExportPage(),
+      ),
+    );
+
+    if (workoutIds?.isEmpty ?? true) {
+      if (context.mounted) {
+        context.showSnackBar('Nothing selected to export');
+      }
+      return;
+    }
+
+    final workoutData = await database.getWorkoutsForExport(workoutIds!);
+    final jsonData = utf8.encode(jsonEncode(workoutData));
+
+    final outputFile = await FilePicker.platform.saveFile(
+      fileName: 'workouts.json',
+      bytes: jsonData,
+    );
+
+    final shareParams = ShareParams(
+      text: localizations.snackbarWorkoutsExportShareText(
+        workoutData.map((x) => '- ${x.name}').join('\n'),
+      ),
+      files: [XFile.fromData(jsonData, mimeType: 'application/json')],
+      fileNameOverrides: ['workouts.json'],
+    );
+
+    if (context.mounted) {
+      context.showSnackBar(
+        outputFile != null
+            ? localizations.snackbarWorkoutsExportedSuccessfully
+            : localizations.snackbarWorkoutsExportFailed,
+        action: outputFile != null
+            ? SnackBarAction(
+                label: localizations.snackbarWorkoutsExportShareAction,
+                onPressed: () async {
+                  try {
+                    await SharePlus.instance.share(shareParams);
+                  } catch (e) {
+                    if (context.mounted) {
+                      context.showSnackBar(
+                        localizations.snackbarWorkoutsExportShareFailed,
+                      );
+                    }
+                  }
+                },
+              )
+            : null,
+      );
+    }
   }
 
   Future _scheduleNotification(BuildContext context) async {

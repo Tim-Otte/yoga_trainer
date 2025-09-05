@@ -39,21 +39,23 @@ class _RadioDialogState<T> extends State<RadioDialog<T>> {
     return AlertDialog(
       title: Text(widget.title),
       content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: widget.values
-              .map(
-                (item) => RadioListTile<T>(
-                  value: item,
-                  groupValue: selectedValue,
-                  title: Text(widget.getTitle(item)),
-                  subtitle: widget.getSubtitle != null
-                      ? Text(widget.getSubtitle!(item))
-                      : null,
-                  onChanged: (v) => setState(() => selectedValue = v),
-                ),
-              )
-              .toList(),
+        child: RadioGroup<T>(
+          groupValue: selectedValue,
+          onChanged: (v) => setState(() => selectedValue = v),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widget.values
+                .map(
+                  (item) => RadioListTile<T>(
+                    value: item,
+                    title: Text(widget.getTitle(item)),
+                    subtitle: widget.getSubtitle != null
+                        ? Text(widget.getSubtitle!(item))
+                        : null,
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ),
       actions: [

@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yoga_trainer/entities/all.dart';
+import 'package:yoga_trainer/entities/workout_with_poses.dart' as export_models;
 import 'package:yoga_trainer/extensions/iterable.dart';
 
 part 'database.g.dart';
@@ -186,6 +187,121 @@ class AppDatabase extends _$AppDatabase {
           ),
         )
         .getSingle();
+  }
+
+  /// Retrieves workout data for export based on the provided list of workout IDs.
+  ///
+  /// Returns a `Future` that completes with the exported workout data.
+  ///
+  /// [workoutIds] is a list of integer IDs representing the workouts to be exported.
+  Future<List<export_models.WorkoutWithPoses>> getWorkoutsForExport(
+    List<int> workoutIds,
+  ) async {
+    List<export_models.WorkoutWithPoses> result = [];
+    var w = await select(workouts).get();
+    for (var workout in w) {
+      var rows = await ((select(workoutPoses).join([
+        innerJoin(poses, poses.id.equalsExp(workoutPoses.pose)),
+        innerJoin(bodyParts, bodyParts.id.equalsExp(poses.affectedBodyPart)),
+      ]))..where(workoutPoses.workout.equals(workout.id))).get();
+
+      result.add(
+        export_models.WorkoutWithPoses(
+          name: workout.name,
+          description: workout.description,
+          poses: rows.map((row) {
+            var wp = row.readTable(workoutPoses);
+            var p = row.readTable(poses);
+            var bp = row.readTable(bodyParts);
+
+            return export_models.PoseInfos(
+              pose: export_models.PoseData.fromPose(p, bp),
+              order: wp.order,
+              prepTime: wp.prepTime,
+              side: wp.side,
+            );
+          }).toList(),
+        ),
+      );
+    }
+
+    return result;
+  }
+
+  /// Imports workout data into the database.
+  ///
+  /// Returns a [Future] that completes when the import operation is finished.
+  Future importWorkouts(
+    List<export_models.WorkoutWithPoses> workoutsToImport,
+  ) async {
+    final bodyPartsToInsert = workoutsToImport
+        .map((x) => x.poses.map((y) => y.pose.affectedBodyPart))
+        .fold(<String>[], (prev, el) => [...prev, ...el])
+        .toSet();
+    final Map<String, int> bodyPartMap = {};
+
+    for (var bodyPart in bodyPartsToInsert) {
+      final exists = await (select(
+        bodyParts,
+      )..where((bp) => bp.name.equals(bodyPart))).getSingleOrNull();
+
+      if (exists != null) {
+        bodyPartMap[bodyPart] = exists.id;
+      } else {
+        final newId = await into(
+          bodyParts,
+        ).insert(BodyPartsCompanion.insert(name: bodyPart));
+        bodyPartMap[bodyPart] = newId;
+      }
+    }
+
+    for (var workout in workoutsToImport) {
+      final workoutId = await into(workouts).insert(
+        WorkoutsCompanion.insert(
+          name: workout.name,
+          description: workout.description,
+        ),
+      );
+
+      for (var pose in workout.poses) {
+        final exists =
+            await (select(poses)..where(
+                  (p) =>
+                      p.name.equals(pose.pose.name) &
+                      p.affectedBodyPart.equals(
+                        bodyPartMap[pose.pose.affectedBodyPart]!,
+                      ),
+                ))
+                .getSingleOrNull();
+
+        int poseId;
+
+        if (exists != null) {
+          poseId = exists.id;
+        } else {
+          poseId = await into(poses).insert(
+            PosesCompanion.insert(
+              name: pose.pose.name,
+              description: pose.pose.description,
+              duration: pose.pose.duration,
+              difficulty: pose.pose.difficulty,
+              affectedBodyPart: bodyPartMap[pose.pose.affectedBodyPart]!,
+              isUnilateral: pose.pose.isUnilateral,
+            ),
+          );
+        }
+
+        await into(workoutPoses).insert(
+          WorkoutPosesCompanion.insert(
+            workout: workoutId,
+            pose: poseId,
+            order: pose.order,
+            side: Value(pose.side),
+            prepTime: Value(pose.prepTime),
+          ),
+        );
+      }
+    }
   }
 
   /// Checks if a workout with the specified [name] exists in the database.

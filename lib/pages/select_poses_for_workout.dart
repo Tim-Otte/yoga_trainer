@@ -104,7 +104,7 @@ class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
             final pose = item.pose;
             final bodyPart = item.bodyPart;
 
-            return ListTile(
+            return CheckboxListTile(
               title: Text(pose.name),
               subtitle: DetailsList(
                 children: [
@@ -128,23 +128,14 @@ class _SelectPosesForWorkoutPageState extends State<SelectPosesForWorkoutPage> {
                   ),
                 ],
               ),
-              leading: Checkbox(
-                value: _selected.contains(item),
-                onChanged: (checked) {
-                  if ((checked ?? false)) {
-                    if (!_selected.contains(item)) {
-                      setState(() => _selected.add(item));
-                    }
-                  } else {
-                    setState(() => _selected.remove(item));
+              value: _selected.contains(item),
+              onChanged: (checked) {
+                if ((checked ?? false)) {
+                  if (!_selected.contains(item)) {
+                    setState(() => _selected.add(item));
                   }
-                },
-              ),
-              onTap: () {
-                if (_selected.contains(item)) {
-                  setState(() => _selected.remove(item));
                 } else {
-                  setState(() => _selected.add(item));
+                  setState(() => _selected.remove(item));
                 }
               },
             );
