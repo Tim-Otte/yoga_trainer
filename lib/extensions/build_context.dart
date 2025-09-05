@@ -53,9 +53,18 @@ extension BuildContextExtensions on BuildContext {
   /// ```dart
   /// context.showSnackBar('Operation successful');
   /// ```
-  void showSnackBar(String message) {
+  ///
+  /// or with an action:
+  /// ```dart
+  /// context.showSnackBar('Operation successful', action: SnackBarAction(label: 'Click me', onPressed: () {}));
+  /// ```
+  void showSnackBar(String message, {SnackBarAction? action}) {
     ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 3),
+        action: action,
+      ),
     );
   }
 }

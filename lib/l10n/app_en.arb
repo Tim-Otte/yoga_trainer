@@ -232,6 +232,18 @@
     "@workoutPrepTime": {
         "description": "The text to show when the workout prep time is active"
     },
+    "selectWorkoutsToImport": "Select workouts for import",
+    "@selectWorkoutsToImport": {
+        "description": "The title of the select_workouts_to_import page"
+    },
+    "workoutExistsAlready": "This workout exists already",
+    "@workoutExistsAlready": {
+        "description": "The text to show when a workout already exists"
+    },
+    "selectWorkoutsToExport": "Select workouts for export",
+    "@selectWorkoutsToExport": {
+        "description": "The title of the select_workouts_to_export page"
+    },
     "ttsPoseAnnouncement": "{poseName} in {prepTime}",
     "@ttsPoseAnnouncement": {
         "description": "The text that will be announced when a new pose is displayed",
@@ -278,6 +290,18 @@
     "settingsLanguage": "Language",
     "@settingsLanguage": {
         "description": "The title of the language setting"
+    },
+    "settingsImportExport": "Import / Export",
+    "@settingsImportExport": {
+        "description": "The title of the import / export setting"
+    },
+    "settingsImport": "Import",
+    "@settingsImport": {
+        "description": "The tooltip of the import setting"
+    },
+    "settingsExport": "Export",
+    "@settingsExport": {
+        "description": "The tooltip of the export setting"
     },
     "settingsNotificationSection": "Notification",
     "@settingsNotificationSection": {
@@ -411,6 +435,43 @@
     "snackbarNotificationDisabled": "Notifications successfully disabled",
     "@snackbarNotificationDisabled": {
         "description": "The text to show when notifications are successfully disabled"
+    },
+    "snackbarWorkoutImportNoFileSelected": "No file for import selected",
+    "@snackbarWorkoutImportNoFileSelected": {
+        "description": "The text to show when no file was selected for importing workouts"
+    },
+    "snackbarWorkoutsImportedSuccessfully": "Workouts successfully imported",
+    "@snackbarWorkoutsImportedSuccessfully": {
+        "description": "The text to show when the workouts were imported successfully"
+    },
+    "snackbarWorkoutsImportFailed": "Workout import failed",
+    "@snackbarWorkoutsImportFailed": {
+        "description": "The text to show when the workouts could not be imported"
+    },
+    "snackbarWorkoutsExportedSuccessfully": "Workouts successfully exported",
+    "@snackbarWorkoutsExportedSuccessfully": {
+        "description": "The text to show when the workouts were exported successfully"
+    },
+    "snackbarWorkoutsExportFailed": "Workout export failed",
+    "@snackbarWorkoutsExportFailed": {
+        "description": "The text to show when the workouts could not be exported"
+    },
+    "snackbarWorkoutsExportShareAction": "Share",
+    "@snackbarWorkoutsExportShareAction": {
+        "description": "The text to show for the share action"
+    },
+    "snackbarWorkoutsExportShareText": "Hey, I want to share these workouts with you:\n\n{workouts}",
+    "@snackbarWorkoutsExportShareText": {
+        "description": "The text to send when sharing workouts",
+        "placeholders": {
+            "workouts": {
+                "type": "String"
+            }
+        }
+    },
+    "snackbarWorkoutsExportShareFailed": "Could not share workouts",
+    "@snackbarWorkoutsExportShareFailed": {
+        "description": "The text to show when the workouts could not be shared"
     },
     "deleteDialogTitle": "Confirm deletion",
     "@deleteDialogTitle": {
