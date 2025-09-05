@@ -47,7 +47,16 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
   }
 
   @override
-  PageType getPageType() => PageType.tabs;
+  PageType getPageType(BuildContext context) {
+    final settingsController = Provider.of<SettingsController>(
+      context,
+      listen: false,
+    );
+
+    return settingsController.weekdayRecommendations
+        ? PageType.tabs
+        : PageType.normal;
+  }
 
   @override
   List<Tab> getTabs(BuildContext context) {
@@ -79,12 +88,21 @@ class WorkoutsPage extends StatelessWidget implements PageInfos {
 
   @override
   Widget build(BuildContext context) {
-    return TabBarView(
-      children: [
-        _getList(context, Weekday.values[DateTime.now().weekday - 1]),
-        _getList(context, null),
-      ],
+    final settingsController = Provider.of<SettingsController>(
+      context,
+      listen: false,
     );
+
+    if (settingsController.weekdayRecommendations) {
+      return TabBarView(
+        children: [
+          _getList(context, Weekday.values[DateTime.now().weekday - 1]),
+          _getList(context, null),
+        ],
+      );
+    } else {
+      return _getList(context, null);
+    }
   }
 
   Widget _getList(BuildContext context, Weekday? weekday) {

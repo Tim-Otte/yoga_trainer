@@ -31,6 +31,18 @@ class SettingsService {
     return asyncPrefs.setString('locale', value);
   }
 
+  /// Loads the user's preferred weekday recommandations.
+  Future<bool> getWeekdayRecommendations() {
+    return asyncPrefs
+        .getBool('weekdayRecommendations')
+        .then((value) => value ?? false);
+  }
+
+  /// Saves the user's preferred weekday recommandations.
+  Future updateWeekdayRecommendations(bool value) {
+    return asyncPrefs.setBool('weekdayRecommendations', value);
+  }
+
   /// Loads the user's preferred notification state.
   Future<bool> getNotificationState() {
     return asyncPrefs

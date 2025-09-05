@@ -43,7 +43,7 @@ class PosesPage extends StatelessWidget implements PageInfos {
   }
 
   @override
-  PageType getPageType() => PageType.normal;
+  PageType getPageType(BuildContext context) => PageType.normal;
 
   @override
   List<Tab> getTabs(BuildContext context) => [];

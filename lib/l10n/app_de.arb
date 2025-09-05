@@ -68,6 +68,8 @@
     "settingsGeneralSection": "Allgemein",
     "settingsTheme": "Design",
     "settingsLanguage": "Sprache",
+    "settingsWorkoutRecommendations": "Workout-Vorschläge",
+    "settingsWorkoutRecommendationsSubtitle": "Vorschläge anhand des Wochentags",
     "settingsImportExport": "Import / Export",
     "settingsImport": "Import",
     "settingsExport": "Export",

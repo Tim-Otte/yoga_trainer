@@ -42,7 +42,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
   }
 
   @override
-  PageType getPageType() => PageType.normal;
+  PageType getPageType(BuildContext context) => PageType.normal;
 
   @override
   List<Tab> getTabs(BuildContext context) => [];
@@ -107,6 +107,17 @@ class SettingsPage extends StatelessWidget implements PageInfos {
             );
             settingsController.updateLocale(result);
           },
+        ),
+        MaterialSwitchSettingsTile(
+          prefix: Icon(Symbols.date_range),
+          title: Text(localizations.settingsWorkoutRecommendations),
+          description: Text(
+            localizations.settingsWorkoutRecommendationsSubtitle,
+            style: TextStyle(overflow: TextOverflow.ellipsis),
+          ),
+          onToggle: (value) =>
+              settingsController.updateWeekdayRecommendations(value),
+          value: settingsController.weekdayRecommendations,
         ),
         MaterialBasicSettingsTile(
           prefix: Icon(Symbols.database),

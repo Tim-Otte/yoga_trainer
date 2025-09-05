@@ -29,7 +29,7 @@ class _LayoutState extends State<Layout> {
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         titleTextStyle: theme.textTheme.headlineMedium,
-        bottom: currentPage.getPageType() == PageType.tabs
+        bottom: currentPage.getPageType(context) == PageType.tabs
             ? TabBar(tabs: currentPage.getTabs(context))
             : null,
       ),
@@ -51,7 +51,7 @@ class _LayoutState extends State<Layout> {
       floatingActionButton: currentPage.getFAB(context),
     );
 
-    if (currentPage.getPageType() == PageType.tabs) {
+    if (currentPage.getPageType(context) == PageType.tabs) {
       return DefaultTabController(
         length: currentPage.getTabs(context).length,
         child: scaffold,

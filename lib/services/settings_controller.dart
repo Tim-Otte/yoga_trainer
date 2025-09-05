@@ -15,6 +15,7 @@ class SettingsController with ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.system;
   String? _locale;
+  bool _weekdayRecommendations = true;
   bool _notificationState = false;
   TimeOfDay _notificationTime = const TimeOfDay(hour: 18, minute: 0);
   int _workoutPrepTime = 3;
@@ -28,6 +29,7 @@ class SettingsController with ChangeNotifier {
   Locale? get locale =>
       _locale != null ? Locale.fromSubtags(languageCode: _locale!) : null;
 
+  bool get weekdayRecommendations => _weekdayRecommendations;
   bool get notificationState => _notificationState;
   TimeOfDay get notificationTime => _notificationTime;
   int get workoutPrepTime => _workoutPrepTime;
@@ -41,6 +43,8 @@ class SettingsController with ChangeNotifier {
   Future loadSettings() async {
     _themeMode = await _settingsService.getThemeMode();
     _locale = await _settingsService.getLocale();
+    _weekdayRecommendations = await _settingsService
+        .getWeekdayRecommendations();
     _notificationState = await _settingsService.getNotificationState();
     _notificationTime = await _settingsService.getNotificationTime();
     _posePrepTime = await _settingsService.getPosePrepTime();
@@ -78,6 +82,15 @@ class SettingsController with ChangeNotifier {
     _locale = value;
     notifyListeners();
     await _settingsService.updateLocale(value);
+  }
+
+  /// Update and persist the weekday recommendations
+  Future<void> updateWeekdayRecommendations(bool value) async {
+    if (value == _weekdayRecommendations) return;
+
+    _weekdayRecommendations = value;
+    notifyListeners();
+    await _settingsService.updateWeekdayRecommendations(value);
   }
 
   /// Update and persist the notification state
