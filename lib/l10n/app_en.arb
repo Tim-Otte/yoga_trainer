@@ -291,6 +291,14 @@
     "@settingsLanguage": {
         "description": "The title of the language setting"
     },
+    "settingsWorkoutRecommendations": "Workout recommendations",
+    "@settingsWorkoutRecommendations": {
+        "description": "The title of the workout recommendation setting"
+    },
+    "settingsWorkoutRecommendationsSubtitle": "Show recommendations based on the week day",
+    "@settingsWorkoutRecommendationsSubtitle": {
+        "description": "The description of the workout recommendation setting"
+    },
     "settingsImportExport": "Import / Export",
     "@settingsImportExport": {
         "description": "The title of the import / export setting"

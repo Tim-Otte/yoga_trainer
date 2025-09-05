@@ -100,12 +100,13 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                     ),
                   ],
                 ),
-                WeekdaysSelector(
-                  initialValue: _weekdays,
-                  onChanged: (value) => setState(() {
-                    _weekdays = value;
-                  }),
-                ),
+                if (settingsController.weekdayRecommendations)
+                  WeekdaysSelector(
+                    initialValue: _weekdays,
+                    onChanged: (value) => setState(() {
+                      _weekdays = value;
+                    }),
+                  ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(),

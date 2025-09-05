@@ -260,8 +260,9 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
   }
 
   Widget _getDisplayWidget(BuildContext context) {
-    var theme = Theme.of(context);
     final localizations = AppLocalizations.of(context);
+    final settignsController = Provider.of<SettingsController>(context);
+    var theme = Theme.of(context);
 
     return Padding(
       padding: EdgeInsets.all(20),
@@ -285,22 +286,26 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                 style: theme.textTheme.bodyLarge,
               ),
               SizedBox(height: 15),
-              Text(
-                localizations.workoutWeekdays,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-              Text(
-                _weekdays.isEmpty
-                    ? localizations.workoutWeekdaysEmpty
-                    : _weekdays
-                          .map((w) => w.getAbbreviation(context))
-                          .join(', '),
-                style: theme.textTheme.bodyLarge,
-              ),
-              SizedBox(height: 15),
+              ...(settignsController.weekdayRecommendations
+                  ? [
+                      Text(
+                        localizations.workoutWeekdays,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      Text(
+                        _weekdays.isEmpty
+                            ? localizations.workoutWeekdaysEmpty
+                            : _weekdays
+                                  .map((w) => w.getAbbreviation(context))
+                                  .join(', '),
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                      SizedBox(height: 15),
+                    ]
+                  : []),
               Wrap(
                 spacing: 10,
                 children: [
@@ -347,6 +352,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
 
   Widget _getEditMode(BuildContext context) {
     final localizations = AppLocalizations.of(context);
+    final settingsController = Provider.of<SettingsController>(context);
     var theme = Theme.of(context);
 
     return Padding(
@@ -386,12 +392,13 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
                     _workout = _workout.copyWith(description: Value(value));
                   }),
                 ),
-                WeekdaysSelector(
-                  initialValue: _weekdays,
-                  onChanged: (value) => setState(() {
-                    _weekdays = value;
-                  }),
-                ),
+                if (settingsController.weekdayRecommendations)
+                  WeekdaysSelector(
+                    initialValue: _weekdays,
+                    onChanged: (value) => setState(() {
+                      _weekdays = value;
+                    }),
+                  ),
               ],
             ),
             Padding(

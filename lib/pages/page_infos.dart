@@ -34,7 +34,7 @@ interface class PageInfos {
   /// This method determines and provides the type of page being displayed.
   /// The returned [PageType] can be used to customize behavior or appearance
   /// based on the specific page context.
-  PageType getPageType() {
+  PageType getPageType(BuildContext context) {
     throw UnimplementedError('getPageType must be implemented');
   }
 
