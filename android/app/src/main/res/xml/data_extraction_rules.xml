@@ -2,13 +2,13 @@
 <data-extraction-rules>
   <cloud-backup>
     <!-- For shared preferences -->
-    <include domain="file" path="datastore/." />
+    <include domain="file" path="datastore/" />
     <!-- For database file -->
     <include domain="file" path="app_database.sqlite" />
   </cloud-backup>
   <device-transfer>
     <!-- For shared preferences -->
-    <include domain="file" path="datastore/." />
+    <include domain="file" path="datastore/" />
     <!-- For database file -->
     <include domain="file" path="app_database.sqlite" />
   </device-transfer>

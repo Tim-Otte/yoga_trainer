@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
     <!-- For shared preferences -->
-    <include domain="file" path="datastore/." />
+    <include domain="file" path="datastore/" />
     <!-- For database file -->
     <include domain="file" path="app_database.sqlite" />
 </full-backup-content>
