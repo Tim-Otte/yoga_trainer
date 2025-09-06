@@ -35,7 +35,7 @@ class SettingsService {
   Future<bool> getWeekdayRecommendations() {
     return asyncPrefs
         .getBool('weekdayRecommendations')
-        .then((value) => value ?? false);
+        .then((value) => value ?? true);
   }
 
   /// Saves the user's preferred weekday recommandations.

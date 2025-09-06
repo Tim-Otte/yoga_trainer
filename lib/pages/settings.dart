@@ -448,7 +448,9 @@ class SettingsPage extends StatelessWidget implements PageInfos {
 
     if (inputFile == null) {
       if (context.mounted) {
-        context.showSnackBar(localizations.snackbarWorkoutImportNoFileSelected);
+        context.showSnackBar(
+          localizations.snackbarWorkoutsImportNoFileSelected,
+        );
       }
       return;
     }
@@ -502,7 +504,9 @@ class SettingsPage extends StatelessWidget implements PageInfos {
 
     if (workoutIds?.isEmpty ?? true) {
       if (context.mounted) {
-        context.showSnackBar('Nothing selected to export');
+        context.showSnackBar(
+          localizations.snackbarWorkoutsExportNoWorkoutSelected,
+        );
       }
       return;
     }
