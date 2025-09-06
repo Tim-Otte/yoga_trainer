@@ -15,6 +15,11 @@ A modern Flutter app to help users create, manage, and follow custom yoga workou
 - **Localization**: Multi-language support and locale selection.
 - **Theme Support**: Light, dark, and system theme modes.
 - **Settings**: Customize TTS voice, volume, pitch, rate, and prep times for workouts and poses.
+- **Import/Export Workouts**: Easily back up or share your workouts as JSON files.
+- **Weekday Recommendations** (optional): Assign workouts to specific weekdays for better planning.
+
+## 📲 Downloading the latest version
+You can always download the latest version from the [releases page](https://github.com/Tim-Otte/yoga_trainer/releases/latest). Download the `app-release.apk` file to install or update the app on your Android device.
 
 ## 🚀 Getting Started
 
