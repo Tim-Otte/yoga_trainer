@@ -328,9 +328,12 @@ class AppDatabase extends _$AppDatabase {
     List<PoseWithBodyPartAndSide> poses,
     List<Weekday> weekdays,
   ) async {
-    final workoutId = await into(
-      workouts,
-    ).insert(WorkoutsCompanion.insert(name: name, description: description));
+    final workoutId = await into(workouts).insert(
+      WorkoutsCompanion.insert(
+        name: name.trim(),
+        description: description.trim(),
+      ),
+    );
 
     final posesToInsert = poses.mapWithIndex(
       (p, index) => WorkoutPosesCompanion.insert(
@@ -529,8 +532,8 @@ class AppDatabase extends _$AppDatabase {
   ) async {
     await into(poses).insert(
       PosesCompanion.insert(
-        name: name,
-        description: description,
+        name: name.trim(),
+        description: description.trim(),
         duration: duration,
         difficulty: difficulty,
         isUnilateral: isUnilateral,
@@ -596,7 +599,7 @@ class AppDatabase extends _$AppDatabase {
   ///
   /// Returns a [Future] that completes when the insertion is finished.
   Future insertBodyPart(String name) async {
-    await into(bodyParts).insert(BodyPartsCompanion.insert(name: name));
+    await into(bodyParts).insert(BodyPartsCompanion.insert(name: name.trim()));
   }
 
   /// Retrieves a list of [Weekday] objects associated with the specified [workoutId].
