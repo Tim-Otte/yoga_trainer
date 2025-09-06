@@ -444,8 +444,8 @@
     "@snackbarNotificationDisabled": {
         "description": "The text to show when notifications are successfully disabled"
     },
-    "snackbarWorkoutImportNoFileSelected": "No file for import selected",
-    "@snackbarWorkoutImportNoFileSelected": {
+    "snackbarWorkoutsImportNoFileSelected": "No file for import selected",
+    "@snackbarWorkoutsImportNoFileSelected": {
         "description": "The text to show when no file was selected for importing workouts"
     },
     "snackbarWorkoutsImportedSuccessfully": "Workouts successfully imported",
@@ -455,6 +455,10 @@
     "snackbarWorkoutsImportFailed": "Workout import failed",
     "@snackbarWorkoutsImportFailed": {
         "description": "The text to show when the workouts could not be imported"
+    },
+    "snackbarWorkoutsExportNoWorkoutSelected": "No workout for export selected",
+    "@snackbarWorkoutsExportNoWorkoutSelected": {
+        "description": "The text to show when no workout was selected to export"
     },
     "snackbarWorkoutsExportedSuccessfully": "Workouts successfully exported",
     "@snackbarWorkoutsExportedSuccessfully": {

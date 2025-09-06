@@ -62,7 +62,7 @@ extension BuildContextExtensions on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: const Duration(seconds: 3),
+        duration: Duration(seconds: action != null ? 6 : 3),
         action: action,
       ),
     );

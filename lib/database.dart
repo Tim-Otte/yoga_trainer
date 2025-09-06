@@ -198,7 +198,7 @@ class AppDatabase extends _$AppDatabase {
     List<int> workoutIds,
   ) async {
     List<export_models.WorkoutWithPoses> result = [];
-    var w = await select(workouts).get();
+    var w = await (select(workouts)..where((w) => w.id.isIn(workoutIds))).get();
     for (var workout in w) {
       var rows = await ((select(workoutPoses).join([
         innerJoin(poses, poses.id.equalsExp(workoutPoses.pose)),
