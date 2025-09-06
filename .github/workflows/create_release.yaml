@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - v[0-9]+.[0-9]+.[0-9]+
+  pull_request:
+    types: ['opened', 'edited']
 
 jobs:
   create-release:
@@ -23,9 +25,9 @@ jobs:
       - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-            channel: stable
-            flutter-version: 3.35.2
-            cache: true
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
 
       - name: Install dependencies
         run: flutter pub get
