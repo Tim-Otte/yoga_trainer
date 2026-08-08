@@ -439,7 +439,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     final localizations = AppLocalizations.of(context);
     final database = Provider.of<AppDatabase>(context, listen: false);
 
-    final inputFile = await FilePicker.platform.pickFiles(
+    final inputFile = await FilePicker.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['json'],
@@ -456,7 +456,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     }
 
     try {
-      final jsonData = await inputFile.xFiles[0].readAsBytes();
+      final jsonData = await inputFile.xFiles.first.readAsBytes();
       final List<dynamic> json = jsonDecode(utf8.decode(jsonData));
       final workouts = json.map((x) => WorkoutWithPoses.fromJson(x)).toList();
 
@@ -514,7 +514,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     final workoutData = await database.getWorkoutsForExport(workoutIds!);
     final jsonData = utf8.encode(jsonEncode(workoutData));
 
-    final outputFile = await FilePicker.platform.saveFile(
+    final outputFile = await FilePicker.saveFile(
       fileName: 'workouts.json',
       bytes: jsonData,
     );
@@ -598,7 +598,6 @@ class SettingsPage extends StatelessWidget implements PageInfos {
         wakeUpScreen: true,
         category: NotificationCategory.Reminder,
         autoDismissible: false,
-        criticalAlert: true,
       ),
       schedule: NotificationCalendar(
         hour: settingsController.notificationTime.hour,

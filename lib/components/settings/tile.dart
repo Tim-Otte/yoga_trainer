@@ -118,7 +118,7 @@ class MaterialSettingsTile<T> extends StatelessWidget {
                   ),
                 ),
               ),
-              if (suffix != null) suffix!,
+              ?suffix,
             ],
           ),
         ),
