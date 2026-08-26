@@ -1,4 +1,5 @@
 export 'checkbox_dialog.dart';
+export 'confirm_add_without_poses_dialog.dart';
 export 'confirm_delete.dart';
 export 'duration_dialog.dart';
 export 'language_dialog.dart';

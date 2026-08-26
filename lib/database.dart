@@ -103,12 +103,12 @@ class AppDatabase extends _$AppDatabase {
 
     final query =
         select(workouts).join([
-            innerJoin(
+            leftOuterJoin(
               workoutPoses,
               workoutPoses.workout.equalsExp(workouts.id),
               useColumns: false,
             ),
-            innerJoin(
+            leftOuterJoin(
               poses,
               poses.id.equalsExp(workoutPoses.pose),
               useColumns: false,
@@ -138,8 +138,8 @@ class AppDatabase extends _$AppDatabase {
           .map(
             (row) => WorkoutWithInfos(
               workout: row.readTable(workouts),
-              duration: row.read(duration)!,
-              difficulty: Difficulty.values[(row.read(difficulty)!)],
+              duration: row.read(duration) ?? 0,
+              difficulty: Difficulty.values[(row.read(difficulty) ?? Difficulty.easy.index)],
             ),
           )
           .toList(),
@@ -161,12 +161,12 @@ class AppDatabase extends _$AppDatabase {
     final difficulty = poses.difficulty.max();
 
     return (select(workouts).join([
-            innerJoin(
+            leftOuterJoin(
               workoutPoses,
               workoutPoses.workout.equalsExp(workouts.id),
               useColumns: false,
             ),
-            innerJoin(
+            leftOuterJoin(
               poses,
               poses.id.equalsExp(workoutPoses.pose),
               useColumns: false,
@@ -335,6 +335,8 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
 
+    if (poses.isEmpty) return;
+
     final posesToInsert = poses.mapWithIndex(
       (p, index) => WorkoutPosesCompanion.insert(
         workout: workoutId,
@@ -372,23 +374,28 @@ class AppDatabase extends _$AppDatabase {
         workout,
         where: (w) => w.id.equals(workout.id.value),
       );
+      
       // Poses
       batch.deleteWhere(
         workoutPoses,
         (wp) => wp.workout.equals(workout.id.value),
       );
-      batch.insertAll(
-        workoutPoses,
-        poses.mapWithIndex(
-          (item, index) => WorkoutPosesCompanion.insert(
-            workout: workout.id.value,
-            pose: item.pose.id,
-            order: index,
-            side: Value(item.side),
-            prepTime: Value.absentIfNull(item.prepTime),
+
+      if (poses.isNotEmpty) {
+        batch.insertAll(
+          workoutPoses,
+          poses.mapWithIndex(
+            (item, index) => WorkoutPosesCompanion.insert(
+              workout: workout.id.value,
+              pose: item.pose.id,
+              order: index,
+              side: Value(item.side),
+              prepTime: Value.absentIfNull(item.prepTime),
+            ),
           ),
-        ),
-      );
+        );
+      }
+
       // Weekdays
       batch.deleteWhere(
         workoutWeekdays,

@@ -493,6 +493,14 @@
     "@deleteDialogContent": {
         "description": "The content of the confirm_delete dialog"
     },
+    "addWithoutPosesDialogTitle": "Confirm saving",
+    "@addWithoutPosesDialogTitle": {
+        "description": "The title of the confirm_add_without_poses_dialog dialog"
+    },
+    "addWithoutPosesDialogContent": "Do you really want to save this workout without any poses?",
+    "@addWithoutPosesDialogContent": {
+        "description": "The content of the confirm_add_without_poses_dialog dialog"
+    },
     "save": "Save",
     "@save": {
         "description": "The label text for save buttons"

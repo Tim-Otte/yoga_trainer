@@ -439,14 +439,12 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     final localizations = AppLocalizations.of(context);
     final database = Provider.of<AppDatabase>(context, listen: false);
 
-    final inputFile = await FilePicker.pickFiles(
-      allowMultiple: false,
+    final selectedFiles = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
-      withData: true,
     );
 
-    if (inputFile == null) {
+    if (selectedFiles.isEmpty) {
       if (context.mounted) {
         context.showSnackBar(
           localizations.snackbarWorkoutsImportNoFileSelected,
@@ -456,7 +454,7 @@ class SettingsPage extends StatelessWidget implements PageInfos {
     }
 
     try {
-      final jsonData = await inputFile.xFiles.first.readAsBytes();
+      final jsonData = await selectedFiles.first.readAsBytes();
       final List<dynamic> json = jsonDecode(utf8.decode(jsonData));
       final workouts = json.map((x) => WorkoutWithPoses.fromJson(x)).toList();
 

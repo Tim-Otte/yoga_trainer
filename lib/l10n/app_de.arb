@@ -116,6 +116,8 @@
     "snackbarWorkoutsExportShareFailed": "Workouts konnten nicht geteilt werden",
     "deleteDialogTitle": "Löschen bestätigen",
     "deleteDialogContent": "Möchtest Du dies wirklich löschen?",
+    "addWithoutPosesDialogTitle": "Speichern bestätigen",
+    "addWithoutPosesDialogContent": "Möchtest Du dieses Workout wirklich ohne Übungen speichern?",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "search": "Suchen...",

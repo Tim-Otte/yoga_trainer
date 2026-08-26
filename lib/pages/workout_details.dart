@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_workout/all.dart';
+import 'package:yoga_trainer/components/dialogs/all.dart';
 import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
 import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/database.dart';
@@ -126,11 +127,25 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
           actions: _isInEditMode
               ? [
                   IconButton(
-                    onPressed: _isFormValid && (_poses ?? []).isNotEmpty
+                    onPressed: _isFormValid
                         ? () async {
+                            if ((_poses ?? []).isEmpty) {
+                              var confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (_) {
+                                  return Provider(
+                                    create: (_) => database,
+                                    child: ConfirmAddWithoutPosesDialog(),
+                                  );
+                                },
+                              );
+
+                              if (!(confirmed ?? false)) return;
+                            }
+
                             await database.updateWorkout(
                               _workout,
-                              _poses!,
+                              _poses ?? [],
                               _weekdays,
                             );
                             final updatedInfos = await database.getWorkout(
