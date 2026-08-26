@@ -39,7 +39,7 @@ class _PoseListState extends State<PoseList> {
         shrinkWrap: true,
         proxyDecorator: _proxyDecorator,
         children: _poses.map((item) => _getListTile(context, item)).toList(),
-        onReorder: (oldIndex, newIndex) {
+        onReorderItem: (oldIndex, newIndex) {
           if (oldIndex < newIndex) {
             newIndex -= 1;
           }
