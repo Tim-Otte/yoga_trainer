@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Get version from tag
         run: |
@@ -21,7 +21,7 @@ jobs:
           echo "VERSION=${TAG#v}" >> $GITHUB_ENV
 
       - name: Setup Flutter SDK
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: stable
           flutter-version-file: pubspec.yaml
@@ -44,7 +44,7 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --build-name=${{ env.VERSION }}
       
-      - uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@v1.21.0
         with:
           artifacts: ./build/app/outputs/flutter-apk/app-release.apk*
           generateReleaseNotes: true
