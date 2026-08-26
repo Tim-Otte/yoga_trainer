@@ -62,20 +62,29 @@ class _SelectWorkoutToUpdatePageState extends State<SelectWorkoutToUpdatePage> {
               itemBuilder: (context, item, _) => ListTile(
                 title: Text(item.workout.name),
                 subtitle: Text(
-                  item.workout.description,
+                  item.workout.description.isEmpty
+                      ? localizations.workoutDescriptionEmpty
+                      : item.workout.description,
                   overflow: TextOverflow.ellipsis,
                 ),
-                leading: CircleAvatar(child: Icon(item.difficulty.getIcon())),
+                leading: CircleAvatar(
+                  backgroundColor: item.difficulty.getBackgroundColor(context),
+                  foregroundColor: item.difficulty.getForegroundColor(context),
+                  child: Icon(item.difficulty.getIcon()),
+                ),
                 onTap: () => context.navigateTo(
-                  (_) => Provider(
-                    create: (_) => database,
+                  (_) => MultiProvider(
+                    providers: [
+                      Provider(create: (_) => database),
+                      ChangeNotifierProvider.value(value: settingsController),
+                    ],
                     child: WorkoutDetailsPage(
                       workoutInfos: item,
                       poseToAdd: widget.poseToAdd,
                     ),
                   ),
-                  replace: true,
                   fullscreenDialog: true,
+                  replace: true
                 ),
               ),
             ),

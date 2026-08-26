@@ -5,7 +5,6 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:yoga_trainer/components/add_or_edit_workout/all.dart';
 import 'package:yoga_trainer/components/dialogs/all.dart';
-import 'package:yoga_trainer/components/dialogs/confirm_delete.dart';
 import 'package:yoga_trainer/components/duration_text.dart';
 import 'package:yoga_trainer/database.dart';
 import 'package:yoga_trainer/entities/all.dart';
@@ -102,7 +101,7 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
     var settingsController = Provider.of<SettingsController>(context);
 
     return PopScope(
-      canPop: !_isInEditMode,
+      canPop: !_isInEditMode || widget.poseToAdd != null,
       onPopInvokedWithResult: (didPop, result) async {
         if (_isInEditMode && widget.poseToAdd == null) {
           var poses = await database.getAllPosesForWorkout(_workout.id.value);
