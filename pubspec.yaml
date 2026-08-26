@@ -2,9 +2,9 @@ name: yoga_trainer
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Remove this line if you wish to publish to pub.devgit 
 
-version: 0.2.17+19
+version: 0.2.18+20
 
 environment:
   sdk: ^3.9.0
@@ -42,7 +42,7 @@ dependencies:
   package_info_plus: any
   json_serializable: any
   json_annotation: any
-  file_picker: 11.0.3
+  file_picker: ^12.1.1
   share_plus: any
 
 dev_dependencies:
